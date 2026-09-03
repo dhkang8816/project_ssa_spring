@@ -109,7 +109,6 @@
 	</select>
 
 	<!-- 6. 회원 기본 권한 등록 -->
-	<!-- [Member-Mapper.xml] 100번 행 부근 권한 등록 쿼리 수정 -->
 	<insert id="insertMemberRole" parameterType="com.spring.dto.MemberRoleVO">
 		INSERT INTO MEMBER_ROLE (
 			ROLE_ID,
@@ -124,7 +123,6 @@
 
 
 	<!-- 7. 로그인 이력 적재 (MEMBER_LOG) -->
-	<!-- [Member-Mapper.xml] 110번 행 부근 로그인 로그 쿼리 수정 -->
 	<insert id="insertMemberLog" parameterType="map">
 		INSERT INTO MEMBER_LOG (
 			LOG_ID,
@@ -192,7 +190,7 @@
 		</where>
 	</select>
 
-	<!-- 회원 정보 수정 -->
+	<!-- 9. 회원 정보 수정 (💡 PICTURE 컬럼 누락 교정 마감 완료) -->
 	<update id="updateMember" parameterType="com.spring.dto.MemberVO">
 		UPDATE MEMBER
 		SET
@@ -200,7 +198,8 @@
 			DEPARTMENT = #{department},
 			PHONE = #{phone, jdbcType=VARCHAR},
 			EMAIL = #{email},
-			STATUS = #{status}
+			STATUS = #{status},
+			PICTURE = #{picture}   <!-- 💡 여기에 콤마와 함께 매핑 파라미터가 들어가야 DB가 정상 반영됩니다! -->
 		WHERE MEMBER_ID = #{memberId}
 	</update>
 

@@ -21,6 +21,7 @@
         <button type="button" onclick="location.href='${pageContext.request.contextPath}/flighthistory/list'">비행 이력 목록</button>              
     	<button type="button" onclick="location.href='${pageContext.request.contextPath}/detection/list'">탐지 이력 목록</button>
     	<button type="button" onclick="location.href='${pageContext.request.contextPath}/dangerlog/list'">이상 개체 탐지 이력 목록</button>
+    	<button type="button" onclick="location.href='${pageContext.request.contextPath}/alert/list'">경보 이력 목록</button>
     </div>
 
 	<!-- 세션에 Spring Security 인증 Context가 있는지 여부로 판단 -->
