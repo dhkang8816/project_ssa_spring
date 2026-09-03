@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<mvc:annotation-driven />
+
+	<!-- 1. 이전에 작성하신 암호화 및 커스텀 핸들러 빈들 -->
+	<bean id="encoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<bean id="customProvider"
+		class="com.spring.security.CustomAuthenticationProvider">
+		<constructor-arg name="memberDAO" ref="memberDAO" />
+		<constructor-arg name="encoder" ref="encoder" />
+	</bean>
+
+	<bean id="loginSuccessHandler"
+		class="com.spring.security.LoginSuccessHandler" />
+	<bean id="loginFailureHandler"
+		class="com.spring.security.LoginFailureHandler" />
+	<bean id="customDeniedHandler"
+		class="com.spring.security.CustomDeniedHandler" />
+
+	<!-- 2. 💡 Java Config 대신 XML에 기술하는 시큐리티 제어 정책 (순서 및 중복 교정 완료) -->
+	<security:http auto-config="false" use-expressions="true">
+
+		<!-- [1단계] 인증 없이 누구나 접근할 수 있는 완전 허용 페이지 (최상단 배치) -->
+		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		<security:intercept-url pattern="/login" access="permitAll" />
+		<security:intercept-url pattern="/member/regist**" access="permitAll" />
+		<security:intercept-url pattern="/" access="permitAll" />
+		<security:intercept-url pattern="/main" access="permitAll" />
+
+		<!-- [2단계] 미인가 사용자(ROLE_GUEST) 전용 대기 화면 허용 -->
+		<security:intercept-url pattern="/guest/waiting"
+			access="hasRole('ROLE_GUEST')" />
+
+		<!-- [3단계] 상세 권한별 접근 제어 (좁은 범위부터 순서대로 설정) -->
+		<security:intercept-url pattern="/admin/**"
+			access="hasRole('ROLE_ADMIN')" /> <!-- 오직 관리자만 -->
+		<security:intercept-url pattern="/commoncode/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" /> <!-- 관제원, 관리자 -->
+		<security:intercept-url pattern="/animal/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<security:intercept-url pattern="/danger/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<security:intercept-url pattern="/drone/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" /> <!-- 관제원, 관리자 -->
+		<security:intercept-url pattern="/drone/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<security:intercept-url pattern="/detection/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<security:intercept-url pattern="/dangerlog/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<security:intercept-url pattern="/flighthistory/**"
+			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+
+
+		<!-- [4단계] 최하단 기본 방어선: 로그인한 모든 직원 접근 허용 (가장 넓은 범위는 최하단) -->
+		<security:intercept-url pattern="/**" access="isAuthenticated()" />
+
+		<!-- 커스텀 로그인 폼 및 핸들러 연결 (login-processing-url 생략 시 기본값 /login 사용) -->
+		<security:form-login
+			login-page="/login"
+			username-parameter="memberId"
+			password-parameter="password"
+			authentication-success-handler-ref="loginSuccessHandler"
+			authentication-failure-handler-ref="loginFailureHandler" />
+
+		<!-- 💡 [추가] 서버를 재시작해도 쿠키를 통해 로그인 상태를 유지해주는 설정 -->
+		<!-- data-source-ref를 지우고 key 속성만 추가 -->
+		<security:remember-me
+			key="myUniqueDevelopmentKey"
+			token-validity-seconds="86400" />
+
+		<!-- 로그아웃 및 권한 부족 예외 처리 -->
+		<security:logout logout-url="/logout"
+			logout-success-url="/login?logout=true"
+			invalidate-session="true"
+			delete-cookies="JSESSIONID" />
+		<security:access-denied-handler ref="customDeniedHandler" />
+
+	</security:http>
+
+
+	<!-- 3. 💡 커스텀 인증 프로바이더를 시큐리티 매니저에 등록 -->
+	<security:authentication-manager>
+		<security:authentication-provider ref="customProvider" />
+	</security:authentication-manager>
+
+	<context:component-scan base-package="com.spring.security" />
+</beans>

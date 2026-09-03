@@ -1,0 +1,16 @@
+# Build artifacts
+target/
+bin/
+build/
+
+# Eclipse metadata & settings
+.metadata/
+.settings/
+.classpath
+.project
+*.tmp
+*.bak
+
+# OS metadata
+.DS_Store
+Thumbs.db

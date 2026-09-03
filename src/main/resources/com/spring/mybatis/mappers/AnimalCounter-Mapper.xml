@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 앞서 맞춘 단순 네임스페이스 규칙 반영 -->
+<mapper namespace="AnimalCounter-Mapper">
+
+	<resultMap id="animalCounterMap" type="com.spring.dto.AnimalCounterVO">
+        <id property="counterId" column="COUNTER_ID" />
+        <result property="currentCount" column="CURRENT_COUNT" />
+        <result property="lastUpdate" column="LAST_UPDATE" />
+    </resultMap>
+
+	<!-- PageMaker를 활용한 대시보드 카운터 검색 조건 -->
+    <sql id="counterSearch">
+        <where>
+			<!-- searchType별 분기 (c: 카운터ID별, k: 특정 키워드 필터링) -->
+            <if test="searchType == 'c'.toString() and keyword != null and keyword != ''">
+                AND COUNTER_ID = #{keyword}
+            </if>
+            <if test="searchType == 'k'.toString() and keyword != null and keyword != ''">
+                AND COUNTER_ID LIKE '%' || #{keyword} || '%'
+            </if>
+        </where>
+    </sql>
+
+	<!-- 1. [READ] 축종 카운터 페이징 목록 조회 (나중에 10개, 20개로 늘어나도 완벽 대응) -->
+    <select id="selectAnimalCounterList" resultMap="animalCounterMap" parameterType="com.spring.cmd.PageMaker">
+        SELECT * FROM (
+            SELECT ROWNUM AS rn, a.* FROM (
+                SELECT 
+                    COUNTER_ID, 
+                    CURRENT_COUNT, 
+                    LAST_UPDATE
+                FROM ANIMAL_COUNTER
+                <include refid="counterSearch" />
+                ORDER BY COUNTER_ID ASC
+            ) a WHERE ROWNUM &lt;= #{endRow}
+        ) WHERE rn &gt;= #{startRow}
+    </select>
+
+	<!-- 2. [READ] 페이징 계산을 위한 전체 카운터 행 개수 조회 -->
+    <select id="selectAnimalCounterCount" resultType="int" parameterType="com.spring.cmd.PageMaker">
+        SELECT COUNT(*) 
+        FROM ANIMAL_COUNTER
+        <include refid="counterSearch" />
+    </select>
+
+	<!-- 3. [UPDATE] 기존 카운터 데이터 증감 처리 (변화 수치만큼 실시간 가감) -->
+    <update id="updateAnimalCount">
+        UPDATE ANIMAL_COUNTER
+        SET 
+            CURRENT_COUNT = CURRENT_COUNT + #{countDiff},
+            LAST_UPDATE = SYSDATE
+        WHERE COUNTER_ID = #{counterId}
+    </update>
+
+	<!-- 4. [CREATE] 향후 새로운 탐지 대상/축종이 추가되었을 때 새 현황판 행을 개설하는 쿼리 -->
+    <insert id="insertNewCounter" parameterType="com.spring.dto.AnimalCounterVO">
+        INSERT INTO ANIMAL_COUNTER (
+            COUNTER_ID, CURRENT_COUNT, LAST_UPDATE
+        ) VALUES (
+            #{counterId}, 0, SYSDATE
+        )
+    </insert>
+</mapper>

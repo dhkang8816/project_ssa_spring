@@ -1,0 +1,74 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Repository -->
+	<bean id="commonCodeDAO" class="com.spring.dao.CommonCodeDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="memberDAO" class="com.spring.dao.MemberDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="animalDetailDAO" class="com.spring.dao.AnimalDetailDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="animalCounterDAO" class="com.spring.dao.AnimalCounterDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="dangerDetailDAO" class="com.spring.dao.DangerDetailDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="droneDAO" class="com.spring.dao.DroneDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="detectionLogDAO" class="com.spring.dao.DetectionLogDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="dangerLogDAO" class="com.spring.dao.DangerLogDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="flightHistoryDAO" class="com.spring.dao.FlightHistoryDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+
+	<!-- 2. Service 빈 설정: ref에 적힌 이름과 위 id가 완벽하게 일치해야 합니다 -->
+	<bean id="commonCodeService"
+		class="com.spring.service.CommonCodeServiceImpl">
+		<constructor-arg ref="commonCodeDAO" />
+	</bean>
+	<bean id="memberService" class="com.spring.service.MemberServiceImpl">
+		<constructor-arg ref="memberDAO" />
+	</bean>
+	<bean id="animalDetailService"
+		class="com.spring.service.AnimalDetailServiceImpl">
+		<constructor-arg ref="animalDetailDAO" />
+		<!-- 💡 실시간 카운터 연동을 위한 레포지토리 참조 주입 추가 -->
+		<constructor-arg ref="animalCounterDAO" />
+	</bean>
+	<bean id="animalCounterService"
+		class="com.spring.service.AnimalCounterServiceImpl">
+		<constructor-arg ref="animalCounterDAO" />
+	</bean>
+	<bean id="dangerDetailService"
+		class="com.spring.service.DangerDetailServiceImpl">
+		<constructor-arg ref="dangerDetailDAO" />
+	</bean>
+	<bean id="droneService" class="com.spring.service.DroneServiceImpl">
+		<constructor-arg ref="droneDAO" />
+	</bean>
+	<bean id="detectionLogService"
+		class="com.spring.service.DetectionLogServiceImpl">
+		<constructor-arg ref="detectionLogDAO" />
+	</bean>
+	<bean id="dangerLogService" class="com.spring.service.DangerLogServiceImpl">
+		<constructor-arg ref="dangerLogDAO" />
+	</bean>
+	<bean id="flightHistoryService"
+		class="com.spring.service.FlightHistoryServiceImpl">
+		<constructor-arg ref="flightHistoryDAO" />
+	</bean>
+
+
+</beans>

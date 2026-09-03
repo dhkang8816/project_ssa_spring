@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 💡 지정하신 네임스페이스 규칙 반영 -->
+<mapper namespace="DangerDetail-Mapper">
+
+    <!-- DB 영문 컬럼명과 롬복 VO 1:1 매핑 -->
+    <resultMap id="dangerDetailMap" type="com.spring.dto.DangerDetailVO">
+        <id property="dangerId" column="DANGER_ID" />
+        <result property="dangerName" column="DANGER_NAME" />
+        <result property="dangerDate" column="DANGER_DATE" />
+    </resultMap>
+
+    <!-- PageMaker 연동 동적 검색 조건 (n: 이상객체이름) -->
+    <sql id="searchCondition">
+        <where>
+            <if test="searchType == 'n'.toString() and keyword != null and keyword != ''">
+                AND DANGER_NAME LIKE '%' || #{keyword} || '%'
+            </if>
+        </where>
+    </sql>
+
+    <!-- [CREATE] 1. 이상 객체 등록 -->
+   <insert id="insertDanger" parameterType="com.spring.dto.DangerDetailVO">
+        INSERT INTO DANGER_DETAIL (
+            DANGER_ID, 
+            DANGER_NAME, 
+            DANGER_DATE
+        ) VALUES (
+            (SELECT NVL(MAX(DANGER_ID), 0) + 1 FROM DANGER_DETAIL), <!-- 💡 서브쿼리로 자동 일련번호 추출 -->
+            #{dangerName},
+            SYSDATE
+        )
+    </insert>
+
+   <!-- [DangerDetail-Mapper.xml] 2번 목록 조회 쿼리 최종본 -->
+    <select id="selectDangerList" resultMap="dangerDetailMap" parameterType="com.spring.cmd.PageMaker">
+        SELECT * FROM (
+            SELECT ROWNUM AS rn, a.* FROM (
+                /* 💡 이름별로 그룹화하여 중복을 제거하고 가장 최신 데이터 위주로 정렬 */
+                SELECT 
+                    DANGER_NAME,
+                    MIN(DANGER_ID) AS DANGER_ID,
+                    MAX(DANGER_DATE) AS DANGER_DATE
+                FROM DANGER_DETAIL
+                <where>
+                    <if test="searchType == 'n'.toString() and keyword != null and keyword != ''">
+                        AND DANGER_NAME LIKE '%' || #{keyword} || '%'
+                    </if>
+                </where>
+                GROUP BY DANGER_NAME
+                ORDER BY DANGER_ID DESC
+            ) a WHERE ROWNUM &lt;= #{endRow}
+        ) WHERE rn &gt;= #{startRow}
+    </select>
+
+    <!-- 💡 페이징 개수 카운트 쿼리도 똑같이 중복을 제외한 종류 개수만 세도록 교정 -->
+    <select id="selectDangerCount" resultType="int" parameterType="com.spring.cmd.PageMaker">
+        SELECT COUNT(DISTINCT DANGER_NAME) 
+        FROM DANGER_DETAIL
+        <where>
+            <if test="searchType == 'n'.toString() and keyword != null and keyword != ''">
+                AND DANGER_NAME LIKE '%' || #{keyword} || '%'
+            </if>
+        </where>
+    </select>
+
+    <!-- [READ] 4. 상세 단건 조회 -->
+    <select id="selectDangerById" resultMap="dangerDetailMap" parameterType="int">
+        SELECT 
+            DANGER_ID, DANGER_NAME, DANGER_DATE
+        FROM DANGER_DETAIL
+        WHERE DANGER_ID = #{dangerId}
+    </select>
+
+    <!-- [UPDATE] 5. 이상 객체 정보 수정 -->
+    <update id="updateDanger" parameterType="com.spring.dto.DangerDetailVO">
+        UPDATE DANGER_DETAIL
+        SET 
+            DANGER_NAME = #{dangerName}
+        WHERE DANGER_ID = #{dangerId}
+    </update>
+
+    <!-- [DELETE] 6. 이상 객체 정보 삭제 -->
+    <delete id="deleteDanger" parameterType="int">
+        DELETE FROM DANGER_DETAIL
+        WHERE DANGER_ID = #{dangerId}
+    </delete>
+
+</mapper>

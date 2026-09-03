@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Member-Mapper">
+
+	<!-- DB 영문 컬럼명과 Java MemberVO 필드 매핑 -->
+	<resultMap id="memberMap" type="com.spring.dto.MemberVO">
+		<id property="memberId" column="MEMBER_ID" />
+		<result property="name" column="NAME" />
+		<result property="department" column="DEPARTMENT" />
+		<result property="password" column="PASSWORD" />
+		<result property="status" column="STATUS" />
+		<result property="failCount" column="FAIL_COUNT" />
+		<result property="pwdChgDate" column="PWD_CHG_DATE" />
+		<result property="lastLongDate" column="LAST_LONG_DATE" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="phone" column="PHONE" />
+		<result property="email" column="EMAIL" />
+		<result property="picture" column="PICTURE" />
+	</resultMap>
+	
+
+	<!-- 1. 사번 기반 단건 회원 조회 -->
+	<select id="selectMemberById" parameterType="string" resultMap="memberMap">
+		SELECT
+		MEMBER_ID,
+		NAME,
+		DEPARTMENT,
+		PASSWORD,
+		STATUS,
+		FAIL_COUNT,
+		PWD_CHG_DATE,
+		LAST_LONG_DATE,
+		REG_DATE,
+		PHONE,
+		EMAIL,
+		PICTURE
+		FROM MEMBER
+		WHERE MEMBER_ID = #{memberId}
+	</select>
+
+	<!-- 2. 로그인 실패 시 실패 카운트 증가 -->
+	<update id="incrementFailCount" parameterType="string">
+		UPDATE MEMBER
+		SET FAIL_COUNT = FAIL_COUNT + 1
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+
+	<!-- 3. 로그인 성공 시 실패 카운트 리셋(0) -->
+	<update id="resetFailCount" parameterType="string">
+		UPDATE MEMBER
+		SET FAIL_COUNT = 0
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+
+	<!-- 4. 로그인 성공 시 마지막 로그인 타임스탬프 업데이트 -->
+	<update id="updateLastLogDate" parameterType="string">
+		UPDATE MEMBER
+		SET LAST_LONG_DATE = SYSDATE
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+
+	<update id="updateMemberStatus" parameterType="com.spring.dto.MemberVO">
+		UPDATE MEMBER
+		SET STATUS = #{status}
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+
+	<!-- 5. 회원 정보 신규 등록 -->
+	<insert id="insertMember" parameterType="com.spring.dto.MemberVO">
+		INSERT INTO MEMBER (
+		MEMBER_ID,
+		NAME,
+		DEPARTMENT,
+		PASSWORD,
+		STATUS,
+		FAIL_COUNT,
+		PWD_CHG_DATE,
+		LAST_LONG_DATE,
+		REG_DATE,
+		PHONE,
+		EMAIL,
+		PICTURE
+		) VALUES (
+		#{memberId},
+		#{name},
+		#{department},
+		#{password},
+		'0',
+		0,
+		SYSDATE,
+		NULL,
+		SYSDATE,
+		#{phone, jdbcType=VARCHAR},
+		#{email},
+		#{picture}
+		)
+	</insert>
+
+	<!-- 사번 기반 권한 리스트 조회 -->
+	<select id="selectMemberRoles" parameterType="string"
+		resultType="com.spring.dto.MemberRoleVO">
+		SELECT
+		ROLE_ID,
+		ROLE_CODE,
+		MEMBER_ID
+		FROM MEMBER_ROLE
+		WHERE MEMBER_ID = #{memberId}
+	</select>
+
+	<!-- 6. 회원 기본 권한 등록 -->
+	<!-- [Member-Mapper.xml] 100번 행 부근 권한 등록 쿼리 수정 -->
+	<insert id="insertMemberRole" parameterType="com.spring.dto.MemberRoleVO">
+		INSERT INTO MEMBER_ROLE (
+			ROLE_ID,
+			ROLE_CODE,
+			MEMBER_ID
+		) VALUES (
+			(SELECT NVL(MAX(ROLE_ID), 0) + 1 FROM MEMBER_ROLE), 
+			#{roleCode},
+			#{memberId}
+		)
+	</insert>
+
+
+	<!-- 7. 로그인 이력 적재 (MEMBER_LOG) -->
+	<!-- [Member-Mapper.xml] 110번 행 부근 로그인 로그 쿼리 수정 -->
+	<insert id="insertMemberLog" parameterType="map">
+		INSERT INTO MEMBER_LOG (
+			LOG_ID,
+			LOGIN_IP,
+			LOGIN_STATUS,
+			LOGIN_DATE,
+			MEMBER_ID
+		) VALUES (
+			(SELECT NVL(MAX(LOG_ID), 0) + 1 FROM MEMBER_LOG), 
+			#{loginIp},
+			#{loginStatus},
+			SYSDATE,
+			#{memberId}
+		)
+	</insert>
+
+
+	<!-- 8. 페이징 및 검색 조건이 포함된 직원 목록 조회 -->
+	<select id="selectMemberList" parameterType="com.spring.cmd.PageMaker" resultMap="memberMap">
+	    SELECT * FROM (
+	        SELECT ROWNUM AS RNUM, M.* FROM (
+	            SELECT 
+	                MEMBER_ID,
+	                NAME,
+	                DEPARTMENT,
+	                PASSWORD,
+	                STATUS,
+	                FAIL_COUNT,
+	                PWD_CHG_DATE,
+	                LAST_LONG_DATE,
+	                REG_DATE,
+	                PHONE,
+	                EMAIL,
+	                PICTURE
+	            FROM MEMBER
+	            <where>
+	                <if test="keyword != null and keyword != ''">
+	                    <if test="searchType == 't'.toString()">
+	                        NAME LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                    <if test="searchType == 'c'.toString()">
+	                        MEMBER_ID LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                </if>
+	            </where>
+	            ORDER BY REG_DATE DESC
+	        ) M
+	    )
+	    WHERE RNUM BETWEEN #{startRow} AND #{startRow} + #{perPageNum} - 1
+	</select>
+	
+	<!-- 전체 직원 목록 개수 조회 (페이징 및 검색 조건 연동) -->
+	<select id="selectMemberListCount" parameterType="com.spring.cmd.PageMaker" resultType="int">
+		SELECT COUNT(*)
+		FROM MEMBER
+		<where>
+			<if test="keyword != null and keyword != ''">
+				<if test="searchType == 't'.toString()">
+					NAME LIKE '%' || #{keyword} || '%'
+				</if>
+				<if test="searchType == 'c'.toString()">
+					MEMBER_ID LIKE '%' || #{keyword} || '%'
+				</if>
+			</if>
+		</where>
+	</select>
+
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember" parameterType="com.spring.dto.MemberVO">
+		UPDATE MEMBER
+		SET
+			NAME = #{name},
+			DEPARTMENT = #{department},
+			PHONE = #{phone, jdbcType=VARCHAR},
+			EMAIL = #{email},
+			STATUS = #{status}
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+
+</mapper>

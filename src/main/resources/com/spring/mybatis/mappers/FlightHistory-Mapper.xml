@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 💡 지정하신 네임스페이스 규칙 반영 -->
+<mapper namespace="FlightHistory-Mapper">
+
+    <!-- DB 실물 컬럼명과 자바 VO 1:1 정밀 매핑 -->
+    <resultMap id="flightHistoryMap" type="com.spring.dto.FlightHistoryVO">
+        <id property="flightId" column="FLIGHT_ID" />
+        <result property="startTime" column="START_TIME" />
+        <result property="endTime" column="END_TIME" />
+        <result property="flightDuration" column="FLIGHT_DURATION" />
+        <result property="batteryConsumption" column="BATTERY_CONSUMPTION" />
+        <result property="flightDate" column="FLIGHT_DATE" />
+        <result property="droneId" column="DRONE_ID" />
+    </resultMap>
+
+    <!-- PageMaker 연동 다조건 동적 검색 조건 (d: 드론ID) -->
+    <sql id="searchCondition">
+        <where>
+            <if test="searchType == 'd'.toString() and keyword != null and keyword != ''">
+                AND DRONE_ID LIKE '%' || #{keyword} || '%'
+            </if>
+        </where>
+    </sql>
+
+    <!-- [CREATE] 1. 비행 이력 등록 (2번 방식: 비인가 드론 접근 시 에러 없이 안전하게 무시) -->
+    <insert id="insertFlightHistory" parameterType="com.spring.dto.FlightHistoryVO">
+        INSERT INTO FLIGHT_HISTORY (
+            FLIGHT_ID, 
+            START_TIME, 
+            END_TIME, 
+            FLIGHT_DURATION, 
+            BATTERY_CONSUMPTION, 
+            FLIGHT_DATE, 
+            DRONE_ID
+        )
+        SELECT 
+            (SELECT NVL(MAX(FLIGHT_ID), 0) + 1 FROM FLIGHT_HISTORY), -- 💡 시퀀스 대체 서브쿼리
+            #{startTime},
+            #{endTime},
+            #{flightDuration},
+            #{batteryConsumption},
+            SYSDATE,
+            #{droneId}
+        FROM DUAL
+        /* 💡 [정석 방어선] 정식 등록된 드론 기체 ID일 때만 비행 이력이 정상 인서트됨 */
+        WHERE EXISTS (
+            SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId}
+        )
+    </insert>
+
+    <!-- [READ] 2. 페이징 및 다조건 검색 처리된 목록 조회 (PageMaker 구조 연동) -->
+    <select id="selectFlightHistoryList" resultMap="flightHistoryMap" parameterType="com.spring.cmd.PageMaker">
+        SELECT * FROM (
+            SELECT ROWNUM AS rn, a.* FROM (
+                SELECT 
+                    FLIGHT_ID, 
+                    START_TIME, 
+                    END_TIME, 
+                    FLIGHT_DURATION, 
+                    BATTERY_CONSUMPTION, 
+                    FLIGHT_DATE, 
+                    DRONE_ID
+                FROM FLIGHT_HISTORY
+                <include refid="searchCondition" />
+                /* 최근 비행 내역이 가장 위로 오도록 역순 정렬 */
+                ORDER BY FLIGHT_ID DESC
+            ) a WHERE ROWNUM &lt;= #{endRow}
+        ) WHERE rn &gt;= #{startRow}
+    </select>
+
+    <!-- [READ] 3. 페이징 계산용 전체 비행 이력 건수 카운트 -->
+    <select id="selectFlightHistoryCount" resultType="int" parameterType="com.spring.cmd.PageMaker">
+        SELECT COUNT(*) 
+        FROM FLIGHT_HISTORY
+        <include refid="searchCondition" />
+    </select>
+
+    <!-- [READ] 4. 비행 이력 단건 상세 조회 -->
+    <select id="selectFlightHistoryById" resultMap="flightHistoryMap" parameterType="int">
+        SELECT 
+            FLIGHT_ID, 
+            START_TIME, 
+            END_TIME, 
+            FLIGHT_DURATION, 
+            BATTERY_CONSUMPTION, 
+            FLIGHT_DATE, 
+            DRONE_ID
+        FROM FLIGHT_HISTORY
+        WHERE FLIGHT_ID = #{flightId}
+    </select>
+
+    <!-- [DELETE] 5. 잘못 적재된 비행 이력 정보 삭제 -->
+    <delete id="deleteFlightHistory" parameterType="int">
+        DELETE FROM FLIGHT_HISTORY
+        WHERE FLIGHT_ID = #{flightId}
+    </delete>
+
+</mapper>
