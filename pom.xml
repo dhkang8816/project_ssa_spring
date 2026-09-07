@@ -215,11 +215,12 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>${org.aspectj.aspectjweaver-version}</version>
 		</dependency>
-		<dependency>
+		
+		<!--<dependency>
 			<groupId>spring_application</groupId>
 			<artifactId>spring_application</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 	<build>

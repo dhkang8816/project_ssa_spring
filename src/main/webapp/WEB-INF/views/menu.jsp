@@ -1,0 +1,59 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메뉴</title>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
+
+</head>
+<body>
+    <main>
+        <nav>
+            <div class="sidebar-header">
+                <span class="main-tag">메뉴</span>
+            </div>
+            <ul class="sidebar-list">
+                <li><a href="#">관리자 메뉴</a>
+                    <ul class="submenu">
+                        <li><a href="<c:url value='/patrolreport/list'/>">결제 관리</a></li> 
+                        <li><a href="<c:url value='/member/list'/>">직원 관리</a></li>
+                        <li><a href="<c:url value='/loginlog/list'/>">로그인 이력</a></li>
+                        <li><a href="<c:url value='/commoncode/list'/>">시스템 코드 등록</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">보고서 등록</a>
+                    <ul class="submenu">
+                        <li><a href="<c:url value='/patrolreport/list'/>">업무일지 목록</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">드론관리</a>
+                    <ul class="submenu">
+                        <li><a href="<c:url value='/flighthistory/list'/>">비행 이력</a></li>
+                        <li><a href="<c:url value='/drone/list'/>">드론 관리</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">이상관리</a>
+                    <ul class="submenu">
+                        <li><a href="<c:url value='/alert/list'/>">경보 이력</a></li>
+                        <li><a href="<c:url value='/detection/list'/>">탐지 이력</a></li>
+                        <li><a href="<c:url value='/danger/list'/>">이상객체 탐지 이력</a></li>
+                        <li><a href="#">통계 대시보드</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">동물관리</a>
+                    <ul class="submenu">
+                        <li><a href="<c:url value='/animal/list'/>">유기동물 관리</a></li>
+                        <li><a href="<c:url value='/dangerlog/list'/>">이상객체 관리</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>   
+    </main>
+</body>
+</html>

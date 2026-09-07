@@ -7,6 +7,17 @@
 <head>
 <meta charset="UTF-8">
 <title>관제 탐지 상황 상세정보</title>
+<style>
+	/* 💡 상세화면 전용 대형 이상객체 스냅샷 스타일 추가 */
+	.detail-snapshot {
+		max-width: 600px; 
+		width: 100%;
+		height: auto;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	}
+</style>
 </head>
 <body>
 	<h2>🔍 탐지 상황 상세 내용 및 현장 조치</h2>
@@ -41,15 +52,10 @@
 				<tr>
 					<th style="padding: 6px 12px; background-color: #f9f9f9;">드론 스냅샷 영상</th>
 					<td style="padding: 12px;">
-						<!-- DB 실물 명칭 DSNAPSHOT_PATH 바인딩 -->
-						<c:choose>
-							<c:when test="${not empty dangerLog.dsnapshotPath}">
-								<img src="${pageContext.request.contextPath}${dangerLog.dsnapshotPath}" alt="드론 포착 스냅샷" style="max-width: 500px; border: 1px solid #ccc;" />
-							</c:when>
-							<c:otherwise>
-								<span style="color: gray; font-style: italic;">저장된 현장 사진이 없습니다.</span>
-							</c:otherwise>
-						</c:choose>
+						<!-- 💡 [수정] 컨트롤러의 getDangerSnapshot 주소를 직접 찔러 하드디스크 독립 영구 물리 경로의 이미지와 바인딩 완료 -->
+						<img src="${pageContext.request.contextPath}/dangerlog/getDangerSnapshot?danlogId=${dangerLog.danlogId}" 
+							 alt="드론 포착 스냅샷" class="detail-snapshot" 
+							 onerror="this.src='${pageContext.request.contextPath}/resources/images/member/noImage.jpg';" />
 					</td>
 				</tr>
 				<tr>

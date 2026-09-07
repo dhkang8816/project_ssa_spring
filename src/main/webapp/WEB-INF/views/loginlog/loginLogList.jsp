@@ -1,0 +1,135 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>시스템 로그인 이력</title>
+    <!-- 다크 네이비 테마 style.css 연동 -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+    <style>
+        .status-success { color: #2b8a3e; font-weight: bold; }
+        .status-fail { color: #e03131; font-weight: bold; }
+        /* 페이징 간이 서식 */
+        .pagination { display: flex; list-style: none; padding-left: 0; margin-top: 20px; gap: 5px; }
+        .pagination li.active strong { color: #6366f1; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- 💡 [교정] 태그 끝에 명확하게 슬래시(/)를 닫아 표준 액션 규격 준수 및 파싱 크래시 해결 -->
+    <jsp:include page="/WEB-INF/views/header.jsp" />
+    
+    <div class="main-container">
+        <!-- 💡 [교정] 메뉴 인클루드 태그 역시 단독 태그 종결자(/) 명시 완료 -->
+        <jsp:include page="/WEB-INF/views/menu.jsp" />
+        
+        <!-- 본문 레이아웃 구역 -->
+        <main class="content-area">
+            
+            <!-- 상단 바 구역 -->
+            <div class="staff-top-bar">
+                <h2 class="page-title">🔐 시스템 로그인 인증 이력</h2>
+            </div>
+            
+            <!-- 테이블 요약 정보 및 조작 바 구역 -->
+            <div class="staff-summary-bar">
+                <div class="staff-count">
+                    전체 이력 수: <span class="count-num">${pageMaker.totalCount}</span> 건
+                </div>
+            </div>
+
+            <!-- 테이블 둥근 모서리 래퍼와 실물 스타일 서식 매핑 -->
+            <div class="staff-table-wrapper">
+                <table class="staff-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">로그 번호</th>
+                            <th style="width: 180px;">사번(아이디)</th>
+                            <th>요청 IP 주소</th>
+                            <th>로그인 시도 일시</th>
+                            <th style="width: 150px;">인증 결과</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:choose>
+                            <c:when test="${empty loginLogList}">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #b0b5c0; padding: 30px;">
+                                        기록된 로그인 인증 이력이 존재하지 않습니다.
+                                    </td>
+                                </tr>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach var="log" items="${loginLogList}">
+                                    <tr>
+                                        <td>${log.logId}</td>
+                                        <td style="font-weight: bold;"><c:out value="${log.memberId}" /></td>
+                                        <td>${log.loginIp}</td>
+                                        <td>
+                                            <fmt:formatDate value="${log.loginDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${log.loginStatus eq 'SUCCESS'}">
+                                                    <span class="status-success">성공</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="status-fail">실패</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이징 내비게이션 영역 -->
+            <div>
+                <ul class="pagination">
+                    <c:if test="${pageMaker.prev}">
+                        <li><a href="list?page=${pageMaker.startPage - 1}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">&laquo; 이전</a></li>
+                    </c:if>
+                    <c:forEach var="pageNum" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+                        <li class="${pageMaker.page == pageNum ? 'active' : ''}">
+                            <c:choose>
+                                <c:when test="${pageMaker.page == pageNum}">
+                                    <strong>[${pageNum}]</strong>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="list?page=${pageNum}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">${pageNum}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </li>
+                    </c:forEach>
+                    <c:if test="${pageMaker.next}">
+                        <li><a href="list?page=${pageMaker.endPage + 1}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">다음 &raquo;</a></li>
+                    </c:if>
+                </ul>
+            </div>
+
+            <!-- 다조건 하단 검색 폼 구역 -->
+            <div style="margin-top: 25px;">
+                <form:form action="list" method="get">
+                    <select name="searchType" style="padding: 8px; background: #242434; color: #fff; border: 1px solid #48485e; border-radius: 4px;">
+                        <option value="m" ${pageMaker.searchType == 'm' ? 'selected' : ''}>사번</option>
+                        <option value="s" ${pageMaker.searchType == 's' ? 'selected' : ''}>결과 상태</option>
+                    </select>
+                    <input type="text" name="keyword" value="${pageMaker.keyword}" class="search-input" placeholder="검색어 입력" style="width: 200px; border-radius: 4px; border: 1px solid #48485e; padding: 7px;">
+                    <button type="submit" class="staff-register-btn" style="padding: 8px 16px; border-radius: 4px;">검색</button>
+                </form:form>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- 정적 자원 로딩 마감 -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
+</body>
+</html>

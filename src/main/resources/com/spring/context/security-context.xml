@@ -32,22 +32,61 @@
 	<bean id="loginFailureHandler" class="com.spring.security.LoginFailureHandler" />
 	<bean id="customDeniedHandler" class="com.spring.security.CustomDeniedHandler" />
 
+
+	<security:http pattern="/resources/**" security="none" />
+	<security:http pattern="/js/**" security="none" />
+	<security:http pattern="/css/**" security="none" />
+	<security:http pattern="/yolo/**" security="none" />
+	
 	<!-- 2. 시큐리티 제어 정책 (순서 최적화 및 중복 교정 완료) -->
 	<security:http auto-config="false" use-expressions="true">
 
-		<!-- [1단계] 인증 없이 누구나 접근할 수 있는 완전 허용 페이지 -->
+	    <!-- [개발 및 테스트용] 모든 경로에 대해 로그인 없이 완전히 허용 (permitAll) -->
+	    <!-- 1. 정적 자원 (CSS, JS, 이미지 등) 허용 -->
+	    <security:intercept-url pattern="/resources/**" access="permitAll" />
+	
+	    <!-- 2. 기존 메인 및 공통 페이지 허용 -->
+	    <security:intercept-url pattern="/login" access="permitAll" />
+	    <security:intercept-url pattern="/" access="permitAll" />
+	    <security:intercept-url pattern="/main" access="permitAll" />
+	    <security:intercept-url pattern="/guest/waiting" access="permitAll" />
+	
+	    <!-- 3. 관리자 및 공통 기능 경로 permitAll 변경 -->
+	    <security:intercept-url pattern="/admin/**" access="permitAll" />
+	    <security:intercept-url pattern="/loginlog/**" access="permitAll" />
+	    <security:intercept-url pattern="/commoncode/**" access="permitAll" />
+	    <security:intercept-url pattern="/patrolreport/**" access="permitAll" />
+	
+	    <!-- 4. 드론 및 YOLO AI 분석, 이상관리 관련 연동 API 경로 완벽 허용 (가장 중요) -->
+	    <security:intercept-url pattern="/member/**" access="permitAll" />
+	    <security:intercept-url pattern="/animal/**" access="permitAll" />
+	    <security:intercept-url pattern="/danger/**" access="permitAll" />
+	    <security:intercept-url pattern="/drone/**" access="permitAll" />
+	    <security:intercept-url pattern="/detection/**" access="permitAll" />
+	    <security:intercept-url pattern="/dangerlog/**" access="permitAll" />
+	    <security:intercept-url pattern="/flighthistory/**" access="permitAll" />
+	    <security:intercept-url pattern="/alert/**" access="permitAll" />
+	
+	    <!-- 5. 최하단 기본 방어선도 개발 중에는 전체 허용으로 변경 -->
+	    <security:intercept-url pattern="/**" access="permitAll" />
+
+
+<!--		 [1단계] 인증 없이 누구나 접근할 수 있는 완전 허용 페이지 
 		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		
 		<security:intercept-url pattern="/login" access="permitAll" />
-		<security:intercept-url pattern="/member/regist**" access="permitAll" />
 		<security:intercept-url pattern="/" access="permitAll" />
 		<security:intercept-url pattern="/main" access="permitAll" />
 
-		<!-- [2단계] 미인가 사용자(ROLE_GUEST) 전용 대기 화면 허용 -->
+		 [2단계] 미인가 사용자(ROLE_GUEST) 전용 대기 화면 허용 
 		<security:intercept-url pattern="/guest/waiting" access="hasRole('ROLE_GUEST')" />
 
-		<!-- [3단계] 상세 권한별 접근 제어 (좁은 범위부터 순서대로 설정) -->
+		 [3단계] 상세 권한별 접근 제어 (좁은 범위부터 순서대로 설정) 
 		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" /> 
-		<security:intercept-url pattern="/commoncode/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" /> 
+		<security:intercept-url pattern="/loginlog/**" access="hasRole('ROLE_ADMIN')" /> 
+		<security:intercept-url pattern="/commoncode/**" access="hasAnyRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/patrolreport/**" access="hasAnyRole('ROLE_ADMIN')" /> 
+		<security:intercept-url pattern="/member/" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 		<security:intercept-url pattern="/animal/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 		<security:intercept-url pattern="/danger/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 		<security:intercept-url pattern="/drone/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" /> 
@@ -56,9 +95,9 @@
 		<security:intercept-url pattern="/flighthistory/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 		<security:intercept-url pattern="/alert/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 
-		<!-- [4단계] 최하단 기본 방어선: 로그인한 모든 직원 접근 허용 -->
+		 [4단계] 최하단 기본 방어선: 로그인한 모든 직원 접근 허용 
 		<security:intercept-url pattern="/**" access="isAuthenticated()" />
-
+-->
 		<!-- 커스텀 로그인 폼 및 핸들러 연결 -->
 		<security:form-login
 			login-page="/login"

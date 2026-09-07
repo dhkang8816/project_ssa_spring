@@ -35,6 +35,12 @@
 	<bean id="AlertLogDAO" class="com.spring.dao.AlertLogDAOImpl">
 		<constructor-arg ref="sqlSession" />
 	</bean>
+	<bean id="LoginLogDAO" class="com.spring.dao.LoginLogDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+	<bean id="PatrolReportDAO" class="com.spring.dao.PatrolReportDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
 
 	<!-- 2. Service 빈 설정: ref에 적힌 이름과 위 id가 완벽하게 일치해야 합니다 -->
 	<bean id="commonCodeService"
@@ -75,6 +81,10 @@
 	<bean id="AlertLogService"
 		class="com.spring.service.AlertLogServiceImpl">
 		<constructor-arg ref="AlertLogDAO" />
+	</bean>
+	<bean id="PatrolReportService"
+		class="com.spring.service.PatrolReportServiceImpl">
+		<constructor-arg ref="PatrolReportDAO" />
 	</bean>
 
 

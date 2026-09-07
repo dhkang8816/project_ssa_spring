@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="LoginLog-Mapper">
+
+    <!-- 💡 다조건 동적 검색 필터 공통 SQL 조각 -->
+    <sql id="search">
+        <if test="searchType != null and keyword != null and keyword != ''">
+            <if test="searchType == 'm'.toString()">
+                AND MEMBER_ID LIKE '%' || #{keyword} || '%'
+            </if>
+            <if test="searchType == 's'.toString()">
+                AND LOGIN_STATUS LIKE '%' || #{keyword} || '%'
+            </if>
+        </if>
+    </sql>
+
+    <!-- 1. 로그인 이력 페이징 목록 조회 (오라클 내포 뷰 페이징 기법 적용) -->
+    <select id="selectLoginLogList" resultType="com.spring.dto.LoginLogVO">
+        SELECT 
+            LOG_ID as logId,
+            LOGIN_IP as loginIp,
+            LOGIN_STATUS as loginStatus,
+            LOGIN_DATE as loginDate,
+            MEMBER_ID as memberId
+        FROM (
+            SELECT 
+                ROWNUM AS RNUM, A.*
+            FROM (
+                SELECT 
+                    LOG_ID, LOGIN_IP, LOGIN_STATUS, LOGIN_DATE, MEMBER_ID
+                FROM 
+                    LOGIN_LOG_TABLE <!-- 📌 실물 DB 테이블명에 맞게 필요시 교체하세요 -->
+                WHERE 
+                    LOG_ID &gt; 0
+                    <include refid="search" />
+                ORDER BY 
+                    LOGIN_DATE DESC, LOG_ID DESC
+            ) A
+            WHERE ROWNUM &lt;= #{page} * #{perPageNum}
+        )
+        WHERE RNUM &gt; (#{page} - 1) * #{perPageNum}
+    </select>
+
+    <!-- 2. 로그인 이력 전체 개수 조회 (페이징 및 토탈카운트 매핑) -->
+    <select id="selectLoginLogListCount" resultType="int">
+        SELECT 
+            COUNT(*)
+        FROM 
+            LOGIN_LOG_TABLE
+        WHERE 
+            LOG_ID &gt; 0
+            <include refid="search" />
+    </select>
+
+</mapper>

@@ -7,6 +7,21 @@
 <head>
 <meta charset="UTF-8">
 <title>실시간 이상 객체 탐지 이력</title>
+<style>
+	/* 💡 이상객체 스냅샷 미니 썸네일 전용 스타일 추가 */
+	.mini-snapshot {
+		width: 70px;
+		height: 45px;
+		border-radius: 4px; /* 모서리 부드럽게 마감 */
+		border: 1px solid #ddd;
+		object-fit: cover; /* 비율 유지하며 꽉 차게 */
+		vertical-align: middle;
+	}
+	.pagination li.active strong {
+		font-weight: bold;
+		color: red;
+	}
+</style>
 </head>
 <body>
 	<h2>🛸 실시간 이상 객체 탐지 이력 목록</h2>
@@ -16,6 +31,7 @@
 		<thead>
 			<tr style="background-color: #f2f2f2;">
 				<th style="width: 80px; padding: 8px;">로그번호</th>
+				<th style="width: 90px; padding: 8px;">스냅샷</th> <!-- 💡 캡쳐 화면 컬럼 신규 배치 -->
 				<th style="width: 120px; padding: 8px;">드론 기체 ID</th>
 				<th style="width: 150px; padding: 8px;">이상 객체 코드</th>
 				<th style="width: 180px; padding: 8px;">탐지 시각</th>
@@ -26,7 +42,8 @@
 			<c:choose>
 				<c:when test="${empty dangerLogList}">
 					<tr>
-						<td colspan="5" style="padding: 20px; color: gray;">포착된 실시간 이상 객체 탐지 이력이 없습니다.</td>
+						<!-- 💡 컬럼 확장에 맞게 colspan을 5에서 6으로 변경 -->
+						<td colspan="6" style="padding: 20px; color: gray;">포착된 실시간 이상 객체 탐지 이력이 없습니다.</td>
 					</tr>
 				</c:when>
 				<c:otherwise>
@@ -38,6 +55,16 @@
 									${log.danlogId}
 								</a>
 							</td>
+							
+							<!-- 💡 [추가] getDangerSnapshot 주소를 호출하여 물리 폴더 내부의 이상객체 캡쳐 이미지 출력 -->
+							<td style="padding: 4px;">
+								<a href="${pageContext.request.contextPath}/dangerlog/detail?danlogId=${log.danlogId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
+									<img src="${pageContext.request.contextPath}/dangerlog/getDangerSnapshot?danlogId=${log.danlogId}" 
+										 alt="탐지 스냅샷" class="mini-snapshot" 
+										 onerror="this.src='${pageContext.request.contextPath}/resources/images/member/noImage.jpg';" />
+								</a>
+							</td>
+							
 							<td style="padding: 8px;">
 								<c:choose>
 									<c:when test="${empty log.droneId}"><span style="color: gray;">미배정</span></c:when>
@@ -45,7 +72,7 @@
 								</c:choose>
 							</td>
 							<td style="padding: 8px; font-weight: bold;">
-							    <c:out value="${log.dangerName}" /> <!-- 💡 이제 숫자가 아닌 '멧돼지' 텍스트가 바로 출력됩니다. -->
+							    <c:out value="${log.dangerName}" /> <!-- 이제 숫자가 아닌 '멧돼지' 텍스트가 바로 출력됩니다. -->
 							</td>
 							<td style="padding: 8px;">
 								<fmt:formatDate value="${log.dangerTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

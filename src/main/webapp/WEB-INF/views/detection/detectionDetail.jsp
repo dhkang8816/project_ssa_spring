@@ -7,6 +7,17 @@
 <head>
 <meta charset="UTF-8">
 <title>관제 탐지 상황 상세정보</title>
+<style>
+	/* 💡 상세화면 전용 대형 스냅샷 스타일 */
+	.detail-snapshot {
+		max-width: 600px; 
+		width: 100%;
+		height: auto;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	}
+</style>
 </head>
 <body>
 	<h2>🔍 탐지 상황 상세 내용 및 현장 조치</h2>
@@ -41,15 +52,10 @@
 				<tr>
 					<th style="padding: 6px 12px; background-color: #f9f9f9;">드론 스냅샷 영상</th>
 					<td style="padding: 12px;">
-						<!-- DB에 저장된 이미지 스냅샷 파일 경로 표출 -->
-						<c:choose>
-							<c:when test="${not empty detection.snapshotPath}">
-								<img src="${pageContext.request.contextPath}${detection.snapshotPath}" alt="드론 포착 스냅샷" style="max-width: 500px; border: 1px solid #ccc;" />
-							</c:when>
-							<c:otherwise>
-								<span style="color: gray; font-style: italic;">저장된 현장 사진이 없습니다.</span>
-							</c:otherwise>
-						</c:choose>
+						<!-- 💡 [수정] 컨트롤러의 getSnapshot 스트림 가상 경로를 호출하여 C드라이브 물리 파일과 독립 연동 완료 -->
+						<img src="${pageContext.request.contextPath}/detection/getSnapshot?dlogId=${detection.dlogId}" 
+							 alt="드론 포착 스냅샷" class="detail-snapshot" 
+							 onerror="this.src='${pageContext.request.contextPath}/resources/images/member/noImage.jpg';" />
 					</td>
 				</tr>
 				<tr>
