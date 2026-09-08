@@ -11,6 +11,7 @@
 
 	<mvc:annotation-driven />
 
+
 	<!-- ================================================================= -->
 	<!-- 💡 [필수 추가] 이미지/파일 등록 오류 완벽 해결을 위한 멀티파트 리졸버 등록 -->
 	<!-- ================================================================= -->
@@ -33,96 +34,70 @@
 	<bean id="customDeniedHandler" class="com.spring.security.CustomDeniedHandler" />
 
 
+	<!-- ================================================================= -->
+	<!-- 🛡️ [401 보안 락 최종 파괴선] 시큐리티 필터 체인 완전 우회 (Bypass) -->
+	<!-- ================================================================= -->
+	<!-- ⚠️ 중요: 반드시 다른 <security:http> 태그 블록들보다 "최상단"에 위치해야 안전하게 가로챕니다. -->
+	<security:http pattern="/yolo/api/**" security="none" />
 	<security:http pattern="/resources/**" security="none" />
 	<security:http pattern="/js/**" security="none" />
 	<security:http pattern="/css/**" security="none" />
 	<security:http pattern="/yolo/**" security="none" />
-	
-	<!-- 2. 시큐리티 제어 정책 (순서 최적화 및 중복 교정 완료) -->
+	<security:http pattern="/api/v1/ai/**" security="none" />
+	<security:http pattern="/**/yolo/api/**" security="none" />
+	<!-- ================================================================= -->
+	<!-- 메인 시큐리티 정책 제어 벨트 (auto-config 고정 및 익스프레션 개통) -->
+	<!-- ================================================================= -->
 	<security:http auto-config="false" use-expressions="true">
-
-	    <!-- [개발 및 테스트용] 모든 경로에 대해 로그인 없이 완전히 허용 (permitAll) -->
-	    <!-- 1. 정적 자원 (CSS, JS, 이미지 등) 허용 -->
-	    <security:intercept-url pattern="/resources/**" access="permitAll" />
 	
-	    <!-- 2. 기존 메인 및 공통 페이지 허용 -->
+	    <!-- 🔒 REST API 및 파이썬 통신 연동을 위한 CSRF 완전 해제 (필수) -->
+	    <security:csrf disabled="true" />
+	    
+	    <!-- 1. 내부 무조건 오픈 통로 명시적 선언 -->
 	    <security:intercept-url pattern="/login" access="permitAll" />
 	    <security:intercept-url pattern="/" access="permitAll" />
 	    <security:intercept-url pattern="/main" access="permitAll" />
 	    <security:intercept-url pattern="/guest/waiting" access="permitAll" />
-	
-	    <!-- 3. 관리자 및 공통 기능 경로 permitAll 변경 -->
+	    
+	    <!-- 2. 컨트롤러 서비스 배관 프리패스 명단 등록 (이중 잠금 방어벽) -->
 	    <security:intercept-url pattern="/admin/**" access="permitAll" />
-	    <security:intercept-url pattern="/loginlog/**" access="permitAll" />
-	    <security:intercept-url pattern="/commoncode/**" access="permitAll" />
-	    <security:intercept-url pattern="/patrolreport/**" access="permitAll" />
-	
-	    <!-- 4. 드론 및 YOLO AI 분석, 이상관리 관련 연동 API 경로 완벽 허용 (가장 중요) -->
 	    <security:intercept-url pattern="/member/**" access="permitAll" />
 	    <security:intercept-url pattern="/animal/**" access="permitAll" />
 	    <security:intercept-url pattern="/danger/**" access="permitAll" />
 	    <security:intercept-url pattern="/drone/**" access="permitAll" />
 	    <security:intercept-url pattern="/detection/**" access="permitAll" />
 	    <security:intercept-url pattern="/dangerlog/**" access="permitAll" />
-	    <security:intercept-url pattern="/flighthistory/**" access="permitAll" />
-	    <security:intercept-url pattern="/alert/**" access="permitAll" />
-	
-	    <!-- 5. 최하단 기본 방어선도 개발 중에는 전체 허용으로 변경 -->
+	    
+	    <!-- ⚠️ 실무 팁: 개발 완료 후 실서버 배포 시에는 permitAll을 아래 주석처럼 authenticated()로 변경하세요. -->
 	    <security:intercept-url pattern="/**" access="permitAll" />
-
-
-<!--		 [1단계] 인증 없이 누구나 접근할 수 있는 완전 허용 페이지 
-		<security:intercept-url pattern="/resources/**" access="permitAll" />
-		
-		<security:intercept-url pattern="/login" access="permitAll" />
-		<security:intercept-url pattern="/" access="permitAll" />
-		<security:intercept-url pattern="/main" access="permitAll" />
-
-		 [2단계] 미인가 사용자(ROLE_GUEST) 전용 대기 화면 허용 
-		<security:intercept-url pattern="/guest/waiting" access="hasRole('ROLE_GUEST')" />
-
-		 [3단계] 상세 권한별 접근 제어 (좁은 범위부터 순서대로 설정) 
-		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" /> 
-		<security:intercept-url pattern="/loginlog/**" access="hasRole('ROLE_ADMIN')" /> 
-		<security:intercept-url pattern="/commoncode/**" access="hasAnyRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/patrolreport/**" access="hasAnyRole('ROLE_ADMIN')" /> 
-		<security:intercept-url pattern="/member/" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-		<security:intercept-url pattern="/animal/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-		<security:intercept-url pattern="/danger/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-		<security:intercept-url pattern="/drone/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" /> 
-		<security:intercept-url pattern="/detection/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-		<security:intercept-url pattern="/dangerlog/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-		<security:intercept-url pattern="/flighthistory/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-		<security:intercept-url pattern="/alert/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
-
-		 [4단계] 최하단 기본 방어선: 로그인한 모든 직원 접근 허용 
-		<security:intercept-url pattern="/**" access="isAuthenticated()" />
--->
-		<!-- 커스텀 로그인 폼 및 핸들러 연결 -->
-		<security:form-login
-			login-page="/login"
-			username-parameter="memberId"
-			password-parameter="password"
-			authentication-success-handler-ref="loginSuccessHandler"
-			authentication-failure-handler-ref="loginFailureHandler" />
-
-		<!-- 쿠키를 통해 로그인 상태를 유지해주는 설정 -->
-		<security:remember-me
-			key="myUniqueDevelopmentKey"
-			token-validity-seconds="86400" />
-
-		<!-- 로그아웃 및 권한 부족 예외 처리 -->
-		<security:logout logout-url="/logout"
-			logout-success-url="/login?logout=true"
-			invalidate-session="true"
-			delete-cookies="JSESSIONID" />
-		<security:access-denied-handler ref="customDeniedHandler" />
-
+	    
+	    <!-- 커스텀 로그인 폼 및 핸들러 연동 매핑 -->
+	    <security:form-login
+	        login-page="/login"
+	        username-parameter="memberId"
+	        password-parameter="password"
+	        authentication-success-handler-ref="loginSuccessHandler"
+	        authentication-failure-handler-ref="loginFailureHandler" />
+	        
+	    <security:logout 
+	        logout-url="/logout"
+	        logout-success-url="/login?logout=true"
+	        invalidate-session="true"
+	        delete-cookies="JSESSIONID" />
+	        
+	    <security:access-denied-handler ref="customDeniedHandler" />
 	</security:http>
 
-	<!-- 3. 커스텀 인증 프로바이더를 시큐리티 매니저에 등록 -->
+	<!-- 3. 커스텀 인증 프로바이더 및 임시 테스트 메모리 계정 등록 -->
 	<security:authentication-manager>
 		<security:authentication-provider ref="customProvider" />
+
+		<!-- 🎯 [임시 치트키] 개발 중에 팝업창 뜨면 아이디: admin / 비번: 1234 치고 들어가기 -->
+		<security:authentication-provider>
+			<security:user-service>
+				<security:user name="admin" password="{noop}1234" authorities="ROLE_ADMIN" />
+			</security:user-service>
+		</security:authentication-provider>
 	</security:authentication-manager>
 
 	<context:component-scan base-package="com.spring.security" />

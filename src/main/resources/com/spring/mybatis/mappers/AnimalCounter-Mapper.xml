@@ -45,13 +45,21 @@
     </select>
 
 	<!-- 3. [UPDATE] 기존 카운터 데이터 증감 처리 (변화 수치만큼 실시간 가감) -->
-    <update id="updateAnimalCount">
-        UPDATE ANIMAL_COUNTER
-        SET 
-            CURRENT_COUNT = CURRENT_COUNT + #{countDiff},
-            LAST_UPDATE = SYSDATE
-        WHERE COUNTER_ID = #{counterId}
-    </update>
+	<!-- 🎯 [실시간 현황판 숫자 멈춤 현상 완치 치트키] 
+	     자바 DAOImpl이 던진 Map 파라미터를 정확히 가공하여, 동물 등록 시 수치를 칼같이 실시간 +1 시켜줍니다. -->
+	<!-- 🎯 [마이너스 개체수 철통 방어선 개통] 
+	     차감 결과가 0보다 작아지면 강제로 0마리에 딱 고정시켜 영구적으로 마이너스 하락을 차단합니다. -->
+	<update id="updateAnimalCount" parameterType="map">
+	    UPDATE ANIMAL_COUNTER
+	    SET 
+	        CURRENT_COUNT = CASE 
+	            WHEN (CURRENT_COUNT + #{countDiff, jdbcType=INTEGER}) &lt; 0 THEN 0
+	            ELSE (CURRENT_COUNT + #{countDiff, jdbcType=INTEGER})
+	        END,
+	        LAST_UPDATE = SYSDATE
+	    WHERE COUNTER_ID = #{counterId, jdbcType=VARCHAR}
+	</update>
+
 
 	<!-- 4. [CREATE] 향후 새로운 탐지 대상/축종이 추가되었을 때 새 현황판 행을 개설하는 쿼리 -->
     <insert id="insertNewCounter" parameterType="com.spring.dto.AnimalCounterVO">

@@ -7,27 +7,115 @@
     <title>유기동물 관제 시스템</title>
     <link rel="stylesheet" href="<c:url value='/resources/css/style.css?v='/>">
     <style>
-        body { margin: 0; padding: 0; background-color: #161920; overflow-x: hidden; }
+        /* 1. 글로벌 바디 및 가로 스크롤 누수 차단 */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #161920; 
+            overflow-x: hidden; 
+        }
+        
+        /* 2. 상단 헤더 화면 최상단 레이어 자석 고정 (메뉴 잘림 현상 원천 차단) */
+        header, .top-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 80px !important;    /* 오라클 표준 헤더 높이 사수 */
+            z-index: 1000 !important;   /* 메뉴나 본문 영상이 위로 올라오지 못하도록 잠금 */
+        }
+
+        /* 3. [위치 이상 완치 저격선] 유령 보라색 블록을 깨부수고 메뉴바 우측 정위치 고정 */
         .control-content-wrapper {
-            margin-left: 250px; padding: 20px 30px; box-sizing: border-box;
-            min-height: calc(100vh - 70px); display: flex; flex-direction: column; align-items: center;
+            position: absolute !important;
+            top: 80px !important;        /* 고정 헤더 높이 80px 바로 아래에서 산뜻하게 시작 */
+            left: 250px !important;      /* 좌측 메뉴바 너비 250px 바로 오른쪽에 자석 밀착 */
+            width: calc(100% - 250px) !important; /* 사이드바를 제외한머지 우측 공간 전체 할당 */
+            padding: 20px 30px; 
+            box-sizing: border-box;
+            min-height: calc(100vh - 80px); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            margin: 0 !important;        /* 기존 화면을 무너뜨리던 스페이스 마진 강제 완전 초기화 */
+            z-index: 50 !important;
         }
-        .section-title { color: #ffffff; font-size: 22px; font-weight: 600; margin-top: 5px; margin-bottom: 20px; }
+
+        /* 4. 관제 메인 타이틀 폰트 규격 */
+        .section-title { 
+            color: #ffffff; 
+            font-size: 22px; 
+            font-weight: 600; 
+            margin-top: 5px; 
+            margin-bottom: 20px; 
+        }
+
+        /* 5. 블랙 비디오 프레임 디스플레이 상자 */
         .video-display-box { 
-            background-color: #000000; padding: 8px; border-radius: 10px; border: 1px solid #2c313d; 
-            width: 100%; max-width: 640px; box-sizing: border-box; position: relative;
+            background-color: #000000; 
+            padding: 8px; 
+            border-radius: 10px; 
+            border: 1px solid #2c313d; 
+            width: 100%; 
+            max-width: 640px; 
+            box-sizing: border-box; 
+            position: relative;
         }
-        .streaming-frame { width: 100%; height: auto; display: block; border-radius: 4px; }
+
+        /* 6. YOLOv8 바이너리 스트리밍 비디오 피드 태그 */
+        .streaming-frame { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            border-radius: 4px; 
+        }
+
+        /* 7. 투명 도화지 카운터 캔버스 오버레이 레이어 */
         .ai-canvas-overlay {
-            position: absolute; top: 8px; left: 8px;
-            width: calc(100% - 16px); height: calc(100% - 16px);
-            pointer-events: none; border-radius: 4px; z-index: 10;
+            position: absolute; 
+            top: 8px; 
+            left: 8px;
+            width: calc(100% - 16px); 
+            height: calc(100% - 16px);
+            pointer-events: none; 
+            border-radius: 4px; 
+            z-index: 10;
         }
-        .video-btn-wrapper { margin-top: 15px; display: flex; gap: 10px; }
-        .btn-change { display: inline-block; padding: 8px 16px; background-color: #2c313d; color: #fff; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: 500; transition: background 0.2s; }
-        .btn-change:hover { background-color: #414858; }
-        .btn-esp { background-color: #157347; } 
-        .btn-esp:hover { background-color: #1e7e34; }
+
+        /* 8. 멀티 채널 변환 하단 버튼 정렬 박스 */
+        .video-btn-wrapper { 
+            margin-top: 15px; 
+            display: flex; 
+            gap: 10px; 
+        }
+
+        /* 9. 동영상 1, 2, 3번 스위칭 기본 버튼 양식 */
+        .btn-change { 
+            display: inline-block; 
+            padding: 8px 16px; 
+            background-color: #2c313d; 
+            color: #fff; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-size: 14px; 
+            font-weight: 500; 
+            transition: background 0.2s; 
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-change:hover { 
+            background-color: #414858; 
+        }
+
+        /* 10. 실시간 드론 CAM (ESP32) 전용 녹색 강조 버튼 양식 */
+        .btn-esp { 
+            background-color: #157347; 
+        } 
+        
+        .btn-esp:hover { 
+            background-color: #1e7e34; 
+        }
     </style>
 </head>
 <body>
@@ -35,7 +123,7 @@
     <jsp:include page="/WEB-INF/views/header.jsp" />
     <jsp:include page="/WEB-INF/views/menu.jsp" />
 	
-    <div class="control-content-wrapper">
+    <div class="control-content-wrapper" style="position: absolute !important; top: 80px !important; left: 250px !important; width: calc(100% - 250px) !important; margin: 0 !important; padding: 20px 30px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; z-index: 50 !important;">
         <h2 class="section-title">실시간 유기동물 드론 관제 영상 (YOLOv8)</h2>
         
         <div class="video-display-box">
@@ -84,7 +172,7 @@
                         console.log(" [동영상 소스 변경 성공] 타겟: " + modeKey);
                         // 2. 자바 서버가 모드를 local로 인지한 직후, 화면 끊김 없이 곧바로 동영상 피드를 부드럽게 이어 붙입니다.
                         video.src = "${pageContext.request.contextPath}/yolo/videoFeed?t=" + new Date().getTime();
-                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels';
+                        let activeLabelUrl = 'http://localhost:5000/stream/labels_feed';
                     })
                     .catch(err => console.error("소스 변경 통신 실패:", err));
             }

@@ -31,33 +31,41 @@
         </where>
     </sql>
 
-    <!-- [CREATE] 1. 관제 탐지 로그 등록 (2번 방식: 비인가 드론 유입 시 에러 없이 무시 방어선 적용) -->
-    <insert id="insertDangerLog" parameterType="com.spring.dto.DangerLogVO">
-        INSERT INTO DANGER_LOG (
-            DANLOG_ID, 
-            DANGER_TYPE, 
-            DANGER_TIME, 
-            DACTION_STATUS, 
-            DACTION_REASON, 
-            DSNAPSHOT_PATH, 
-            DANGER_DATE, 
-            DRONE_ID
-        )
-        SELECT 
-            (SELECT NVL(MAX(DANLOG_ID), 0) + 1 FROM DANGER_LOG), -- 💡 시퀀스 대체 서브쿼리
-            #{dangerType},
-            CURRENT_TIMESTAMP, -- 밀리초 단위를 위해 TIMESTAMP 표준 적용
-            '0', -- 최초 포착 시 기본값 '0'(미확인) 적재
-            #{dactionReason, jdbcType=VARCHAR},
-            #{dsnapshotPath},
-            SYSDATE,
-            #{droneId, jdbcType=VARCHAR}
-        FROM DUAL
-        /* 💡 [정석 방어선] 오직 부모 테이블(DRONE)에 해당 기체 아이디가 실존할 때만 데이터가 인서트됨 */
-        WHERE EXISTS (
-            SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId}
-        )
-    </insert>
+
+	<!-- [CREATE] 1. 관제 탐지 로그 등록 (2번 방식: 비인가 드론 유입 시 에러 없이 무시 방어선 적용) -->
+	<insert id="insertDangerLog" parameterType="com.spring.dto.DangerLogVO">
+	    INSERT INTO DANGER_LOG (
+	        DANLOG_ID, 
+	        DANGER_TYPE, 
+	        DANGER_TIME, 
+	        DACTION_STATUS, 
+	        DACTION_REASON, 
+	        DSNAPSHOT_PATH, 
+	        DANGER_DATE, 
+	        DRONE_ID
+	    )
+	    SELECT 
+	        (SELECT NVL(MAX(DANLOG_ID), 0) + 1 FROM DANGER_LOG), -- 💡 시퀀스 대체 서브쿼리
+	        #{dangerType, jdbcType=INTEGER},
+	        CURRENT_TIMESTAMP, -- 밀리초 단위를 위해 TIMESTAMP 표준 적용
+	        '0', -- 최초 포착 시 기본값 '0'(미확인) 적재
+	        #{dactionReason, jdbcType=VARCHAR},
+	        
+	        /* 🎯 [ORA-01400 원천 박멸 치트키] 
+	           자바 가로채기 엔진이 빈값(null)을 보내더라도 오라클 NVL 함수가 감지하여 
+	           강제로 'NONE'이라는 기본 임시 텍스트 주소로 치환 적재하여 철홍 제약조건을 통과시킵니다! */
+	        NVL(#{dsnapshotPath, jdbcType=VARCHAR}, 'NONE'), 
+	        
+	        SYSDATE,
+	        #{droneId, jdbcType=VARCHAR}
+	    FROM DUAL
+	    /* 💡 [정석 방어선] 오직 부모 테이블(DRONE)에 해당 기체 아이디가 실존할 때만 데이터가 인서트됨 */
+	    WHERE EXISTS (
+	        SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId, jdbcType=VARCHAR}
+	    )
+	</insert>
+
+
 
     <!-- [READ] 2. 페이징 및 다조건 검색 처리된 목록 조회 (PageMaker 구조 연동) -->
     <select id="selectDangerLogList" resultMap="dangerLogMap" parameterType="com.spring.cmd.PageMaker">

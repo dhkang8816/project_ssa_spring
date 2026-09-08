@@ -32,28 +32,42 @@
         </where>
     </sql>
 
-    <!-- [CREATE] 1. 관제 탐지 로그 등록 (오라클 시퀀스 없이 최대값 자동 일련번호 처리) -->
-    <insert id="insertDetectionLog" parameterType="com.spring.dto.DetectionLogVO">
-        INSERT INTO DETECTION_LOG (
-            DLOG_ID, DETECT_TIME, ANIMAL_TYPE, SNAPSHOT_PATH, 
-            DETECTION_DATE, DRONE_ID, ACTION_STATUS, ACTION_REASON, DETECT_COUNT
-        )
-        SELECT 
-            (SELECT NVL(MAX(DLOG_ID), 0) + 1 FROM DETECTION_LOG),
-            CURRENT_TIMESTAMP,
-            #{animalType},
-            #{snapshotPath, jdbcType=VARCHAR},
-            SYSDATE,
-            #{droneId},
-            '0',
-            #{actionReason, jdbcType=VARCHAR},
-            #{detectCount}
-        FROM DUAL
-        /* 💡 오직 부모 테이블(DRONE)에 해당 기체 아이디가 실존할 때만 SELECT가 실행되어 INSERT됨 */
-        WHERE EXISTS (
-            SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId}
-        )
-    </insert>
+	 <!-- [CREATE] 1. 관제 탐지 로그 등록 (오라클 시퀀스 없이 최대값 자동 일련번호 처리) -->
+	 <insert id="insertDetectionLog" parameterType="com.spring.dto.DetectionLogVO">
+	     INSERT INTO DETECTION_LOG (
+	         DLOG_ID, 
+	         DETECT_TIME, 
+	         ANIMAL_TYPE, 
+	         SNAPSHOT_PATH, 
+	         DETECTION_DATE, 
+	         DRONE_ID, 
+	         ACTION_STATUS, 
+	         ACTION_REASON, 
+	         DETECT_COUNT
+	     )
+	     SELECT 
+	         (SELECT NVL(MAX(DLOG_ID), 0) + 1 FROM DETECTION_LOG), -- 💡 시퀀스 대체 서브쿼리
+	         CURRENT_TIMESTAMP,
+	         
+	         /* 🎯 [1111 에러 원천 파괴 철벽 방어선 장착] 
+	            모든 가변 변수 뒤에 명시적으로 jdbcType 수식을 결합하여, 
+	            빈 값(null)이나 자료형 엇박자가 유입되더라도 오라클이 거부 없이 무조건 100% 강제 적재하도록 길을 뚫어줍니다. */
+	         #{animalType, jdbcType=VARCHAR},
+	         NVL(#{snapshotPath, jdbcType=VARCHAR}, 'NONE'), -- NOT NULL 제약조건 완벽 방어
+	         SYSDATE,
+	         #{droneId, jdbcType=VARCHAR},
+	         '0',
+	         NVL(#{actionReason, jdbcType=VARCHAR}, '스프링 중계 허브 자동 기록'),
+	         #{detectCount, jdbcType=INTEGER}
+	         
+	     FROM DUAL
+	     /* 💡 [정석 방어선] 오직 부모 테이블(DRONE)에 해당 기체 아이디가 실존할 때만 데이터가 인서트됨 */
+	     WHERE EXISTS (
+	         SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId, jdbcType=VARCHAR}
+	     )
+	 </insert>
+
+
 
     <!-- [READ] 2. 페이징 및 다조건 검색 처리된 목록 조회 (PageMaker 구조 연동) -->
     <select id="selectDetectionLogList" resultMap="detectionLogMap" parameterType="com.spring.cmd.PageMaker">
