@@ -5,18 +5,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.dto.AlertLogVO;
+import com.spring.service.AlertLogService;
+import com.spring.service.AnimalCounterService;
+import com.spring.service.DangerLogService;
+import com.spring.service.DetectionLogService;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -27,14 +32,17 @@ public class AIStreamBridgeController {
 
     // 🎯 [실무형 변수 호출 매핑] 흩어져 있던 2개의 핵심 관제 서비스 레이어를 한곳으로 모읍니다.
     @Autowired
-    private com.spring.service.DetectionLogService detectionLogService; // 정상 축종 미달 서비스 [INDEX]
+    private DetectionLogService detectionLogService; // 정상 축종 미달 서비스 [INDEX]
     
     @Autowired
-    private com.spring.service.DangerLogService dangerLogService;       // 위험 이상객체 서비스 [INDEX]
+    private DangerLogService dangerLogService;       // 위험 이상객체 서비스 [INDEX]
 
     // 🎯 [현황판 서비스 레이어 의존성 호출 추가]
     @Autowired
-    private com.spring.service.AnimalCounterService animalCounterService;
+    private AnimalCounterService animalCounterService;
+    
+    @Autowired
+    private AlertLogService alertLogService;
     
     // =================================================================
     // 🎯 [질문자님 아키텍처 저격: 초고속 인메모리 전역 변수 캐시 서랍장 개설]
@@ -99,42 +107,38 @@ public class AIStreamBridgeController {
     public void bridgeLabels(HttpServletResponse response) {
         String pythonJsonUrl = FLASK_SERVER_URL + "/labels_feed";
         long currentTime = System.currentTimeMillis();
+        boolean isFlaskAlive = false; 
         
         try {
-            // 🎯 [무한 SELECT 난사 원천 폭파 방어선]
-            // 스위치가 꺼져 있을 때(최초 서버 구동 시 딱 1번만) 오라클 DB 문을 열고 마스터 수량을 긁어옵니다.
+            // [오라클 ANIMAL_COUNTER 마스터 현황판 캐싱 로직]
             if (!isMetadataLoaded) {
-                System.out.println("🧱 [스프링 전역 캐시] 서버 최초 구동 확인 ➔ 오라클 ANIMAL_COUNTER 마스터 현황판 최초 1회 정밀 로드 개시.");
+                System.out.println(" [스프링 전역 캐시] 오라클 ANIMAL_COUNTER 초기화 로드 개시.");
                 com.spring.cmd.PageMaker dummyPageMaker = new com.spring.cmd.PageMaker();
                 dummyPageMaker.setPage(1); 
-                
                 java.util.List<com.spring.dto.AnimalCounterVO> dbCounterList = animalCounterService.getAnimalCounterList(dummyPageMaker);
                 if (dbCounterList != null) {
                     for (com.spring.dto.AnimalCounterVO cvo : dbCounterList) {
-                        if (cvo.getCounterId() == 0) cachedDogCount = cvo.getCurrentCount(); // 개의 최초 수량 각인
-                        if (cvo.getCounterId() == 1) cachedCatCount = cvo.getCurrentCount(); // 고양이의 최초 수량 각인
+                        if (cvo.getCounterId() == 0) cachedDogCount = cvo.getCurrentCount();
+                        if (cvo.getCounterId() == 1) cachedCatCount = cvo.getCurrentCount();
                     }
                 }
-                
-                // 만약 DB가 비어있다면 최소 안전 방어선 수치 부여
                 if (cachedDogCount == -1) cachedDogCount = 2;
                 if (cachedCatCount == -1) cachedCatCount = 1;
-                
-                isMetadataLoaded = true; // 🎯 스위치를 ON 시켜서, 앞으로 톰캣이 꺼질 때까지 다시는 상단 DB 조회를 실행하지 못하도록 락을 걸어버립니다!
-                System.out.println("🧱 [스프링 전역 캐시] 로드 완료 완료! ➔ 전역 변수 적재 수량 [개: " + cachedDogCount + "마리, 고양이: " + cachedCatCount + "마리]");
+                isMetadataLoaded = true;
             }
-
-            // 파이썬 라벨 피드 바이너리 통신 개통
+            
+            // 파이썬 라벨 피드 통신 개통
             java.net.URL url = new java.net.URL(pythonJsonUrl);
             java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(1500);
             conn.setReadTimeout(1500);
-
+            
             if (conn.getResponseCode() == 200) {
+                isFlaskAlive = true; 
+                
                 ObjectMapper mapper = new ObjectMapper();
                 com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(conn.getInputStream());
-                
                 com.fasterxml.jackson.databind.JsonNode boxesNode = root.get("boxes");
                 java.util.List<String> detectedLabels = new java.util.ArrayList<>();
                 if (boxesNode != null && boxesNode.isArray()) {
@@ -144,81 +148,144 @@ public class AIStreamBridgeController {
                         }
                     }
                 }
-
-                // =================================================================
-                // 📑 [트랙 A: 정상 축종 개체수 미달 연산 구간 (DB 조회 0건! 100% 전역 변수 제어)]
-                // =================================================================
+                
+             // === [트랙 A: 정상 축종 개체수 미달 연산 구간 (동물미달: '0')] ===
                 int dogTargetLimit = 2; 
                 int catTargetLimit = 1; 
 
-                // 🎯 이제 DB를 찌르지 않고, 서버 안방 전역 변수 메모리에 올라와 있는 cachedDogCount, cachedCatCount 값을 사용하므로 렉이 0%로 줄어듭니다!
-                if (cachedDogCount < dogTargetLimit) {
-                    long lastDogTime = lastNormalInsertTimeMap.getOrDefault(0, 0L);
-                    if ((currentTime - lastDogTime) >= ALARM_COOLDOWN_MS) {
-                        com.spring.dto.DetectionLogVO nvo = new com.spring.dto.DetectionLogVO();
-                        nvo.setAnimalType("0"); 
-                        nvo.setDetectCount(cachedDogCount);
-                        nvo.setDroneId("DRONE01"); 
-                        nvo.setActionStatus("0");
-                        nvo.setActionReason("초고속 전역 메모리 수치 기반 실시간 개 부족 경보 인서트");
+                // 여러 요청이 쿨다운 맵을 동시에 열어보고 통과하는 현상을 막기 위해 동기화 블록(synchronized) 장착
+                synchronized(lastNormalInsertTimeMap) {
+                    
+                    // ----------------------------------------------------
+                    // [1] 반려견 (Dog : 코드 "0") 미달 제어 구간
+                    // ----------------------------------------------------
+                    if (cachedDogCount < dogTargetLimit) {
+                        long lastDogTime = lastNormalInsertTimeMap.getOrDefault(0, 0L);
                         
-                        System.out.println("⏰ [메모리 관제 경보] ➔ 현재 전역 변수 개 마리수 [" + cachedDogCount + "마리] 부족 감지! 오라클 적재.");
-                        detectionLogService.registerDetectionLog(nvo);
-                        lastNormalInsertTimeMap.put(0, currentTime); 
+                        if ((currentTime - lastDogTime) >= ALARM_COOLDOWN_MS) {
+                            //  [실무 고도화 핵심] DB 저장 전에 현재 시각 도장을 먼저 찍어서 60ms 뒤에 올 후속 쓰레드 철통 방어!
+                            lastNormalInsertTimeMap.put(0, currentTime); 
+                            
+                            com.spring.dto.DetectionLogVO nvo = new com.spring.dto.DetectionLogVO();
+                            nvo.setAnimalType("0"); 
+                            nvo.setDetectCount(cachedDogCount);
+                            nvo.setDroneId("DRONE01"); 
+                            nvo.setActionStatus("0");
+                            nvo.setActionReason("반려견 개체수 부족 자동 감지 로그");
+                            
+                            detectionLogService.registerDetectionLog(nvo); // 부모 로깅 수행
+                            try {
+                                //  컨트롤러단 방어코드: Integer 객체 널체크 및 기본값 치환 연산 고도화
+                            	Integer finalDlogId = (nvo.getDlogId() > 0) ? nvo.getDlogId() : null;
+
+                                AlertLogVO avo = AlertLogVO.builder()
+                                        .alertType("0") 
+                                        .alertMsg("⚠ [관제 경보] 모니터링 구역 내 기본 반려견 개체수 부족 현상 발생!")
+                                        .sendStatus("1") 
+                                        .dlogId(finalDlogId) // ➔ 원천 버그 해결 완료된 ID 강제 바인딩
+                                        .firstSendTime(new Timestamp(System.currentTimeMillis()))
+                                        .build();
+                                alertLogService.registerAlertLog(avo);
+                                System.out.println("📬 [10초 쿨다운 제어] '반려견 미달(0)' FK 연동 적재 완수!");
+                            } catch (Exception ex) {
+                                System.err.println("❌ 반려견 경보 적재 중 예외 발생: " + ex.getMessage());
+                            }
+                        }
+                    }
+                    
+                    // ----------------------------------------------------
+                    // [2] 고양이 (Cat : 코드 "1") 미달 제어 구간 (누락 기능 반영)
+                    // ----------------------------------------------------
+                    if (cachedCatCount < catTargetLimit) {
+                        long lastCatTime = lastNormalInsertTimeMap.getOrDefault(1, 0L); // 고양이는 맵의 Key를 1로 독립 관리
+                        
+                        if ((currentTime - lastCatTime) >= ALARM_COOLDOWN_MS) {
+                            // 도장 먼저 쾅 찍기
+                            lastNormalInsertTimeMap.put(1, currentTime); 
+                            
+                            com.spring.dto.DetectionLogVO nvo = new com.spring.dto.DetectionLogVO();
+                            nvo.setAnimalType("1"); // 고양이 구분 코드 
+                            nvo.setDetectCount(cachedCatCount);
+                            nvo.setDroneId("DRONE01"); 
+                            nvo.setActionStatus("0");
+                            nvo.setActionReason("고양이 개체수 부족 자동 감지 로그");
+                            
+                            detectionLogService.registerDetectionLog(nvo); // 부모 로깅 수행
+                            try {
+                                //  컨트롤러단 방어코드: 고양이 데이터 널체크 및 기본값 치환 연산 고도화
+                            	Integer finalDlogId = (nvo.getDlogId() > 0) ? nvo.getDlogId() : null;
+
+                                AlertLogVO avo = AlertLogVO.builder()
+                                        .alertType("0") 
+                                        .alertMsg("⚠ [관제 경보] 모니터링 구역 내 기본 고양이 개체수 부족 현상 발생!")
+                                        .sendStatus("1")
+                                        .dlogId(finalDlogId) // ➔ 원천 버그 해결 완료된 ID 강제 바인딩
+                                        .firstSendTime(new Timestamp(System.currentTimeMillis()))
+                                        .build();
+                                alertLogService.registerAlertLog(avo);
+                                System.out.println("📬 [10초 쿨다운 제어] '고양이 미달(1)' FK 연동 적재 완수!");
+                            } catch (Exception ex) {
+                                System.err.println("❌ 고양이 경보 적재 중 예외 발생: " + ex.getMessage());
+                            }
+                        }
                     }
                 }
 
-                if (cachedCatCount < catTargetLimit) {
-                    long lastCatTime = lastNormalInsertTimeMap.getOrDefault(1, 0L);
-                    if ((currentTime - lastCatTime) >= ALARM_COOLDOWN_MS) {
-                        com.spring.dto.DetectionLogVO nvo = new com.spring.dto.DetectionLogVO();
-                        nvo.setAnimalType("1"); 
-                        nvo.setDetectCount(cachedCatCount);
-                        nvo.setDroneId("DRONE01"); 
-                        nvo.setActionStatus("0");
-                        nvo.setActionReason("초고속 전역 메모리 수치 기반 실시간 고양이 부족 경보 인서트");
-                        
-                        System.out.println("⏰ [메모리 관제 경보] ➔ 현재 전역 변수 고양이 마리수 [" + cachedCatCount + "마리] 부족 감지! 오라클 전송 완료.");
-                        detectionLogService.registerDetectionLog(nvo);
-                        lastNormalInsertTimeMap.put(1, currentTime); 
-                    }
-                }
-
-                // =================================================================
-                // 📑 [트랙 B: 유해 이상객체 출현 연산 구간 (무결점 유지)]
-                // =================================================================
+                
+                // === [트랙 B: 유해 이상객체 출현 연산 구간 (이상개체: '1')] ===
                 if (detectedLabels.contains("pink_dragon") || detectedLabels.contains("tiger") || detectedLabels.contains("blue_alien")) {
                     int currentDangerType = 0;
-                    if (detectedLabels.contains("blue_alien")) currentDangerType = 2;
-                    else if (detectedLabels.contains("blue_shark")) currentDangerType = 3;
-                    else if (detectedLabels.contains("pink_dragon")) currentDangerType = 4;
-                    else if (detectedLabels.contains("tiger")) currentDangerType = 5;
-
+                    String dangerName = "이상 객체";
+                    
+                    if (detectedLabels.contains("blue_alien")) { currentDangerType = 2; dangerName = "외계 생물(블루)"; }
+                    else if (detectedLabels.contains("pink_dragon")) { currentDangerType = 4; dangerName = "유해 비행체(드래곤)"; }
+                    else if (detectedLabels.contains("tiger")) { currentDangerType = 5; dangerName = "맹수(호랑이)"; }
+                    
                     if (currentDangerType != 0) {
                         long lastInsertTime = lastInsertTimeMap.getOrDefault(currentDangerType, 0L);
-                        
-                        if ((currentTime - lastInsertTime) < ALARM_COOLDOWN_MS) {
-                            // 쿨다운 통과
-                        } else {
+                        if ((currentTime - lastInsertTime) >= ALARM_COOLDOWN_MS) {
+                            
+                            // 1. 부모 위험 테이블 적재
                             com.spring.dto.DangerLogVO dvo = new com.spring.dto.DangerLogVO();
                             dvo.setDangerType(currentDangerType);
                             dvo.setDactionStatus("0");
-                            dvo.setDactionReason("스프링 고속 라벨 중계 허브 엔진 실시간 객체별 독립 가로채기 원격 기록");
+                            dvo.setDactionReason("스프링 고속 라벨 중계 허브 엔진 실시간 객체 가로채기 기록");
                             dvo.setDroneId("DRONE01");
-
-                            System.out.println("🚨 [이상객체 쿨다운 통과] 위험 코드 [" + currentDangerType + "]번 출현 ➔ 오라클 실시간 1건 저장!");
                             dangerLogService.registerDangerLog(dvo);
+                            System.out.println("🚨 [이상객체 1단계] DANGER_LOG 오라클 저장 완료.");
+                            
+                            try {
+                                //  컨트롤러단 방어코드: DangerLog의 danlogId가 Integer 래퍼 객체이므로 안전하게 복원 추출
+                            	Integer finalDanlogId = (dvo.getDanlogId() > 0) ? dvo.getDanlogId() : null;
+
+                                AlertLogVO avo = AlertLogVO.builder()
+                                        .alertType("1") 
+                                        .alertMsg(" [비상 경보] 관제 구역 내 위험 이상객체 [" + dangerName + "] 실시간 출현! 대피 요망.")
+                                        .sendStatus("1") 
+                                        .danlogId(finalDanlogId) // ➔ 원천 버그 해결 완료된 ID 강제 바인딩
+                                        .firstSendTime(new Timestamp(System.currentTimeMillis()))
+                                        .build();
+                                alertLogService.registerAlertLog(avo);
+                                System.out.println(" [통합 연동] '이상객체(1)' FK 연동 적재 완수!");
+                            } catch (Exception ex) {
+                                System.err.println("❌ 위험 경보 적재 중 예외 발생: " + ex.getMessage());
+                            }
                             
                             lastInsertTimeMap.put(currentDangerType, currentTime);
                         }
                     }
                 }
+            } else {
+                return;
             }
+            
         } catch (Exception e) {
-            // 비동기 노이즈 스킵
+            return; 
         }
-
-        executeProxy(pythonJsonUrl, response, 2000, 2000, true);
+        
+        if (isFlaskAlive) {
+            executeProxy(pythonJsonUrl, response, 2000, 2000, true);
+        }
     }
 
     // 💡 [실무 고도화 팁] 나중에 웹 화면에서 수량이 변경(등록/삭제)되면 

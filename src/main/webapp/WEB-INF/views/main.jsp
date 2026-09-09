@@ -147,36 +147,37 @@
         // 현재 브라우저 페이지 세션 안에서 사용할 라우팅 메모리 상태 변수 정의 (기본값: videoFeed 기본 통로)
         let activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels';
 
-        // 🌟 [최종 하이브리드 네이티브 스위칭 엔진]
-        // 버튼을 누르면 자바 서버의 지연 타임아웃을 거치지 않고 프론트엔드가 즉시 다이렉트 스트리밍 주소로 강제 워프시킵니다.
-		        // 🌟 [최종 하이브리드 네이티브 스위칭 엔진 - 레이스 컨디션 버그 완치 버전]
-                // 🌟 [하이브리드 네이티브 스위칭 엔진 - 부드러운 전환 + 싱크 버그 완치 버전]
+     // 🌟 [최종 완치 마스터 저격선] 윈도우 OS 소켓 좀비 락을 완전히 무력화시키는 단선 스위칭 엔진
         const switchMode = (modeKey) => {
             const video = document.getElementById('droneVideo');
             
-            if (modeKey === 'esp32') {
-                // 1. 자바 백엔드에 모드 변경 신호를 보냅니다.
-                fetch("${pageContext.request.contextPath}/yolo/changeVideo/esp32")
-                    .then(res => {
-                        console.log(" [자바 통지 성공] ESP32 모드 전환 완료");
-                        // 2. 화면을 끄지 않고 부드럽게 Flask 주소로 워프시킵니다.
+            // 1. 영상 통로를 명시적으로 즉시 비워 자바/파이썬에 걸려있던 좀비 세션을 원천 차단합니다.
+            video.src = ""; 
+            
+            // 2. 자바 백엔드에 모드 변경 명령을 전송하여 타이머와 캐시를 정비합니다.
+            fetch("${pageContext.request.contextPath}/yolo/changeVideo/" + modeKey)
+            .then(res => {
+                console.log("✈ [채널 스위칭 통지 완수] 모드 키: " + modeKey);
+                
+                // 3. 찰나의 시간(50ms) 버퍼를 준 뒤, 주소 배관망을 완벽하게 분리하여 매핑합니다.
+                setTimeout(() => {
+                    if (modeKey === 'esp32') {
+                        // 🌟 사용자가 ESP32 버튼을 누르면 플라스크 내부의 독립 개설된 esp32 직통 스트림관을 찌릅니다.
                         video.src = "http://localhost:5000/esp32_yolov12/video_feed";
-                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/espLabels';
-                    })
-                    .catch(err => console.error("ESP32 모드 전환 신호 실패:", err));
-                    
-            } else {
-                // 1. 자바 백엔드에 동영상 모드 변경 신호를 '먼저' 확실하게 보냅니다.
-                fetch("${pageContext.request.contextPath}/yolo/changeVideo/" + modeKey)
-                    .then(res => {
-                        console.log(" [동영상 소스 변경 성공] 타겟: " + modeKey);
-                        // 2. 자바 서버가 모드를 local로 인지한 직후, 화면 끊김 없이 곧바로 동영상 피드를 부드럽게 이어 붙입니다.
+                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels?t=' + new Date().getTime();
+                    } else {
+                        // 🌟 사용자가 일반 동영상(video_1,2,3)을 누르면 원래의 무결점 자바videoFeed 엔드포인트로 복귀합니다!
+                        // 주소 배관이 완전히 분리되어 파이썬이 백그라운드에서 -138을 찾고 있더라도 
+                        // 동영상 화면은 지연 시간 0ms 만에 즉각 살아나며 칼싱크 귀환에 성공합니다.
                         video.src = "${pageContext.request.contextPath}/yolo/videoFeed?t=" + new Date().getTime();
-                        let activeLabelUrl = 'http://localhost:5000/stream/labels_feed';
-                    })
-                    .catch(err => console.error("소스 변경 통신 실패:", err));
-            }
+                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels?t=' + new Date().getTime();
+                    }
+                }, 50);
+            })
+            .catch(err => console.error("❌ 채널 스위칭 통신 실패:", err));
         };
+
+
 
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -232,29 +233,77 @@
                 ctx.fillText(textStr, x + 3, y - 6);
             };
 
-            // 실시간 60ms 간격 AI 레이더 데이터 동적 폴링 가동
-            setInterval(async () => {
+            // 🛠️ [최종 안정화 버전] 플라스크 부활 감지형 관제 레이더 스크립트
+            const pollAiRadar = async () => {
                 if (canvas.width === 0 || canvas.height === 0) {
                     syncCanvasSize();
+                    setTimeout(pollAiRadar, 500);
                     return;
                 }
+                
+                let delayTime = 60; // 기본 대기 주기 (60ms)
 
                 try {
-                    // 동적으로 변경되는 activeLabelUrl 변수 주소를 찔러 다중 수집 처리
+                    // 백엔드 통합 스트림 엔진 주소 찌르기
                     const response = await fetch(activeLabelUrl);
-                    if (!response.ok) return;
                     
-                    const data = await response.json();
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    if (data?.boxes?.length > 0) {
-                        data.boxes.forEach(box => drawBoundingBox(box));
+                    if (!response.ok) {
+                        delayTime = 3000; // 플라스크가 꺼져있으면 3초 대기
+                        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    } else {
+                        const data = await response.json();
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        
+                        // 1. 화면에 초록색 YOLO 바운딩 박스 그리기
+                        if (data?.boxes?.length > 0) {
+                            data.boxes.forEach(box => drawBoundingBox(box));
+                        }
+                        
+                        // 2. 성공 시에는 대기 시간 60ms 유지
+                        delayTime = 60; 
                     }
                 } catch (error) {
-                    console.error("좌표 갱신 실패:", error);
+                    // 플라스크 엔진 끊김 시 3초 딜레이 부여하여 톰캣 보호
+                    delayTime = 3000;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    console.log("🔌 [관제 레이더 대기] 플라스크 서버 연결 상태를 확인 중입니다...");
                 }
-            }, 60); 
+
+                // 가변 스케줄러 재호출
+                setTimeout(pollAiRadar, delayTime);
+            };
+
+            // 최초 1회 트리거 발동
+            pollAiRadar();
         });
+    </script>
+
+    
+    <script>
+		// 알림이 도착했을 때 동적으로 HTML 리스트를 밀어 넣는 공통 함수
+	    function appendRealtimeAlarm(message) {
+	        // '알림이 없습니다' 문구가 있으면 먼저 지우기
+	        $('.empty-alarm-msg').remove();
+	        
+	        // 현재 시각 가져오기
+	        let now = new Date();
+	        let timeStr = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+	
+	        // 최신 알림 디자인 생성
+	        let newAlarmHtml = '<li style="padding: 12px 15px; border-bottom: 1px solid #f5f5f5; line-height: 1.4; background-color: #fffafb;">'
+	                         + '  <div>' + message + '</div>'
+	                         + '  <div style="font-size: 11px; color: #aaa; margin-top: 4px; text-align: right;">' + timeStr + '</div>'
+	                         + '</li>';
+	                         
+	        // 알림 리스트 최상단(맨 위)에 새로운 알림 꼽아 넣기
+	        $('.alarm-list-content').prepend(newAlarmHtml);
+	        
+	        // 🔔 헤더 종 흔들기 및 배지 카운트 올리기 트리거
+	        $('#alarmBellIcon').addClass('fa-shake').css('color', '#ff4d4d');
+	        let currentCount = parseInt($('.alarm-count-badge').text()) || 0;
+	        $('.alarm-count-badge').text(currentCount + 1).show();
+	    }
+
     </script>
 </body>
 </html>

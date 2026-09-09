@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest; // 💡 Tomcat 10 사양 완벽 준수
-
 import org.apache.commons.io.IOUtils; // 💡 아파치 commons 라이브러리 연동
 import org.springframework.beans.factory.annotation.Autowired; // 💡 프로젝트 스타일 동기화
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +28,7 @@ import com.spring.dto.DangerLogVO;
 import com.spring.service.DangerDetailService;
 import com.spring.service.DangerLogService;
 
+import jakarta.servlet.http.HttpServletRequest; // 💡 Tomcat 10 사양 완벽 준수
 import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 통합 완료
 
 @Log4j2
@@ -163,29 +164,35 @@ public class DangerLogController {
     public ResponseEntity<byte[]> getDangerSnapshot(@RequestParam("danlogId") int danlogId, HttpServletRequest request) throws IOException {
         InputStream in = null;
         try {
+            // 1. 이상객체 서비스(dangerLogService)를 통해 DB에서 상세 정보를 조회합니다.
             DangerLogVO vo = dangerLogService.getDangerLogById(danlogId);
             
-            // DB의 dsnapshotPath가 비어있으면 기본 이미지 대치
+            // 2. DB의 dsnapshotPath 변수명 검증 및 대치 (빈 값이면 noImage.jpg)
             String fileName = (vo == null || vo.getDsnapshotPath() == null || vo.getDsnapshotPath().isEmpty()) 
                               ? "noImage.jpg" : vo.getDsnapshotPath();
             
-            // 💡 [교정] getUploadPath 호출 시 request 인자값을 정상적으로 전달
+            // 3. 미달 감지와 동일하게 컨트롤러 내부의 getUploadPath를 호출하여 물리 경로를 얻어옵니다.
             String uploadPath = getUploadPath(request);
             File file = new File(uploadPath, fileName);
-            
-            // 폴더 내부에 실물 파일 없을 시 가상 크래시 대피선 가동
+            // 4. 실물 파일이 폴더에 없을 경우 noImage.jpg로 우회 방어선 구축
             if (!file.exists()) {
                 file = new File(uploadPath, "noImage.jpg");
             }
             
             in = new FileInputStream(file);
-            return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), HttpStatus.OK);
+            
+            // 5. 브라우저가 이미지(JPEG)로 올바르게 인지하도록 Content-Type 헤더 명시 추가 (더 안전함)
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            
+            return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers, HttpStatus.OK);
             
         } catch (Exception e) {
-            log.error("이상객체 스냅샷 스트림 전송 중 예외 발생: ", e);
+            log.error("이상객체 스냅샷 이미지 스트림 전송 중 예외 발생: ", e);
             return new ResponseEntity<byte[]>(HttpStatus.NOT_FOUND);
         } finally {
             if (in != null) in.close();
         }
     }
+
 }

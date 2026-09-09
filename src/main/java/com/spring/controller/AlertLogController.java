@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.cmd.PageMaker;
@@ -117,5 +118,36 @@ public class AlertLogController {
         return "redirect:/alert/list";
     }
     
-    // detail 메서드 생략 (이전 설계 유지)
+    @GetMapping("/alertDetail")
+    public String detail(@RequestParam("alertId") int alertId, Model model) {
+        log.info("컨트롤러 진입: detail -> 요청 경보 ID: {}", alertId);
+        try {
+            AlertLogVO alert = alertLogService.getAlertLogDetail(alertId);
+            
+            //  [디테일 싱크 고도화] 상세 화면에서도 alertType 한글 변환 처리
+            PageMaker searchCodeCmd = new PageMaker();
+            searchCodeCmd.setSearchGrpCode("ALERT_TYPE");
+            List<CommonCodeVO> commonCodeList = commonCodeService.getCommonCodeList(searchCodeCmd);
+            
+            java.util.Map<String, String> codeMap = commonCodeList.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                    CommonCodeVO::getCode, 
+                    CommonCodeVO::getCodeName,
+                    (existing, replacement) -> existing
+                ));
+                
+            String korName = codeMap.get(alert.getAlertType());
+            if (korName != null) {
+                alert.setAlertType(korName); // 한글 이름으로 덮어쓰기
+            }
+
+            model.addAttribute("alert", alert);
+        } catch (Exception e) {
+            log.error("경보 상세 조회 중 에러 발생: ", e);
+            model.addAttribute("errorMessage", "존재하지 않거나 불러올 수 없는 경보 이력입니다.");
+        }
+        return "alert/alertDetail";
+    }
+
+
 }

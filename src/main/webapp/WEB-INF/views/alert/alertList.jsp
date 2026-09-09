@@ -41,7 +41,7 @@
 						<tr>
 							<!-- 1. 경보번호 (상세보기 이동 링크 + 페이징/검색 상태 유지) -->
 							<td>
-								<a href="${pageContext.request.contextPath}/alert/detail?alertId=${alert.alertId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
+								<a href="${pageContext.request.contextPath}/alert/alertDetail?alertId=${alert.alertId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
 									${alert.alertId}
 								</a>
 							</td>

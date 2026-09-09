@@ -57,11 +57,11 @@
 	<!-- 하단 제어 버튼 영역 (보던 페이지 상태 파라미터 복귀 연동) -->
 	<div>
 		<!-- 💡 목록 돌아가기 버튼: 클릭 시 보던 페이지 번호, 검색어, 검색 타입을 쿼리스트링으로 바인딩하여 복귀 -->
-		<button type="button" 
-			onclick="location.href='list?page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}'">
-			목록으로
+		<!-- 가장 안전하고 깔끔한 대안 방식 -->
+		<button type="button" onclick="javascript:history.back();">
+		    목록으로
 		</button>
-		
+				
 		<button type="button" style="margin-left: 5px;"
 			onclick="location.href='${pageContext.request.contextPath}/'">
 			메인으로

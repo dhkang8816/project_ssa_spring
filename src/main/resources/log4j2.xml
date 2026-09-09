@@ -39,7 +39,7 @@
 		<Logger name="org.springframework.web" level="error" additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger> 
-		<Logger name="org.springframework.web.servlet.mvc.method.annotation" level="trace" additivity="false">
+		<Logger name="org.springframework.web.servlet.mvc.method.annotation" level="error" additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger> 
 		

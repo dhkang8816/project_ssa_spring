@@ -48,7 +48,7 @@
                 <ul class="submenu">
                     <li><a href="<c:url value='/alert/list'/>">경보 이력</a></li>
                     <li><a href="<c:url value='/detection/list'/>">탐지 이력</a></li>
-                    <li><a href="<c:url value='/danger/list'/>">이상객체 탐지 이력</a></li>
+                    <li><a href="<c:url value='dangerlog/list'/>">이상객체 탐지 이력</a></li>
                     <li><a href="#">통계 대시보드</a></li>
                 </ul>
             </li>
@@ -56,7 +56,7 @@
                 <a href="#">동물관리</a>
                 <ul class="submenu">
                     <li><a href="<c:url value='/animal/list'/>">유기동물 관리</a></li>
-                    <li><a href="<c:url value='/dangerlog/list'/>">이상객체 관리</a></li>
+                    <li><a href="<c:url value='/danger/list'/>">이상객체 관리</a></li>
                 </ul>
             </li>
         </ul>

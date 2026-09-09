@@ -67,6 +67,7 @@
 	    <security:intercept-url pattern="/drone/**" access="permitAll" />
 	    <security:intercept-url pattern="/detection/**" access="permitAll" />
 	    <security:intercept-url pattern="/dangerlog/**" access="permitAll" />
+	    <security:intercept-url pattern="/api/event/**" access="permitAll" />
 	    
 	    <!-- ⚠️ 실무 팁: 개발 완료 후 실서버 배포 시에는 permitAll을 아래 주석처럼 authenticated()로 변경하세요. -->
 	    <security:intercept-url pattern="/**" access="permitAll" />

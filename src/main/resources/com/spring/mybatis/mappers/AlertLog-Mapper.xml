@@ -75,5 +75,23 @@
             AND ALERT_MSG LIKE '%' || #{keyword} || '%'
         </if>
     </select>
+    
+	     <!--  [신규 고도화] 경보 이력 단건 상세 조회 (404/500 버그 원천 완치) -->
+	 <select id="getAlertLog" parameterType="int" resultType="com.spring.dto.AlertLogVO">
+	     SELECT 
+	         ALERT_ID         as alertId,
+	         ALERT_MSG        as alertMsg,
+	         SEND_STATUS      as sendStatus,
+	         SEND_DATE        as sendDate,
+	         DLOG_ID          as dlogId,
+	         FIRST_SEND_TIME  as firstSendTime,
+	         ALERT_TYPE       as alertType,
+	         DANLOG_ID        as danlogId
+	     FROM 
+	         ALERT_LOG
+	     WHERE 
+	         ALERT_ID = #{alertId}
+	 </select>
+
 
 </mapper>

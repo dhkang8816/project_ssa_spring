@@ -14,7 +14,8 @@
 		p:driverClassName="${jdbc.driverClassName}" p:jdbcUrl="${jdbc.url}"
 		p:username="${jdbc.username}" p:password="${jdbc.password}"
 		p:maximumPoolSize="${jdbc.maximumPoolSize}"
-		p:minimumIdle="${jdbc.minimumIdle}" />
+		p:minimumIdle="${jdbc.minimumIdle}" 
+		p:connectionTimeout="1000"/>
 	<!-- dataSource -->
 	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
 		destroy-method="close" c:hikariConfig-ref="hikariConfig" />
