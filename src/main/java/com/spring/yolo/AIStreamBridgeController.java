@@ -324,7 +324,15 @@ public class AIStreamBridgeController {
                 
                 // 💡 getWriter() 충돌 로직 제거! 오직 쓰레드 인터럽트와 스트림 자체의 정상 종료만 체크합니다.
                 while (!Thread.currentThread().isInterrupted() && (bytesRead = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, bytesRead);
+                    
+                    // 🌟 [9월 7일 무결점 엔진 핵심 이식] 
+                    // 사용자가 채널을 바꾸는 순간(currentMode 체인지), 
+                    // 이전에 물려있던 구형 프록시 중계 루프를 자바 스스로 즉시 깨부수고(break) 탈출합니다!
+                    // 이 두 줄이 들어가야 포트 독점권이 즉시 반환되어 30초 좀비 락이 완전히 파괴됩니다.
+                    if (!isJson && "esp32".equals(currentMode) && targetUrl.contains("/stream/")) break;
+                    if (!isJson && "local".equals(currentMode) && targetUrl.contains("/esp32_yolov12/")) break;
+                	
+                	os.write(buffer, 0, bytesRead);
                     if (!isJson) {
                         os.flush(); // MJPEG 영상은 매 프레임 즉시 밀어내야 화면이 나옵니다.
                     }

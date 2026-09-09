@@ -147,34 +147,42 @@
         // 현재 브라우저 페이지 세션 안에서 사용할 라우팅 메모리 상태 변수 정의 (기본값: videoFeed 기본 통로)
         let activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels';
 
-     // 🌟 [최종 완치 마스터 저격선] 윈도우 OS 소켓 좀비 락을 완전히 무력화시키는 단선 스위칭 엔진
         const switchMode = (modeKey) => {
             const video = document.getElementById('droneVideo');
+            video.src = ""; // 좀비 세션 방어선
             
-            // 1. 영상 통로를 명시적으로 즉시 비워 자바/파이썬에 걸려있던 좀비 세션을 원천 차단합니다.
-            video.src = ""; 
-            
-            // 2. 자바 백엔드에 모드 변경 명령을 전송하여 타이머와 캐시를 정비합니다.
-            fetch("${pageContext.request.contextPath}/yolo/changeVideo/" + modeKey)
-            .then(res => {
-                console.log("✈ [채널 스위칭 통지 완수] 모드 키: " + modeKey);
-                
-                // 3. 찰나의 시간(50ms) 버퍼를 준 뒤, 주소 배관망을 완벽하게 분리하여 매핑합니다.
-                setTimeout(() => {
-                    if (modeKey === 'esp32') {
-                        // 🌟 사용자가 ESP32 버튼을 누르면 플라스크 내부의 독립 개설된 esp32 직통 스트림관을 찌릅니다.
+            if (modeKey === 'esp32') {
+                // 1. 자바 백엔드에 모드 변경 신호를 보냅니다.
+                fetch("${pageContext.request.contextPath}/yolo/changeVideo/esp32")
+                .then(res => {
+                    console.log("✈ [자바 통지 성공] ESP32 모드 전환 완료");
+                    
+                    setTimeout(() => {
+                        // 2. 7일 버전의 무결점 하이브리드 워프 가동 (Flask 다이렉트 주소 주입)
                         video.src = "http://localhost:5000/esp32_yolov12/video_feed";
-                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels?t=' + new Date().getTime();
-                    } else {
-                        // 🌟 사용자가 일반 동영상(video_1,2,3)을 누르면 원래의 무결점 자바videoFeed 엔드포인트로 복귀합니다!
-                        // 주소 배관이 완전히 분리되어 파이썬이 백그라운드에서 -138을 찾고 있더라도 
-                        // 동영상 화면은 지연 시간 0ms 만에 즉각 살아나며 칼싱크 귀환에 성공합니다.
+                        
+                        // 3. 7일 버전의 ESP32 전용 라벨 배관 완벽 복구
+                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/espLabels';
+                    }, 80);
+                })
+                .catch(err => console.error("ESP32 모드 전환 신호 실패:", err));
+                
+            } else {
+                // 1. 자바 백엔드에 동영상 모드 변경 신호를 '먼저' 확실하게 보냅니다.
+                fetch("${pageContext.request.contextPath}/yolo/changeVideo/" + modeKey)
+                .then(res => {
+                    console.log("✈ [동영상 소스 변경 성공] 타겟: " + modeKey);
+                    
+                    setTimeout(() => {
+                        // 2. 원래의 안전한 자바 로컬 피드로 복귀
                         video.src = "${pageContext.request.contextPath}/yolo/videoFeed?t=" + new Date().getTime();
-                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels?t=' + new Date().getTime();
-                    }
-                }, 50);
-            })
-            .catch(err => console.error("❌ 채널 스위칭 통신 실패:", err));
+                        
+                        // 3. 일반 동영상 라벨 배관 복구
+                        activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels';
+                    }, 80);
+                })
+                .catch(err => console.error("소스 변경 통신 실패:", err));
+            }
         };
 
 
