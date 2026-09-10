@@ -138,7 +138,98 @@
             <button type="button" onclick="switchMode('video_3')" class="btn-change">동영상 3번</button>
             <button type="button" onclick="switchMode('esp32')" class="btn-change btn-esp">실시간 드론 CAM (ESP32)</button>
         </div>
+        
+       	<!-- ================================================================ -->
+		<!--  [위치 이상 완치] 비디오 박스 상단 자석 고정형 드롭다운 설정 컴포넌트 -->
+		<!-- ================================================================ -->
+		<div class="drone-dropdown-wrapper" style="
+		    width: 100%; 
+		    max-width: 640px; 
+		    display: flex !important; 
+		    justify-content: flex-end !important; 
+		    position: relative !important; /* 상단 헤더로 뚫고 올라가는 현상 원천 차단 */
+		    margin-top: 15px;
+		    margin-bottom: 10px; 
+		    box-sizing: border-box;
+		    z-index: 1000 !important; /* 영상 및 캔버스보다 무조건 위 레이어 배치 */
+		">
+		    <!-- 토글 트리거 버튼 -->
+		    <button type="button" id="btnToggleDroneSetting" style="
+		        background-color: #2c313d; 
+		        color: #ffffff; 
+		        border: 1px solid #414858; 
+		        padding: 6px 14px; 
+		        border-radius: 5px; 
+		        cursor: pointer; 
+		        font-size: 13px; 
+		        font-weight: 500;
+		        transition: background 0.2s;
+		    " onmouseover="this.style.backgroundColor='#414858'" onmouseout="this.style.backgroundColor='#2c313d'">
+		        ⚙ 드론 설정
+		    </button>
+		
+		    <!-- 클릭 시 아래로 정위치 팝업 처리되는 드롭다운 창 -->
+		    <div id="droneSettingDropdown" style="
+		        display: none; 
+		        position: absolute; 
+		        top: 35px; 
+		        right: 0; 
+		        width: 320px; 
+		        background-color: #222733; 
+		        border: 1px solid #2c313d; 
+		        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); 
+		        border-radius: 8px; 
+		        padding: 15px; 
+		        box-sizing: border-box;
+		        z-index: 9999 !important;
+		    ">
+		        <h4 style="color: #ffffff; font-size: 13px; margin-top: 0; margin-bottom: 12px; font-weight: 600; border-bottom: 1px solid #3b4252; padding-bottom: 8px;">
+		            ⚙ 채널별 드론 배정 실시간 매핑
+		        </h4>
+		        
+				<div style="display: flex; flex-direction: column; gap: 10px;">
+				    <!-- 동영상 1번 -->
+				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+				        <span style="width: 100px;">동영상 1번</span>
+				        <select id="drone_select_video_1" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+				        </select>
+				        <button type="button" onclick="fn_saveDroneMapping('video_1')" style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+				    </div>
+				    <!-- 동영상 2번 -->
+				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+				        <span style="width: 100px;">동영상 2번</span>
+				        <select id="drone_select_video_2" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+				        </select>
+				        <button type="button" onclick="fn_saveDroneMapping('video_2')" style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+				    </div>
+				    <!-- 동영상 3번 -->
+				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+				        <span style="width: 100px;">동영상 3번</span>
+				        <select id="drone_select_video_3" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+				        </select>
+				        <button type="button" onclick="fn_saveDroneMapping('video_3')" style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+				    </div>
+				    <!-- 실시간 CAM -->
+				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+				        <span style="width: 100px; color: #5ddcff;">실시간 CAM</span>
+				        <select id="drone_select_esp32" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+				        </select>
+				        <button type="button" onclick="fn_saveDroneMapping('esp32')" style="background: #157347; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+				    </div>
+				</div>
+		    </div>
+		</div>
     </div>
+    
+
+
+
+
+	    
 
     <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
@@ -312,6 +403,131 @@
 	        $('.alarm-count-badge').text(currentCount + 1).show();
 	    }
 
+    </script>
+    
+    <script>
+    
+	 // 1. 드론 설정 버튼 클릭 시 팝업 창 슬라이드/페이드 토글
+	    $('#btnToggleDroneSetting').on('click', function(e) {
+	        e.stopPropagation(); // 이벤트 버블링 차단
+	        $('#droneSettingDropdown').fadeToggle(150);
+	    });
+	
+	    // 2. 드론 설정 팝업창 내부를 클릭했을 때는 닫히지 않도록 버그 스킵 방어
+	    $('#droneSettingDropdown').on('click', function(e) {
+	        e.stopPropagation();
+	    });
+	
+	    // 3. 팝업창 바깥의 검은 화면이나 본문을 아무 데나 누르면 팝업이 자동으로 부드럽게 닫히도록 마스킹
+	    $(document).on('click', function() {
+	        $('#droneSettingDropdown').fadeOut(100);
+	    });
+
+	 	// [최종 개량 버전] 페이지 최초 로드 시 격발 연동
+	    $(document).ready(function() {
+	        fn_loadCurrentDroneMappings();
+	    });
+
+	    function fn_loadCurrentDroneMappings() {
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/yolo/currentMappings",
+	            type: "GET",
+	            dataType: "json",
+	            cache: false, // 브라우저 사이드 캐시 노이즈 원천 차단
+	            success: function(res) {
+	                console.log("✈ [시큐리티 돌파 수신 완료]:", res);
+	                
+	                if(res) {
+	                    // 백엔드가 송신한 변수 key 이름 구조와 정확하게 1:1 디펜스 매핑
+	                    var drones = res.dbDroneList;        
+	                    var mappings = res.activeMappings;   
+	                    
+	                    // 1. 화면 내 동적 드론 select 콤보박스 순회 구동
+	                    $(".drone-map-select").each(function() {
+	                        var $el = $(this);
+	                        $el.empty(); // 텅 빈 상태로 초기화
+	                        
+	                        if(drones && drones.length > 0) {
+	                            drones.forEach(function(droneId) {
+	                                $el.append($('<option>', {
+	                                    value: droneId,
+	                                    text: droneId
+	                                }));
+	                            });
+	                        } else {
+	                            // 만약 이 가이드라인 글씨가 콤보박스에 출력된다면 
+	                            // 컨트롤러 내부에서 droneService의 getDroneList가 0건을 반환한 것입니다.
+	                            $el.append('<option value="">등록 드론 없음</option>');
+	                        }
+	                    });
+	                    
+	                    // 2. 옵션 동적 삽입이 끝난 직후, DB에 매핑되어 있던 실시간 값으로 selected 고정
+	                    if(mappings) {
+	                        Object.keys(mappings).forEach(function(key) {
+	                            var targetSelect = $("#drone_select_" + key);
+	                            if(targetSelect.length > 0) {
+	                                targetSelect.val(mappings[key]);
+	                            }
+	                        });
+	                    }
+	                }
+	            },
+	            error: function(xhr, status, error) {
+	                console.error("❌ 드론 맵 정보 획득 실패 사유: ", error);
+	            }
+	        });
+	    }
+	    
+	 // [추가] HTML의 각 '적용' 버튼이 클릭되었을 때 백엔드로 단건 매핑 데이터를 전송하는 실시간 반영 함수
+	    function fn_saveDroneMapping(sourceKey) {
+	        // 1. 버튼에 맵핑된 sourceKey를 조합하여 매칭되는 select 박스 엘리먼트 타겟팅
+	        var targetSelect = $("#drone_select_" + sourceKey);
+	        
+	        if (targetSelect.length === 0) {
+	            alert("해당 채널의 설정 요소를 찾을 수 없습니다.");
+	            return;
+	        }
+
+	        // 2. 사용자가 콤보박스에서 최종 선택한 드론 ID 값 가져오기
+	        var droneId = targetSelect.val();
+
+	        if (!droneId) {
+	            alert("배정할 드론을 선택해 주세요.");
+	            return;
+	        }
+
+	        // 3. 백엔드 컨트롤러(@RequestParam 서블릿 사양)에 맞춰 POST Form 형태로 전송
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/yolo/updateMapping",
+	            type: "POST",
+	            dataType: "json", // 컨트롤러가 리턴하는 JSON({"status":"SUCCESS"}) 포맷 대응
+	            data: {
+	                sourceKey: sourceKey,
+	                droneId: droneId
+	            },
+	            success: function(res) {
+	                // 컨트롤러가 FAIL 응답을 보냈거나 성공했을 때의 분기 처리
+	                if (res && res.status === "SUCCESS") {
+	                    alert("🎯 [" + sourceKey + "] 채널에 드론 배정이 완벽하게 적용되었습니다.");
+	                    
+	                    // 설정 창을 부드럽게 닫기
+	                    $('#droneSettingDropdown').fadeOut(100);
+	                    
+	                    // 전역 인메모리 캐시 및 화면 컴포넌트 데이터 최신화를 위해 재조회
+	                    fn_loadCurrentDroneMappings();
+	                } else {
+	                    alert("❌ 서버 처리 중 매핑 적용에 실패했습니다.");
+	                }
+	            },
+	            error: function(xhr, status, error) {
+	                console.error("❌ 드론 매핑 적용 통신 실패 사유: ", error);
+	                alert("서버와 통신 중 오류가 발생했습니다. (컨트롤러 확인 필요)");
+	            }
+	        });
+	    }
+
+
+    
     </script>
 </body>
 </html>
