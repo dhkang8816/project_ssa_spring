@@ -25,27 +25,7 @@
         margin-top: 5px;
     }
 </style>
-<script>
-    // 💡 선택한 사진 파일 실시간 미리보기 스크립트
-    function previewImage(input) {
-        var preview = document.getElementById('imagePreview');
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
 
-    // 💡 사진 선택 취소 및 기본 이미지 복구 스크립트
-    function removeSelectedImage() {
-        var preview = document.getElementById('imagePreview');
-        var fileInput = document.getElementById('fileInput');
-        fileInput.value = ""; 
-        preview.src = "${pageContext.request.contextPath}/resources/images/member/noImage.jpg";
-    }
-</script>
 </head>
 <body>
     <h2>회원가입</h2>
@@ -98,4 +78,25 @@
         </div>
     </form:form>
 </body>
+<script>
+    // 💡 선택한 사진 파일 실시간 미리보기 스크립트
+    function previewImage(input) {
+        var preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 💡 사진 선택 취소 및 기본 이미지 복구 스크립트
+    function removeSelectedImage() {
+        var preview = document.getElementById('imagePreview');
+        var fileInput = document.getElementById('fileInput');
+        fileInput.value = ""; 
+        preview.src = "${pageContext.request.contextPath}/resources/images/member/noImage.jpg";
+    }
+</script>
 </html>

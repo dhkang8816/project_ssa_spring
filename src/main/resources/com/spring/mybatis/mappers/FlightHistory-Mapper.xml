@@ -36,8 +36,8 @@
         )
         SELECT 
             (SELECT NVL(MAX(FLIGHT_ID), 0) + 1 FROM FLIGHT_HISTORY), -- 💡 시퀀스 대체 서브쿼리
-            #{startTime},
-            #{endTime},
+	        #{startTime, jdbcType=TIMESTAMP},
+	        #{endTime, jdbcType=TIMESTAMP},
             #{flightDuration},
             #{batteryConsumption},
             SYSDATE,

@@ -7,6 +7,8 @@
 <title>안내 메시지</title>
 </head>
 <body>
+
+</body>
 <script>
     // 💡 백엔드 컨트롤러가 던져준 경고 메시지 출력
     var message = "${message}";
@@ -22,5 +24,4 @@
         history.back();
     }
 </script>
-</body>
 </html>

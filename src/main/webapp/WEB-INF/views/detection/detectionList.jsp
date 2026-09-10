@@ -137,9 +137,9 @@
 	<br>
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 
+</body>
 	<script>
 	    var msg = "${msg}";
 	    if(msg === "MODIFY_SUCCESS") alert("현장 상황 조치 내역이 성공적으로 업데이트되었습니다.");
 	</script>
-</body>
 </html>

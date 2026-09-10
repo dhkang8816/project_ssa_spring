@@ -25,34 +25,7 @@
         margin-top: 5px;
     }
 </style>
-<script>
-    // 새로운 사진 파일 선택 시 실시간 미리보기 스크립트
-    function previewImage(input) {
-        var preview = document.getElementById('imagePreview');
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-            
-            // 사진이 새로 업로드되면 삭제 요청 플래그를 취소함
-            document.getElementById('deleteFlag').value = "false";
-        }
-    }
 
-    // 기존 사진 초기화(삭제) 요청 단추 제어 스크립트
-    function removeSelectedImage() {
-        var preview = document.getElementById('imagePreview');
-        var fileInput = document.getElementById('fileInput');
-        
-        fileInput.value = ""; 
-        preview.src = "${pageContext.request.contextPath}/resources/images/member/noImage.jpg";
-        
-        // 컨트롤러에게 기존 물리 파일을 지우고 noImage.jpg 로 변경하라는 신호 송신
-        document.getElementById('deleteFlag').value = "true";
-    }
-</script>
 </head>
 <body>
 	<h2>직원 정보 수정</h2>
@@ -134,4 +107,32 @@
 		</div>
 	</form:form>
 </body>
+<script>
+    // 새로운 사진 파일 선택 시 실시간 미리보기 스크립트
+    function previewImage(input) {
+        var preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+            
+            // 사진이 새로 업로드되면 삭제 요청 플래그를 취소함
+            document.getElementById('deleteFlag').value = "false";
+        }
+    }
+
+    // 기존 사진 초기화(삭제) 요청 단추 제어 스크립트
+    function removeSelectedImage() {
+        var preview = document.getElementById('imagePreview');
+        var fileInput = document.getElementById('fileInput');
+        
+        fileInput.value = ""; 
+        preview.src = "${pageContext.request.contextPath}/resources/images/member/noImage.jpg";
+        
+        // 컨트롤러에게 기존 물리 파일을 지우고 noImage.jpg 로 변경하라는 신호 송신
+        document.getElementById('deleteFlag').value = "true";
+    }
+</script>
 </html>

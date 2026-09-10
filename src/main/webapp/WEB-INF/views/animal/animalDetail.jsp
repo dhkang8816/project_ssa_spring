@@ -92,6 +92,7 @@
 	<br />
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 
+</body>
 	<script>
 		// 💡 버튼 하나로 수정/삭제 주소를 동적으로 분기하는 레거시 표준 자바스크립트 함수
 		function fn_submit(mode) {
@@ -118,5 +119,4 @@
 					+ "&keyword=${pageMaker.keyword}";
 		}
 	</script>
-</body>
 </html>

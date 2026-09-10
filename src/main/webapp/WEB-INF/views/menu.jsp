@@ -48,8 +48,8 @@
                 <ul class="submenu">
                     <li><a href="<c:url value='/alert/list'/>">경보 이력</a></li>
                     <li><a href="<c:url value='/detection/list'/>">탐지 이력</a></li>
-                    <li><a href="<c:url value='dangerlog/list'/>">이상객체 탐지 이력</a></li>
-                    <li><a href="#">통계 대시보드</a></li>
+                    <li><a href="<c:url value='/dangerlog/list'/>">이상객체 탐지 이력</a></li>
+                    <li><a href="<c:url value='/dashboard/main'/>">통계 대시보드</a></li>
                 </ul>
             </li>
             <li>

@@ -89,9 +89,19 @@
 		class="com.spring.service.PatrolReportServiceImpl">
 		<constructor-arg ref="PatrolReportDAO" />
 	</bean>
-	<bean id="VideoDroneMapService"
-		class="com.spring.service.VideoDroneMapServiceImpl">
-		<constructor-arg ref="VideoDroneMapDAO" />
+	<!-- 2. 실시간 AI 스트림 캐시 관리 엔진 등록 -->
+	<!-- 💡 중요: 실제 파일 최상단에 package com.spring.yolo; 라고 선언되어 있으므로 class 경로를 com.spring.yolo로 정밀 조준합니다. -->
+	<bean id="AIStreamBridgeService" class="com.spring.yolo.AIStreamBridgeService">
+	    <!-- 자바 파일에 구현된 public AIStreamBridgeService(VideoDroneMapDAO videoDroneMapDAO) 구조 만족을 위해 주입 -->
+	    <constructor-arg ref="VideoDroneMapDAO" />
+	</bean>
+	<!-- 3. 비즈니스 맵 매핑 서비스 조립 (자바 코드의 @AllArgsConstructor 인자 개수 2개 완벽 결합) -->
+	<bean id="VideoDroneMapService" class="com.spring.service.VideoDroneMapServiceImpl">
+	    <!-- 1번째 인자: 위에서 개설한 대문자 ID의 DAO를 대소문자 정확히 매칭하여 주입 -->
+	    <constructor-arg ref="VideoDroneMapDAO" />
+	    
+	    <!-- 2번째 인자: [누락 해결] 자바 파일이 애타게 기다리던 AIStreamBridgeService 빈을 안전하게 토스 -->
+	    <constructor-arg ref="AIStreamBridgeService" />
 	</bean>
 
 

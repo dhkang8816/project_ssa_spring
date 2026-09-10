@@ -103,9 +103,9 @@
 	<br>
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 
-	<script>
-	    var msg = "${msg}";
-	    if(msg === "REMOVE_SUCCESS") alert("선택하신 비행 이력 로그가 안전하게 삭제되었습니다.");
-	</script>
 </body>
+<script>
+    var msg = "${msg}";
+    if(msg === "REMOVE_SUCCESS") alert("선택하신 비행 이력 로그가 안전하게 삭제되었습니다.");
+</script>
 </html>

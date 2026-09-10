@@ -7,23 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>신규 경보 이력 등록</title>
-<script>
-	function validateForm() {
-		var alertType = document.getElementById("alertType").value;
-		var alertMsg = document.getElementById("alertMsg").value;
-		
-		if (!alertType) {
-			alert("경보대상구분을 선택해주세요.");
-			return false;
-		}
-		if (!alertMsg.trim()) {
-			alert("경보 알림 메시지 내용을 입력해주세요.");
-			document.getElementById("alertMsg").focus();
-			return false;
-		}
-		return true;
-	}
-</script>
+
 </head>
 <body>
 	<h2>신규 경보 이력 등록 화면</h2>
@@ -91,4 +75,23 @@
 	</form:form>
 
 </body>
+<script>
+	function validateForm() {
+		var alertType = document.getElementById("alertType").value;
+		var alertMsg = document.getElementById("alertMsg").value;
+		
+		if (!alertType) {
+			alert("경보대상구분을 선택해주세요.");
+			return false;
+		}
+		if (!alertMsg.trim()) {
+			alert("경보 알림 메시지 내용을 입력해주세요.");
+			document.getElementById("alertMsg").focus();
+			return false;
+		}
+		return true;
+	}
+</script>
 </html>
+
+

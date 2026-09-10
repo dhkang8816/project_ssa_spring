@@ -51,6 +51,7 @@
 	<br />
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 
+</body>
 <script>
 	function fn_submit(mode) {
 		var form = document.getElementById("dangerForm");
@@ -72,5 +73,4 @@
 		              + "&keyword=${pageMaker.keyword}";
 	}
 </script>
-</body>
 </html>

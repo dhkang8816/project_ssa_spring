@@ -93,11 +93,11 @@
 	<br>
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 
+</body>
 	<script>
 	    var msg = "${msg}";
 	    if(msg === "REGISTER_SUCCESS") alert("신규 드론 기체가 등록되었습니다.");
 	    if(msg === "MODIFY_SUCCESS") alert("드론 배정 정보가 수정되었습니다.");
 	    if(msg === "REMOVE_SUCCESS") alert("드론 기체 정보가 삭제되었습니다.");
 	</script>
-</body>
 </html>

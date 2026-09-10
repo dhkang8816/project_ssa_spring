@@ -69,6 +69,7 @@
 		</div>
 	</form:form>
 
+</body>
 <script>
 	function fn_delete() {
 		if(!confirm("정말로 이 드론의 비행 이력 데이터를 시스템에서 영구 삭제하시겠습니까?")) return;
@@ -84,5 +85,4 @@
 		              + "&keyword=${pageMaker.keyword}";
 	}
 </script>
-</body>
 </html>

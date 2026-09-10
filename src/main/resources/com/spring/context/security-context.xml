@@ -11,7 +11,6 @@
 
 	<mvc:annotation-driven />
 
-
 	<!-- ================================================================= -->
 	<!-- 💡 [필수 추가] 이미지/파일 등록 오류 완벽 해결을 위한 멀티파트 리졸버 등록 -->
 	<!-- ================================================================= -->
@@ -33,7 +32,6 @@
 	<bean id="loginFailureHandler" class="com.spring.security.LoginFailureHandler" />
 	<bean id="customDeniedHandler" class="com.spring.security.CustomDeniedHandler" />
 
-
 	<!-- ================================================================= -->
 	<!-- 🛡️ [401 보안 락 최종 파괴선] 시큐리티 필터 체인 완전 우회 (Bypass) -->
 	<!-- ================================================================= -->
@@ -45,20 +43,19 @@
 	<security:http pattern="/yolo/**" security="none" />
 	<security:http pattern="/api/v1/ai/**" security="none" />
 	<security:http pattern="/**/yolo/api/**" security="none" />
+	<security:http pattern="/api/event/**" security="none" />
+	<security:http pattern="/api/user/**" security="none" />
 	<!-- ================================================================= -->
 	<!-- 메인 시큐리티 정책 제어 벨트 (auto-config 고정 및 익스프레션 개통) -->
 	<!-- ================================================================= -->
 	<security:http auto-config="false" use-expressions="true">
-	
 	    <!-- 🔒 REST API 및 파이썬 통신 연동을 위한 CSRF 완전 해제 (필수) -->
 	    <security:csrf disabled="true" />
-	    
 	    <!-- 1. 내부 무조건 오픈 통로 명시적 선언 -->
 	    <security:intercept-url pattern="/login" access="permitAll" />
 	    <security:intercept-url pattern="/" access="permitAll" />
 	    <security:intercept-url pattern="/main" access="permitAll" />
 	    <security:intercept-url pattern="/guest/waiting" access="permitAll" />
-	    
 	    <!-- 2. 컨트롤러 서비스 배관 프리패스 명단 등록 (이중 잠금 방어벽) -->
 	    <security:intercept-url pattern="/admin/**" access="permitAll" />
 	    <security:intercept-url pattern="/member/**" access="permitAll" />
@@ -68,7 +65,11 @@
 	    <security:intercept-url pattern="/detection/**" access="permitAll" />
 	    <security:intercept-url pattern="/dangerlog/**" access="permitAll" />
 	    <security:intercept-url pattern="/api/event/**" access="permitAll" />
-	    
+        <security:intercept-url pattern="/dashboard/**" access="permitAll" />
+	    <security:intercept-url pattern="/flighthistory/**" access="permitAll" />
+	    <security:intercept-url pattern="/patrolreport/**" access="permitAll" />
+	    <security:intercept-url pattern="/loginlog/**" access="permitAll" />
+	    <security:intercept-url pattern="/api/**" access="permitAll" />
 	    <!-- ⚠️ 실무 팁: 개발 완료 후 실서버 배포 시에는 permitAll을 아래 주석처럼 authenticated()로 변경하세요. -->
 	    <security:intercept-url pattern="/**" access="permitAll" />
 	    

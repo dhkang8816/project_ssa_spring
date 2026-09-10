@@ -13,16 +13,7 @@
     input, select { padding: 6px; width: 250px; }
     input[readonly] { background-color: #f0f0f0; cursor: not-allowed; }
 </style>
-<script>
-    // 삭제 요청 시 한 번 더 안전하게 물어보는 자바스크립트 함수
-    function fnDelete() {
-        if(confirm("정말로 이 코드를 삭제하시겠습니까?")) {
-            var form = document.detailForm;
-            form.action = "${pageContext.request.contextPath}/commoncode/remove";
-            form.submit();
-        }
-    }
-</script>
+
 </head>
 <body>
 
@@ -67,4 +58,14 @@
     </form:form>
 
 </body>
+<script>
+    // 삭제 요청 시 한 번 더 안전하게 물어보는 자바스크립트 함수
+    function fnDelete() {
+        if(confirm("정말로 이 코드를 삭제하시겠습니까?")) {
+            var form = document.detailForm;
+            form.action = "${pageContext.request.contextPath}/commoncode/remove";
+            form.submit();
+        }
+    }
+</script>
 </html>

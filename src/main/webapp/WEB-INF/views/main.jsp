@@ -120,8 +120,8 @@
 </head>
 <body>
 
-    <jsp:include page="/WEB-INF/views/header.jsp" />
     <jsp:include page="/WEB-INF/views/menu.jsp" />
+    <jsp:include page="/WEB-INF/views/header.jsp" />
 	
     <div class="control-content-wrapper" style="position: absolute !important; top: 80px !important; left: 250px !important; width: calc(100% - 250px) !important; margin: 0 !important; padding: 20px 30px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; z-index: 50 !important;">
         <h2 class="section-title">실시간 유기동물 드론 관제 영상 (YOLOv8)</h2>
@@ -225,13 +225,9 @@
 		</div>
     </div>
     
+</body>
 
-
-
-
-	    
-
-    <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
     
     <script>
@@ -275,9 +271,6 @@
                 .catch(err => console.error("소스 변경 통신 실패:", err));
             }
         };
-
-
-
 
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('aiCanvas');
@@ -377,7 +370,6 @@
         });
     </script>
 
-    
     <script>
 		// 알림이 도착했을 때 동적으로 HTML 리스트를 밀어 넣는 공통 함수
 	    function appendRealtimeAlarm(message) {
@@ -525,9 +517,5 @@
 	            }
 	        });
 	    }
-
-
-    
-    </script>
-</body>
+</script>
 </html>

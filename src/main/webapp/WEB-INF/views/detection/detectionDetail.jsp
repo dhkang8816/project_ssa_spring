@@ -84,6 +84,8 @@
 		</div>
 	</form:form>
 
+</body>
+
 <script>
 	function fn_goList() {
 		location.href = "${pageContext.request.contextPath}/detection/list"
@@ -92,5 +94,4 @@
 		              + "&keyword=${pageMaker.keyword}";
 	}
 </script>
-</body>
 </html>

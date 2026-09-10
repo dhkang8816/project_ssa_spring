@@ -70,7 +70,6 @@
             <c:if test="${empty sessionScope.SPRING_SECURITY_CONTEXT}">
                 <a href="${pageContext.request.contextPath}/login">로그인</a>
             </c:if>
-
            
 			<%-- 2. 로그인 완료 상태일 때 --%>
 			<c:if test="${not empty sessionScope.SPRING_SECURITY_CONTEXT}">
@@ -144,6 +143,7 @@
     </header>
 </div>
 
+</body>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
 
 <script>
@@ -245,5 +245,4 @@ $(document).ready(function() {
 });
 
 </script>
-</body>
 </html>
