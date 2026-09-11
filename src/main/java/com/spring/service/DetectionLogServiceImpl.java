@@ -1,6 +1,7 @@
 package com.spring.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,5 +46,10 @@ public class DetectionLogServiceImpl implements DetectionLogService {
     public void modifyActionStatus(DetectionLogVO dlv) {
         // [UPDATE] 현장 조치 상태 및 내용 업데이트
         detectionLogDAO.updateActionStatus(dlv);
+    }
+    
+    @Override
+    public Map<String, Object> getTodayDetectionStats() throws Exception {
+        return detectionLogDAO.selectTodayDetectionStats();
     }
 }

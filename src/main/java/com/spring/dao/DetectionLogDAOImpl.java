@@ -1,6 +1,7 @@
 package com.spring.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,10 @@ public class DetectionLogDAOImpl implements DetectionLogDAO {
     public int updateActionStatus(DetectionLogVO dlv) {
         // [UPDATE] 현장 조치 상태 및 내용 업데이트
         return sqlSession.update(NAMESPACE + ".updateActionStatus", dlv);
+    }
+    
+    @Override
+    public Map<String, Object> selectTodayDetectionStats() throws Exception {
+        return sqlSession.selectOne(NAMESPACE + ".selectTodayDetectionStats");
     }
 }

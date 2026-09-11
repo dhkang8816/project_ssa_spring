@@ -1,6 +1,8 @@
 package com.spring.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.spring.cmd.PageMaker;
 import com.spring.dto.DetectionLogVO;
 
@@ -17,4 +19,7 @@ public interface DetectionLogService {
     
     // 4. 현장 조치 상태 및 내용 업데이트
     public void modifyActionStatus(DetectionLogVO dlv);
+    
+    // 5. 조치율 계산 
+    public Map<String, Object> getTodayDetectionStats() throws Exception;
 }

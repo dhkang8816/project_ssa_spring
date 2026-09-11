@@ -2,6 +2,7 @@ package com.spring.service;
 
 import java.util.List;
 
+import com.spring.cmd.PageMaker;
 import com.spring.dto.PatrolReportVO;
 
 public interface PatrolReportService {
@@ -20,4 +21,7 @@ public interface PatrolReportService {
 
     // 5. 삭제
     void deleteReport(int reportId) throws Exception;
+    
+    // 📊 [PAGING] 페이징 네비게이션 연산 수행 및 잘라진 목록 데이터 조회
+    public List<PatrolReportVO> getReportListWithPaging(PageMaker pageMaker) throws Exception;
 }

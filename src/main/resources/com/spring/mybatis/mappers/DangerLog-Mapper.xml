@@ -118,5 +118,16 @@
             DACTION_REASON = #{dactionReason, jdbcType=VARCHAR}
         WHERE DANLOG_ID = #{danlogId}
     </update>
+    
+    <!-- [DASHBOARD] 당일 이상객체 탐지수 및 조치완료수 고속 집계 -->
+	<select id="selectTodayDangerStats" resultType="java.util.HashMap">
+	    SELECT 
+	        COUNT(*) AS "TOTAL_COUNT",
+	        COUNT(CASE WHEN DACTION_STATUS = '2' THEN 1 END) AS "COMPLETE_COUNT"
+	    FROM DANGER_LOG
+	    WHERE DANGER_DATE &gt;= TRUNC(SYSDATE)
+	      AND DANGER_DATE &lt; TRUNC(SYSDATE) + 1
+	</select>
+
 
 </mapper>

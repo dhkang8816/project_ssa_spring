@@ -246,88 +246,124 @@ function fn_fetchAiBriefing() {
         url: "${pageContext.request.contextPath}/dashboard/api/ai-briefing",
         type: "GET",
         dataType: "json",
-     // success: function(res) { ... } 내부 영역을 아래의 완전히 독립된 구조 코드로 통째로 변경하세요.
         success: function(res) {
-            console.log("✈ [오라클 관제 및 멀티 블록 차트 데이터 수신 완료]:", res);
-            try {
-                var danger = res.dangerCount;
-                var detect = res.detectionCount;
-                var hours = res.flightHours;
-                var score = res.safetyScore;
+	    console.log("✈ [오라클 관제 데이터 수신 완료]:", res);
+	    try {
+	        // 데이터 누락을 대비한 기본 안전 처리
+	        var danger = (res.dangerCount !== undefined && res.dangerCount !== null) ? res.dangerCount : 0;
+	        var detect = (res.detectionCount !== undefined && res.detectionCount !== null) ? res.detectionCount : 0;
+	        var hours = (res.flightHours !== undefined && res.flightHours !== null) ? res.flightHours : 0.0;
+	        var todayDetect = (res.todayDetectCount !== undefined && res.todayDetectCount !== null) ? res.todayDetectCount : 0;
+	        var completeRate = (res.actionCompleteRate !== undefined && res.actionCompleteRate !== null) ? res.actionCompleteRate : 0.0;
+	        var score = (res.safetyScore !== undefined && res.safetyScore !== null) ? res.safetyScore : 0;
+	        
+	        var statusText = "안전";
+	        var statusColor = "#2ecc71"; 
+	        
+	        if(score >= 70) { 
+	            statusText = "심각 (출동)"; 
+	            statusColor = "#e74c3c"; 
+	        } else if(score >= 40) { 
+	            statusText = "주의 (감시)"; 
+	            statusColor = "#f1c40f"; 
+	        } else {
+	            statusText = "안전"; 
+	            statusColor = "#2ecc71";
+	        }
+	        
+	        // B. [수정 핵심] 신규 지표를 포함하여 가로 5열(repeat(5, 1fr)) 반응형 그리드로 확장 조립
+	        var cardHtml = '<div style="width:100%; display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; text-align:center; padding:10px 0;">' +
+	            
+	            // 카드 1: 종합 위험도 (기존 유지)
+	            '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid ' + statusColor + ';">' +
+	            '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">관제구역 종합 위험도</div>' +
+	            '    <div style="font-size:18px; font-weight:bold; color:' + statusColor + ';">' + score + '점 [' + statusText + ']</div>' +
+	            '  </div>' +
+	            
+	            // 카드 2: 당일 탐지 총 건수 (🔥 신규 지표 배치)
+	            '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #5ddcff;">' +
+	            '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">당일 탐지 총 건수</div>' +
+	            '    <div style="font-size:24px; font-weight:bold; color:#5ddcff;">' + todayDetect + ' 건</div>' +
+	            '  </div>' +
+
+	            // 카드 3: 당일 조치 완료율 (🔥 신규 지표 배치)
+	            '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #2ecc71;">' +
+	            '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">당일 현장조치 완료율</div>' +
+	            '    <div style="font-size:24px; font-weight:bold; color:#2ecc71;">' + completeRate + ' %</div>' +
+	            '  </div>' +
+
+	            // 카드 4: 드론 종합 누적 비행시간 (기존 유지, 텍스트 가시성 보정)
+	            '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #3498db;">' +
+	            '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">당일 드론 총 비행시간</div>' +
+	            '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">' + hours + ' 시간</div>' +
+	            '  </div>' +
+	            
+	            // 카드 5: 위험 이상객체 포착 풀 (기존 유지)
+	            '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #e74c3c;">' +
+	            '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">누적 위험객체 포착</div>' +
+	            '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">' + danger + ' 회</div>' +
+	            '  </div>' +
+	            
+	            // 카드 6: 마리수 기준 미달 경보 풀 (기존 유지)
+	            '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #f1c40f;">' +
+	            '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">누적 미달경보 발생</div>' +
+	            '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">' + detect + ' 건</div>' +
+	            '  </div>' +
+
+	            '</div>';
+	        
+	        // 상단 컨테이너 영역에 완성된 카드 주입
+	        $("#aiBriefingContent").html(cardHtml);
+	        
+	        // [이후 하단 차트 렌더링 코드는 기존 그대로 유지하면 됩니다]
+	        $("#dashboardGraphZone").show();
+
                 
-                var statusText = "안전";
-                var statusColor = "#2ecc71"; 
-                if(score >= 70) { statusText = "심각 (출동)"; statusColor = "#e74c3c"; }
-                else if(score >= 40) { statusText = "주의 (감시)"; statusColor = "#f1c40f"; }
+                // [행동 3-1] 차트 인스턴스 초기화 및 재생성 (꺾은선 그래프)
+                var ctxTrend = document.getElementById('trendChart').getContext('2d');
+                if(window.myTrendChart) window.myTrendChart.destroy(); // 기존 차트 객체 제거로 버그 방지
+                window.myTrendChart = new Chart(ctxTrend, {
+                    type: 'line',
+                    data: {
+                        labels: res.dateLabels,
+                        datasets: [
+                            { 
+                                label: '위험객체 (회)', 
+                                data: res.dangerWeeklyData, 
+                                borderColor: '#e74c3c', 
+                                backgroundColor: 'rgba(231, 76, 60, 0.05)', 
+                                borderWidth: 2, tension: 0.3, fill: true
+                            },
+                            { 
+                                label: '미달경보 (건)', 
+                                data: res.detectWeeklyData, 
+                                borderColor: '#f1c40f', 
+                                backgroundColor: 'rgba(241, 196, 15, 0.05)', 
+                                borderWidth: 2, tension: 0.3, fill: true
+                            }
+                        ]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        resizeDelay: 50, // 👈 렌더링 엇박자 방지 방어선 추가
+                        plugins: { 
+                            legend: { 
+                                labels: { color: '#fff', font: { size: 10 } } 
+                            } 
+                        },
+                        scales: { 
+                            x: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 10 } } }, 
+                            y: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 10 } }, beginAtZero: true } // 🎯 Y축 자동 스케일링 활성화
+                        }
+                    }
 
-                // [행동 1] 상단 구역 상자(#aiBriefingContent)에는 오직 4개 카드만 깔끔하게 주입
-                var cardHtml = '<div style="width:100%; display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; text-align:center; padding:10px 0;">' +
-                    '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid ' + statusColor + ';">' +
-                    '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">관제구역 종합 위험도</div>' +
-                    '    <div style="font-size:18px; font-weight:bold; color:' + statusColor + ';">' + score + '점 [' + statusText + ']</div>' +
-                    '  </div>' +
-                    '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #e74c3c;">' +
-                    '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">위험 이상객체 포착</div>' +
-                    '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">' + danger + ' 회</div>' +
-                    '  </div>' +
-                    '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #f1c40f;">' +
-                    '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">마리수 기준 미달 경보</div>' +
-                    '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">' + detect + ' 건</div>' +
-                    '  </div>' +
-                    '  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #3498db;">' +
-                    '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">드론 종합 누적 비행</div>' +
-                    '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">' + hours + ' 시간</div>' +
-                    '  </div>' +
-                    '</div>';
-
-                $contentBox.html(cardHtml);
-
-                // [행동 2] 숨겨져 있던 하단 그래프 전용 독립 블럭 상자를 당당하게 활성화(노출)
-                $("#dashboardGraphZone").show();
-
-                // [행동 3-1] 아래로 완전히 내려온 독립 공간 좌측에 [일별 꺾은선 차트] 렌더링
-				// 3-1. 좌측 [일별 꺾은선 차트] 그리기 엔진 시동 (데이터 이름 완벽 동기화)
-				var ctxTrend = document.getElementById('trendChart').getContext('2d');
-				new Chart(ctxTrend, {
-				    type: 'line',
-				    data: {
-				        labels: res.dateLabels, // 날짜 라벨 배열
-				        datasets: [
-				            { 
-				                label: '위험객체 (회)', 
-				                data: res.dangerWeeklyData, // 👈 백엔드 변수명과 100% 동일하게 매핑
-				                borderColor: '#e74c3c', 
-				                backgroundColor: 'rgba(231, 76, 60, 0.05)', 
-				                borderWidth: 2, 
-				                tension: 0.3, 
-				                fill: true 
-				            },
-				            { 
-				                label: '미달경보 (건)', 
-				                data: res.detectWeeklyData, // 👈 백엔드 변수명과 100% 동일하게 매핑
-				                borderColor: '#f1c40f', 
-				                backgroundColor: 'rgba(241, 196, 15, 0.05)', 
-				                borderWidth: 2, 
-				                tension: 0.3, 
-				                fill: true 
-				            }
-				        ]
-				    },
-				    options: { 
-				        responsive: true, 
-				        maintainAspectRatio: false, 
-				        resizeDelay: 50, /* 💡 화면 크기 변화 감지 후 0.05초 뒤에 차트를 부드럽게 다시 그려 반응형 보장 */
-				        plugins: { legend: { labels: { color: '#ffffff', font: { size: 11 } } } }, 
-				        scales: { 
-				            x: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 11 } } }, 
-				            y: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 11 } }, beginAtZero: true } 
-				        } 
-				    }
-				});
-
-                // [행동 3-2] 아래로 완전히 내려온 독립 공간 우측에 [시간대별 막대 차트] 렌더링
+                });
+                
+                // [행동 3-2] 시간대별 막대 차트
                 var ctxTime = document.getElementById('timeChart').getContext('2d');
-                new Chart(ctxTime, {
+                if(window.myTimeChart) window.myTimeChart.destroy();
+                window.myTimeChart = new Chart(ctxTime, {
                     type: 'bar',
                     data: {
                         labels: res.timeLabels,
@@ -339,40 +375,42 @@ function fn_fetchAiBriefing() {
                     options: { 
                         responsive: true, 
                         maintainAspectRatio: false, 
-                        resizeDelay: 50, /* 💡 동일하게 리사이즈 딜레이 옵션 부여 */
-                        plugins: { legend: { labels: { color: '#ffffff', font: { size: 11 } } } }, 
+                        resizeDelay: 50,
+                        plugins: { 
+                            legend: { display: false } 
+                        },
                         scales: { 
-                            x: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 11 } } }, 
-                            y: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 11 } }, beginAtZero: true } 
-                        } 
+                            x: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 10 } } }, 
+                            y: { grid: { color: '#2c313d' }, ticks: { color: '#aaa', font: { size: 10 } }, beginAtZero: true } // 🎯 Y축 자동 스케일링 활성화
+                        }
                     }
 
                 });
                 
-            	 // [행동 3-3] 축종별 도넛 차트 렌더링
+                // [행동 3-3] 축종별 도넛 차트
                 var ctxAnimal = document.getElementById('animalChart').getContext('2d');
-                new Chart(ctxAnimal, {
+                if(window.myAnimalChart) window.myAnimalChart.destroy();
+                window.myAnimalChart = new Chart(ctxAnimal, {
                     type: 'doughnut',
                     data: {
                         labels: res.animalLabels,
                         datasets: [{
                             data: res.animalData,
-                            backgroundColor: ['#2980b9', '#ecf0f1'], // 반려견(블루계열), 고양이(화이트계열)
+                            backgroundColor: ['#2980b9', '#ecf0f1'],
                             borderWidth: 0
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        resizeDelay: 50,
+                        responsive: true, maintainAspectRatio: false, resizeDelay: 50,
                         plugins: { legend: { position: 'right', labels: { color: '#ffffff' } } }
                     }
                 });
-
-                // [행동 3-4] 이상객체 유형별 가로 막대 차트 렌더링
+                
+                // [행동 3-4] 이상객체 유형별 가로 막대 차트
                 var ctxDangerType = document.getElementById('dangerTypeChart').getContext('2d');
-                new Chart(ctxDangerType, {
-                    type: 'bar', // indexAxis 옵션으로 가로막대 전환
+                if(window.myDangerTypeChart) window.myDangerTypeChart.destroy();
+                window.myDangerTypeChart = new Chart(ctxDangerType, {
+                    type: 'bar',
                     data: {
                         labels: res.dangerTypeLabels,
                         datasets: [{
@@ -383,23 +421,22 @@ function fn_fetchAiBriefing() {
                         }]
                     },
                     options: {
-                        indexAxis: 'y', // 💡 가로 막대 차트로 변경하여 가독성 업그레이드
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        resizeDelay: 50,
-                        plugins: { legend: { display: false } }, // 단일 데이터셋이므로 범례 숨김
+                        indexAxis: 'y',
+                        responsive: true, maintainAspectRatio: false, resizeDelay: 50,
+                        plugins: { legend: { display: false } },
                         scales: {
                             x: { grid: { color: '#2c313d' }, ticks: { color: '#aaa' }, beginAtZero: true },
                             y: { grid: { display: false }, ticks: { color: '#ffffff' } }
                         }
                     }
                 });
-
+                
             } catch (parseError) {
                 console.error("화면 시각화 매핑 에러:", parseError);
-                $contentBox.html('<div style="color:#ff6b6b;">❌ 데이터 멀티 시각화 블록 분리 연동 중 오류가 발생했습니다.</div>');
+                $("#aiBriefingContent").html('<div style="color:#ff6b6b;">❌ 데이터 멀티 시각화 블록 분리 연동 중 오류가 발생했습니다.</div>');
             }
         }
+
     });
 }
 </script>

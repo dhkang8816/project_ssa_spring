@@ -122,5 +122,16 @@
             ACTION_REASON = #{actionReason, jdbcType=VARCHAR}
         WHERE DLOG_ID = #{dlogId}
     </update>
+    
+    <!-- [DASHBOARD] 당일 일반관제 탐지수 및 조치완료수 고속 집계 -->
+	<select id="selectTodayDetectionStats" resultType="java.util.HashMap">
+	    SELECT 
+	        COUNT(*) AS "TOTAL_COUNT",
+	        COUNT(CASE WHEN ACTION_STATUS = '2' THEN 1 END) AS "COMPLETE_COUNT"
+	    FROM DETECTION_LOG
+	    WHERE DETECTION_DATE &gt;= TRUNC(SYSDATE)
+	      AND DETECTION_DATE &lt; TRUNC(SYSDATE) + 1
+	</select>
+
 
 </mapper>

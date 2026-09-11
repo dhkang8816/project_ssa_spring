@@ -18,35 +18,48 @@ public class PatrolReportDAOImpl implements PatrolReportDAO {
     private final SqlSession sqlSession;
     
     // 매퍼 XML에 정의한 namespace 정의
-    private static final String NAMESPACE = "PatrolReport-Mapper.";
+    private static final String NAMESPACE = "PatrolReport-Mapper";
 
     @Override
     public int insertReport(PatrolReportVO reportVO) {
-        return sqlSession.insert(NAMESPACE + "insertReport", reportVO);
+        return sqlSession.insert(NAMESPACE + ".insertReport", reportVO);
     }
 
     @Override
     public PatrolReportVO getReportById(int reportId) {
-        return sqlSession.selectOne(NAMESPACE + "getReportById", reportId);
+        return sqlSession.selectOne(NAMESPACE + ".getReportById", reportId);
     }
 
     @Override
-    public List<PatrolReportVO> getReportList() { // 💡 PageMaker 인자 제거
-        return sqlSession.selectList(NAMESPACE + "getReportList");
+    public List<PatrolReportVO> getReportList() {
+        // 💡 중간에 마침표(".") 수식을 정확하게 삽입하여 경로 조립 오작동을 해결합니다.
+        return sqlSession.selectList(NAMESPACE + ".getReportList");
     }
+
     
     // 💡 전체 카운트 조회용 메서드 추가
     public int getReportListCount(PageMaker pageMaker) {
-        return sqlSession.selectOne(NAMESPACE + "getReportListCount", pageMaker);
+        return sqlSession.selectOne(NAMESPACE + ".getReportListCount", pageMaker);
     }
 
     @Override
     public int updateReport(PatrolReportVO reportVO) {
-        return sqlSession.update(NAMESPACE + "updateReport", reportVO);
+        return sqlSession.update(NAMESPACE + ".updateReport", reportVO);
     }
 
     @Override
     public int deleteReport(int reportId) {
-        return sqlSession.delete(NAMESPACE + "deleteReport", reportId);
+        return sqlSession.delete(NAMESPACE + ".deleteReport", reportId);
+    }
+    @Override
+    public List<PatrolReportVO> getReportListWithPaging(PageMaker pageMaker) throws Exception {
+        // 매퍼 XML에 PageMaker 객체를 그대로 전달하여 startRow, endRow 수식을 쿼리에 매핑합니다.
+        return sqlSession.selectList(NAMESPACE + ".getReportListWithPaging", pageMaker);
+    }
+
+    @Override
+    public int getReportTotalCount(PageMaker pageMaker) throws Exception {
+        // 🔥 [버그 픽스] 중복 마침표 수식 분쇄 정정 (PatrolReport-Mapper.. -> PatrolReport-Mapper.)
+        return sqlSession.selectOne(NAMESPACE + ".getReportTotalCount", pageMaker);
     }
 }

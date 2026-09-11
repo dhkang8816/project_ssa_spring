@@ -1,6 +1,7 @@
 package com.spring.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,10 @@ public class DangerLogDAOImpl implements DangerLogDAO {
     public int updateDactionStatus(DangerLogVO dlv) {
         // [UPDATE] 관제원 현장 조치 상태 및 사유 내용 업데이트
         return sqlSession.update(NAMESPACE + ".updateDactionStatus", dlv);
+    }
+    
+    @Override
+    public Map<String, Object> selectTodayDangerStats() throws Exception {
+        return sqlSession.selectOne(NAMESPACE + ".selectTodayDangerStats");
     }
 }

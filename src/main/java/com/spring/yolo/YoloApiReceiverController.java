@@ -90,7 +90,10 @@ public class YoloApiReceiverController {
         synchronized(YoloApiReceiverController.class) {
             try {
                 log.info(" [AI 수신 게이트웨이] 위험 객체 신호 유입 성공 ➔ 수신된 코드 번호: {}", vo.getDangerType());
-                
+                if (vo.getDroneId() == null || vo.getDroneId().isEmpty()) {
+                    // 혹은 현재 활성화된 드론을 찾아오는 로직 연동
+                    vo.setDroneId("DRONE01"); 
+                }
                 // 1. 부모 위험 테이블(DANGER_LOG) 적재 실행
                 dangerLogService.registerDangerLog(vo); 
                 

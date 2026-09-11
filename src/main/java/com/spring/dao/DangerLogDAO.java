@@ -1,6 +1,8 @@
 package com.spring.dao;
 
 import java.util.List;
+import java.util.Map;
+
 import com.spring.cmd.PageMaker;
 import com.spring.dto.DangerLogVO;
 
@@ -20,4 +22,7 @@ public interface DangerLogDAO {
     
     // 5. 조치 상태 수정
     public int updateDactionStatus(DangerLogVO dlv);
+    
+    // 6. 조치율
+    public Map<String, Object> selectTodayDangerStats() throws Exception;
 }
