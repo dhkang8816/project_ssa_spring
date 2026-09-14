@@ -93,6 +93,24 @@
     </select>
 
 	  <!-- 4. 수정 (부적합한 열 유형 ORA-1111 오류 원천 파쇄 보정본) -->
+    <select id="getPendingReportListWithPaging" parameterType="com.spring.cmd.PageMaker" resultMap="reportResultMap">
+        SELECT * FROM (
+            SELECT ROWNUM AS rn, a.* FROM (
+                SELECT
+                    REPORT_ID, REPORT_DATE, TOTAL_FLIGHT_TIME, TOTAL_DETECT_COUNT,
+                    COMPLETION_RATE, CONFIRM_STATUS, PATROL_DATE, MOD_DATE, MEMBER_ID,
+                    ACTION_TAKEN, REMARK
+                FROM PATROL_REPORT
+                WHERE CONFIRM_STATUS = '0'
+                ORDER BY REPORT_ID DESC
+            ) a WHERE ROWNUM &lt;= #{endRow}
+        ) WHERE rn &gt;= #{startRow}
+    </select>
+
+    <select id="getPendingReportTotalCount" parameterType="com.spring.cmd.PageMaker" resultType="int">
+        SELECT COUNT(*) FROM PATROL_REPORT WHERE CONFIRM_STATUS = '0'
+    </select>
+
 	 <update id="updateReport" parameterType="com.spring.dto.PatrolReportVO">
 	    UPDATE PATROL_REPORT
 	    SET 
@@ -111,6 +129,10 @@
 	        REMARK             = #{remark, jdbcType=VARCHAR}
 	    WHERE REPORT_ID = #{reportId}
 	 </update>
+
+    <update id="updateConfirmStatus" parameterType="map">
+        UPDATE PATROL_REPORT SET CONFIRM_STATUS = #{confirmStatus} WHERE REPORT_ID = #{reportId}
+    </update>
 
     <!-- 5. 삭제 -->
     <delete id="deleteReport" parameterType="int">

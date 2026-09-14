@@ -1,5 +1,7 @@
 package com.spring.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,14 +45,21 @@ public class PatrolReportController {
 
 	// [1] 업무 보고서 리스트 조회
 	@GetMapping("/list")
-	public String list(Model model) throws Exception {
-		List<PatrolReportVO> reportList = reportService.getReportList();
+	public String list(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
+		List<PatrolReportVO> reportList = reportService.getReportListWithPaging(pageMaker);
 		model.addAttribute("reportList", reportList);
 		return "patrolreport/patrolReportList";
 	}
 
+	@GetMapping("/approval/list")
+	public String approvalList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
+		List<PatrolReportVO> reportList = reportService.getPendingReportListWithPaging(pageMaker);
+		model.addAttribute("reportList", reportList);
+		return "patrolreport/patrolReportApprovalList";
+	}
+
 	// [2] 상세 페이지 내에서 결재 상태를 실시간 변경하여 DB에 적재하는 API
-	@PostMapping("/updateStatus")
+	@PostMapping("/legacy/updateStatus")
 	@ResponseBody
 	public String updateStatus(@RequestParam("reportId") int reportId,
 			@RequestParam("confirmStatus") String confirmStatus) {
@@ -71,7 +80,7 @@ public class PatrolReportController {
     @GetMapping("/register")
     public String registerForm(Model model) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentMemberId = "admin"; // 기본 폴백 계정
+        String currentMemberId = auth != null && auth.isAuthenticated() ? auth.getName() : null;
         
         if (auth != null && auth.getPrincipal() instanceof CustomUser) {
             CustomUser customUser = (CustomUser) auth.getPrincipal();
@@ -87,6 +96,7 @@ public class PatrolReportController {
         model.addAttribute("currentMemberName", writerVO != null ? writerVO.getName() : "관리자");
         model.addAttribute("currentDept", writerVO != null ? writerVO.getDepartment() : "관제운영팀");
         model.addAttribute("reportVO", new PatrolReportVO());
+        model.addAttribute("approverList", memberService.getAdminMembers());
         
         return "patrolreport/patrolReportRegister";
     }
@@ -104,7 +114,7 @@ public class PatrolReportController {
 			PatrolReportVO reportVO = reportService.getReportById(reportId.intValue());
 
 			if (reportVO != null) {
-				java.util.Date now = new java.util.Date(); // 오라클 DB에 적재할 실시간 현재 시간(SYSDATE)
+				Date now = new java.util.Date(); // 오라클 DB에 적재할 실시간 현재 시간(SYSDATE)
 
 				// 라이브 대시보드 API 스냅샷에서 가공해온 실시간 당일 통계 수치 덮어쓰기
 				reportVO.setTotalFlightTime(flightTime);
@@ -115,7 +125,7 @@ public class PatrolReportController {
 				reportService.updateReport(reportVO);
 
 				// 비동기 화면 우측 하단 갱신일자 구역에 새로고침 없이 즉시 렌더링해 줄 포맷 문자열 반환
-				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				return sdf.format(now);
 			}
 			return "FAIL";
@@ -126,12 +136,17 @@ public class PatrolReportController {
 	}
     // 💡 [버그 픽스] 끝에 붙어있던 원치 않는 마침표(.)를 완벽하게 제거하여 405 에러를 박멸합니다.
     @PostMapping("/register")
-    public String register(@ModelAttribute("reportVO") PatrolReportVO reportVO) throws Exception {
+    public String register(@ModelAttribute("reportVO") PatrolReportVO reportVO,
+            @RequestParam("approverId") String approverId) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentMemberId = "admin";
+        String currentMemberId = auth != null && auth.isAuthenticated() ? auth.getName() : null;
         if (auth != null && auth.getPrincipal() instanceof CustomUser) {
             CustomUser customUser = (CustomUser) auth.getPrincipal();
             currentMemberId = customUser.getMember().getMemberId();
+        }
+
+        if (currentMemberId == null || currentMemberId.trim().isEmpty()) {
+            throw new org.springframework.security.access.AccessDeniedException("Authentication is required.");
         }
 
         // FOOTER 실시간 대시보드 지표 추출 작동
@@ -174,7 +189,7 @@ public class PatrolReportController {
         reportVO.setTotalDetectCount((long) totalTodayDetectCount);
         reportVO.setCompletionRate(Math.round(actionCompleteRate * 100) / 100.0);
 
-        reportService.insertReport(reportVO);
+        reportService.insertReportWithWorkflow(reportVO, approverId);
         return "redirect:/patrolreport/list";
     }
 

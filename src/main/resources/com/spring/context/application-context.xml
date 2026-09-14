@@ -44,6 +44,9 @@
 	<bean id="VideoDroneMapDAO" class="com.spring.dao.VideoDroneMapDAOImpl">
 		<constructor-arg ref="sqlSession" />
 	</bean>
+	<bean id="WorkFlowDAO" class="com.spring.dao.WorkFlowDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
 
 	<!-- 2. Service 빈 설정: ref에 적힌 이름과 위 id가 완벽하게 일치해야 합니다 -->
 	<bean id="commonCodeService"
@@ -88,6 +91,8 @@
 	<bean id="PatrolReportService"
 		class="com.spring.service.PatrolReportServiceImpl">
 		<constructor-arg ref="PatrolReportDAO" />
+		<constructor-arg ref="WorkFlowDAO" />
+		<constructor-arg ref="memberDAO" />
 	</bean>
 	<!-- 2. 실시간 AI 스트림 캐시 관리 엔진 등록 -->
 	<!-- 💡 중요: 실제 파일 최상단에 package com.spring.yolo; 라고 선언되어 있으므로 class 경로를 com.spring.yolo로 정밀 조준합니다. -->
@@ -102,6 +107,12 @@
 	    
 	    <!-- 2번째 인자: [누락 해결] 자바 파일이 애타게 기다리던 AIStreamBridgeService 빈을 안전하게 토스 -->
 	    <constructor-arg ref="AIStreamBridgeService" />
+	</bean>
+	<bean id="WorkFlowService"
+		class="com.spring.service.WorkFlowServiceImpl">
+		<constructor-arg ref="WorkFlowDAO" />
+		<constructor-arg ref="memberDAO" />
+		<constructor-arg ref="PatrolReportDAO" />
 	</bean>
 
 

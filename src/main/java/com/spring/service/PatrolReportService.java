@@ -8,7 +8,8 @@ import com.spring.dto.PatrolReportVO;
 public interface PatrolReportService {
 
     // 1. 등록
-    void insertReport(PatrolReportVO reportVO) throws Exception;
+	void insertReport(PatrolReportVO reportVO) throws Exception;
+	void insertReportWithWorkflow(PatrolReportVO reportVO, String approverId) throws Exception;
 
     // 2. 단건 상세 조회
     PatrolReportVO getReportById(int reportId) throws Exception;
@@ -24,4 +25,6 @@ public interface PatrolReportService {
     
     // 📊 [PAGING] 페이징 네비게이션 연산 수행 및 잘라진 목록 데이터 조회
     public List<PatrolReportVO> getReportListWithPaging(PageMaker pageMaker) throws Exception;
+
+    List<PatrolReportVO> getPendingReportListWithPaging(PageMaker pageMaker) throws Exception;
 }

@@ -22,4 +22,15 @@ public final class RuntimeSettings {
             return defaultValue;
         }
     }
+
+    public static boolean enabled(String name, boolean defaultValue) {
+        String value = text(name, String.valueOf(defaultValue));
+        if ("true".equalsIgnoreCase(value)) {
+            return true;
+        }
+        if ("false".equalsIgnoreCase(value)) {
+            return false;
+        }
+        return defaultValue;
+    }
 }

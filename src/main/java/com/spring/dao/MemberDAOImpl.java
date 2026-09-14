@@ -55,6 +55,17 @@ public class MemberDAOImpl implements MemberDAO {
     public List<MemberRoleVO> selectMemberRoles(String memberId) throws Exception {
         return sqlSession.selectList(NAMESPACE + ".selectMemberRoles", memberId);
     }
+
+    @Override
+    public List<MemberVO> selectAdminMembers() throws Exception {
+        return sqlSession.selectList(NAMESPACE + ".selectAdminMembers");
+    }
+
+    @Override
+    public boolean isAdminMember(String memberId) throws Exception {
+        Integer count = sqlSession.selectOne(NAMESPACE + ".countAdminMember", memberId);
+        return count != null && count > 0;
+    }
     
     @Override
     public void insertMember(MemberVO member) throws Exception {

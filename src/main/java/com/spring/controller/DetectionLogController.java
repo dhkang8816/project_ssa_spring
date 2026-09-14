@@ -2,11 +2,10 @@ package com.spring.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
-import jakarta.servlet.http.HttpServletRequest; // 💡 Tomcat 10 사양 완벽 준수
 
 import org.apache.commons.io.IOUtils; // 💡 아파치 commons 라이브러리 연동
 import org.springframework.beans.factory.annotation.Autowired; // 💡 Member 쪽과 스타일 동기화
@@ -27,6 +26,8 @@ import com.spring.dto.DetectionLogVO;
 import com.spring.service.DetectionLogService;
 import com.spring.util.RuntimeSettings;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest; // 💡 Tomcat 10 사양 완벽 준수
 import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 추가
 
 @Log4j2
@@ -51,12 +52,12 @@ public class DetectionLogController {
         
         File noImageFile = new File(uploadDir, "noImage.jpg");
         if (!noImageFile.exists()) {
-            jakarta.servlet.ServletContext context = request.getServletContext();
+            ServletContext context = request.getServletContext();
             String resourcePath = context.getRealPath("/resources/images/member/noImage.jpg");
             File originFile = new File(resourcePath);
             if (originFile.exists()) {
                 try (InputStream in = new FileInputStream(originFile);
-                     java.io.FileOutputStream out = new java.io.FileOutputStream(noImageFile)) {
+                     FileOutputStream out = new FileOutputStream(noImageFile)) {
                     IOUtils.copy(in, out);
                     log.info("🎯 [자가치유 완료] C:\\upload\\detection\\noImage.jpg 파일이 자동 배포되었습니다.");
                 } catch (Exception e) { log.error("이미지 복사 실패: ", e); }

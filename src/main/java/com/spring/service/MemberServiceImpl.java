@@ -67,6 +67,16 @@ public class MemberServiceImpl implements MemberService {
     public int getMemberListCount(PageMaker pageMaker) throws Exception {
         return memberDAO.selectMemberListCount(pageMaker);
     }
+
+    @Override
+    public List<MemberVO> getAdminMembers() throws Exception {
+        return memberDAO.selectAdminMembers();
+    }
+
+    @Override
+    public boolean isAdminMember(String memberId) throws Exception {
+        return memberDAO.isAdminMember(memberId);
+    }
     
     // 로그인 성공 후처리
     @Transactional

@@ -59,7 +59,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				authorities.add(new SimpleGrantedAuthority("ROLE_GUEST"));
 			}
 
-			return new UsernamePasswordAuthenticationToken(memberId, password, authorities);
+			return new UsernamePasswordAuthenticationToken(new CustomUser(member), password, authorities);
 
 		} catch (Exception e) {
 			e.printStackTrace();

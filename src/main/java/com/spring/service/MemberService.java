@@ -16,6 +16,10 @@ public interface MemberService {
     List<MemberVO> getMemberList(PageMaker pageMaker) throws Exception;
     
     int getMemberListCount(PageMaker pageMaker) throws Exception;
+
+    List<MemberVO> getAdminMembers() throws Exception;
+
+    boolean isAdminMember(String memberId) throws Exception;
     
     // 4. 로그인 성공 후처리 (실패 카운트 리셋, 마지막 로그인 일시 갱신)
     void loginSuccess(String memberId, String ip) throws Exception;

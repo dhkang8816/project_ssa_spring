@@ -1,13 +1,17 @@
 package com.spring.yolo;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,8 +28,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.cmd.PageMaker;
+import com.spring.dto.DroneVO;
 import com.spring.dto.FlightHistoryVO;
 import com.spring.service.DroneService;
 import com.spring.service.FlightHistoryService;
@@ -47,6 +53,8 @@ public class AIStreamBridgeController {
 			"SSA_FLASK_VIDEO_READ_TIMEOUT_MS", 3000);
 	private static final int FLASK_LABEL_TIMEOUT_MS = RuntimeSettings.positiveInt(
 			"SSA_FLASK_LABEL_TIMEOUT_MS", 1500);
+	private static final boolean LEGACY_LABEL_EVENT_SIDE_EFFECTS_ENABLED =
+			RuntimeSettings.enabled("SSA_ENABLE_LEGACY_LABEL_EVENT_SIDE_EFFECTS", false);
 	private static String currentMode = "local";
 	private static String lastActiveSourceKey = "video_1";
 
@@ -134,19 +142,22 @@ public class AIStreamBridgeController {
 		String pythonJsonUrl = FLASK_SERVER_URL + "/labels_feed";
 		boolean isFlaskAlive = false;
 		try {
-			java.net.URL url = new java.net.URL(pythonJsonUrl);
-			java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+			URL url = new URL(pythonJsonUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setConnectTimeout(FLASK_LABEL_TIMEOUT_MS);
 			conn.setReadTimeout(FLASK_LABEL_TIMEOUT_MS);
 
 			if (conn.getResponseCode() == 200) {
 				isFlaskAlive = true;
+
+				if (LEGACY_LABEL_EVENT_SIDE_EFFECTS_ENABLED) {
 				ObjectMapper mapper = new ObjectMapper();
-				com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(conn.getInputStream());
+				JsonNode root = mapper.readTree(conn.getInputStream());
 
 				// ➔ 핵심 분리 포인트: 비대하던 오라클 인서트 로직 전체를 분리해낸 전문 서비스 레이어로 위임 슛!
 				aiStreamBridgeService.processYoloLabels(root, currentMode, lastActiveSourceKey);
+				}
 			}
 		} catch (Exception e) {
 			// 통신 노이즈 패스
@@ -167,11 +178,11 @@ public class AIStreamBridgeController {
 			PageMaker dbPageMaker = new PageMaker();
 			dbPageMaker.setPage(1);
 			dbPageMaker.setPerPageNum(1000);
-			java.util.List<com.spring.dto.DroneVO> dbDroneList = droneService.getDroneList(dbPageMaker);
+			List<DroneVO> dbDroneList = droneService.getDroneList(dbPageMaker);
 
-			java.util.List<String> droneIdList = new ArrayList<>();
+			List<String> droneIdList = new ArrayList<>();
 			if (dbDroneList != null) {
-				for (com.spring.dto.DroneVO dvo : dbDroneList) {
+				for (DroneVO dvo : dbDroneList) {
 					if (dvo.getDroneId() != null) {
 						droneIdList.add(dvo.getDroneId());
 					}
@@ -221,16 +232,16 @@ public class AIStreamBridgeController {
 					os.write(buffer, 0, bytesRead);
 					if (!isJson)
 						os.flush();
-				} catch (java.net.SocketTimeoutException e) {
+				} catch (SocketTimeoutException e) {
 					if (Thread.currentThread().isInterrupted())
 						break;
-				} catch (java.io.IOException ioEx) {
+				} catch (IOException ioEx) {
 					break;
 				}
 			}
 			if (os != null)
 				os.flush();
-		} catch (java.io.InterruptedIOException e) {
+		} catch (InterruptedIOException e) {
 			Thread.currentThread().interrupt();
 		} catch (Exception e) {
 			// 패스

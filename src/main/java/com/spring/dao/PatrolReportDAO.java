@@ -14,4 +14,7 @@ public interface PatrolReportDAO {
     int deleteReport(int reportId);
     public List<PatrolReportVO> getReportListWithPaging(PageMaker pageMaker) throws Exception;
     public int getReportTotalCount(PageMaker pageMaker) throws Exception;
+    List<PatrolReportVO> getPendingReportListWithPaging(PageMaker pageMaker) throws Exception;
+    int getPendingReportTotalCount(PageMaker pageMaker) throws Exception;
+    int updateConfirmStatus(int reportId, String confirmStatus);
 }

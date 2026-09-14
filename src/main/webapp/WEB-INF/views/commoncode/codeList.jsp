@@ -58,26 +58,158 @@ th {
 	color: red;
 }
 </style>
+<style>
+body {
+	margin: 0;
+	padding: 32px;
+	background: #28283a;
+	color: #fff;
+	font-family: 'Malgun Gothic', sans-serif
+}
+
+h2 {
+	margin: 0 0 24px;
+	font-size: 26px;
+	color: #fff
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 18px 0;
+	background: #323244;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, .22)
+}
+
+th {
+	padding: 15px 16px;
+	background: #242434 !important;
+	color: #b0b5c0;
+	border: 0 !important;
+	border-bottom: 2px solid #48485e !important;
+	text-align: left
+}
+
+td {
+	padding: 14px 16px;
+	background: #323244;
+	color: #fff;
+	border: 0 !important;
+	border-bottom: 1px solid #48485e !important
+}
+
+tr:hover td {
+	background: #3a3a51
+}
+
+a {
+	color: #68d6de;
+	text-decoration: none
+}
+
+button {
+	padding: 9px 16px;
+	background: #6366f1;
+	color: #fff;
+	border: 0;
+	border-radius: 6px;
+	font-weight: 700;
+	cursor: pointer
+}
+
+button:hover {
+	background: #4f46e5
+}
+
+form {
+	margin-top: 18px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center
+}
+
+input, select {
+	padding: 8px 10px;
+	background: #242434;
+	color: #fff;
+	border: 1px solid #48485e;
+	border-radius: 5px
+}
+
+.pagination {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: center;
+	margin: 22px 0 !important;
+	padding: 0 !important
+}
+
+.pagination li {
+	margin: 0 !important
+}
+
+.pagination a, .pagination strong {
+	display: block;
+	padding: 6px 10px;
+	background: #242434;
+	border-radius: 5px
+}
+
+.pagination .active strong {
+	color: #00f0ff !important
+}
+
+@media ( max-width :760px) {
+	body {
+		padding: 20px
+	}
+	h2 {
+		font-size: 22px
+	}
+	table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap
+	}
+}
+</style>
+<style>
+body {
+	padding: 100px 32px 32px 282px;
+}
+
+@media ( max-width : 760px) {
+	body {
+		padding: 84px 20px 20px 230px;
+	}
+}
+</style>
 </head>
 <body>
+	<jsp:include page="/WEB-INF/views/menu.jsp" />
+	<jsp:include page="/WEB-INF/views/header.jsp" />
 
 	<h2>🛠️ 공통코드 데이터 연동 확인 화면</h2>
-	
+
 	<!-- 💡 pageMaker 객체에서 값 가져오도록 수정 -->
 	<p>
 		현재 페이지: <strong>${pageMaker.page}</strong> | 검색된 총 데이터 개수: <strong>${pageMaker.totalCount}개</strong>
 	</p>
-	
+
 	<button type="button"
-		onclick="location.href='${pageContext.request.contextPath}/commoncode/registerForm'">신규 코드 등록</button>
+		onclick="location.href='${pageContext.request.contextPath}/commoncode/registerForm'">신규
+		코드 등록</button>
 
 	<!-- 💡 검색 폼 영역 추가 -->
 	<div class="search-box">
-		<form action="${pageContext.request.contextPath}/commoncode/list" method="get">
-			그룹코드: <input type="text" name="searchGrpCode" value="${pageMaker.searchGrpCode}">
-			코드이름: <input type="text" name="searchKeyword" value="${pageMaker.searchKeyword}">
-			사용여부: 
-			<select name="searchUseYn">
+		<form action="${pageContext.request.contextPath}/commoncode/list"
+			method="get">
+			그룹코드: <input type="text" name="searchGrpCode"
+				value="${pageMaker.searchGrpCode}"> 코드이름: <input type="text"
+				name="searchKeyword" value="${pageMaker.searchKeyword}">
+			사용여부: <select name="searchUseYn">
 				<option value="">전체</option>
 				<option value="Y" ${pageMaker.searchUseYn == 'Y' ? 'selected' : ''}>Y</option>
 				<option value="N" ${pageMaker.searchUseYn == 'N' ? 'selected' : ''}>N</option>
@@ -118,7 +250,8 @@ th {
 				</c:when>
 				<c:otherwise>
 					<tr>
-						<td colspan="7" class="no-data">조회된 데이터가 없습니다. DB에 값이 들어있는지 확인하세요.</td>
+						<td colspan="7" class="no-data">조회된 데이터가 없습니다. DB에 값이 들어있는지
+							확인하세요.</td>
 					</tr>
 				</c:otherwise>
 			</c:choose>
@@ -128,20 +261,25 @@ th {
 	<!-- 💡 하단 페이징 버튼 영역 추가 (검색 조건 유지 포함) -->
 	<ul class="pagination">
 		<c:if test="${pageMaker.prev}">
-			<li><a href="list?page=${pageMaker.startPage - 1}&searchGrpCode=${pageMaker.searchGrpCode}&searchKeyword=${pageMaker.searchKeyword}&searchUseYn=${pageMaker.searchUseYn}">&laquo; 이전</a></li>
+			<li><a
+				href="list?page=${pageMaker.startPage - 1}&searchGrpCode=${pageMaker.searchGrpCode}&searchKeyword=${pageMaker.searchKeyword}&searchUseYn=${pageMaker.searchUseYn}">&laquo;
+					이전</a></li>
 		</c:if>
 
-		<c:forEach var="pageNum" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
-			<li class="${pageMaker.page == pageNum ? 'active' : ''}">
-				<a href="list?page=${pageNum}&searchGrpCode=${pageMaker.searchGrpCode}&searchKeyword=${pageMaker.searchKeyword}&searchUseYn=${pageMaker.searchUseYn}">${pageNum}</a>
+		<c:forEach var="pageNum" begin="${pageMaker.startPage}"
+			end="${pageMaker.endPage}">
+			<li class="${pageMaker.page == pageNum ? 'active' : ''}"><a
+				href="list?page=${pageNum}&searchGrpCode=${pageMaker.searchGrpCode}&searchKeyword=${pageMaker.searchKeyword}&searchUseYn=${pageMaker.searchUseYn}">${pageNum}</a>
 			</li>
 		</c:forEach>
 
 		<c:if test="${pageMaker.next}">
-			<li><a href="list?page=${pageMaker.endPage + 1}&searchGrpCode=${pageMaker.searchGrpCode}&searchKeyword=${pageMaker.searchKeyword}&searchUseYn=${pageMaker.searchUseYn}">다음 &raquo;</a></li>
+			<li><a
+				href="list?page=${pageMaker.endPage + 1}&searchGrpCode=${pageMaker.searchGrpCode}&searchKeyword=${pageMaker.searchKeyword}&searchUseYn=${pageMaker.searchUseYn}">다음
+					&raquo;</a></li>
 		</c:if>
 	</ul>
-	
+
 	<br>
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 

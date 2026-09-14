@@ -1,236 +1,227 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>유기동물 관제 시스템</title>
-    <link rel="stylesheet" href="<c:url value='/resources/css/style.css?v='/>">
-    <style>
-        /* 1. 글로벌 바디 및 가로 스크롤 누수 차단 */
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background-color: #161920; 
-            overflow-x: hidden; 
-        }
-        
-        /* 2. 상단 헤더 화면 최상단 레이어 자석 고정 (메뉴 잘림 현상 원천 차단) */
-        header, .top-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 80px !important;    /* 오라클 표준 헤더 높이 사수 */
-            z-index: 1000 !important;   /* 메뉴나 본문 영상이 위로 올라오지 못하도록 잠금 */
-        }
+<meta charset="UTF-8">
+<title>유기동물 관제 시스템</title>
+<link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
+<style>
+/* 1. 글로벌 바디 및 가로 스크롤 누수 차단 */
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #161920;
+	overflow-x: hidden;
+}
 
-        /* 3. [위치 이상 완치 저격선] 유령 보라색 블록을 깨부수고 메뉴바 우측 정위치 고정 */
-        .control-content-wrapper {
-            position: absolute !important;
-            top: 80px !important;        /* 고정 헤더 높이 80px 바로 아래에서 산뜻하게 시작 */
-            left: 250px !important;      /* 좌측 메뉴바 너비 250px 바로 오른쪽에 자석 밀착 */
-            width: calc(100% - 250px) !important; /* 사이드바를 제외한머지 우측 공간 전체 할당 */
-            padding: 20px 30px; 
-            box-sizing: border-box;
-            min-height: calc(100vh - 80px); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            margin: 0 !important;        /* 기존 화면을 무너뜨리던 스페이스 마진 강제 완전 초기화 */
-            z-index: 50 !important;
-        }
+/* 2. 상단 헤더 화면 최상단 레이어 자석 고정 (메뉴 잘림 현상 원천 차단) */
+header, .top-header {
+	position: fixed !important;
+	top: 0 !important;
+	left: 0 !important;
+	width: 100% !important;
+	height: 80px !important; /* 오라클 표준 헤더 높이 사수 */
+	z-index: 1000 !important; /* 메뉴나 본문 영상이 위로 올라오지 못하도록 잠금 */
+}
 
-        /* 4. 관제 메인 타이틀 폰트 규격 */
-        .section-title { 
-            color: #ffffff; 
-            font-size: 22px; 
-            font-weight: 600; 
-            margin-top: 5px; 
-            margin-bottom: 20px; 
-        }
+/* 3. [위치 이상 완치 저격선] 유령 보라색 블록을 깨부수고 메뉴바 우측 정위치 고정 */
+.control-content-wrapper {
+	position: absolute !important;
+	top: 80px !important; /* 고정 헤더 높이 80px 바로 아래에서 산뜻하게 시작 */
+	left: 250px !important; /* 좌측 메뉴바 너비 250px 바로 오른쪽에 자석 밀착 */
+	width: calc(100% - 250px) !important; /* 사이드바를 제외한머지 우측 공간 전체 할당 */
+	padding: 20px 30px;
+	box-sizing: border-box;
+	min-height: calc(100vh - 80px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 !important; /* 기존 화면을 무너뜨리던 스페이스 마진 강제 완전 초기화 */
+	z-index: 50 !important;
+}
 
-        /* 5. 블랙 비디오 프레임 디스플레이 상자 */
-        .video-display-box { 
-            background-color: #000000; 
-            padding: 8px; 
-            border-radius: 10px; 
-            border: 1px solid #2c313d; 
-            width: 100%; 
-            max-width: 640px; 
-            box-sizing: border-box; 
-            position: relative;
-        }
+/* 4. 관제 메인 타이틀 폰트 규격 */
+.section-title {
+	color: #ffffff;
+	font-size: 22px;
+	font-weight: 600;
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
 
-        /* 6. YOLOv8 바이너리 스트리밍 비디오 피드 태그 */
-        .streaming-frame { 
-            width: 100%; 
-            height: auto; 
-            display: block; 
-            border-radius: 4px; 
-        }
+/* 5. 블랙 비디오 프레임 디스플레이 상자 */
+.video-display-box {
+	background-color: #000000;
+	padding: 8px;
+	border-radius: 10px;
+	border: 1px solid #2c313d;
+	width: 100%;
+	max-width: 640px;
+	box-sizing: border-box;
+	position: relative;
+}
 
-        /* 7. 투명 도화지 카운터 캔버스 오버레이 레이어 */
-        .ai-canvas-overlay {
-            position: absolute; 
-            top: 8px; 
-            left: 8px;
-            width: calc(100% - 16px); 
-            height: calc(100% - 16px);
-            pointer-events: none; 
-            border-radius: 4px; 
-            z-index: 10;
-        }
+/* 6. YOLOv8 바이너리 스트리밍 비디오 피드 태그 */
+.streaming-frame {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 4px;
+}
 
-        /* 8. 멀티 채널 변환 하단 버튼 정렬 박스 */
-        .video-btn-wrapper { 
-            margin-top: 15px; 
-            display: flex; 
-            gap: 10px; 
-        }
+/* 7. 투명 도화지 카운터 캔버스 오버레이 레이어 */
+.ai-canvas-overlay {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	width: calc(100% - 16px);
+	height: calc(100% - 16px);
+	pointer-events: none;
+	border-radius: 4px;
+	z-index: 10;
+}
 
-        /* 9. 동영상 1, 2, 3번 스위칭 기본 버튼 양식 */
-        .btn-change { 
-            display: inline-block; 
-            padding: 8px 16px; 
-            background-color: #2c313d; 
-            color: #fff; 
-            text-decoration: none; 
-            border-radius: 5px; 
-            font-size: 14px; 
-            font-weight: 500; 
-            transition: background 0.2s; 
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn-change:hover { 
-            background-color: #414858; 
-        }
+/* 8. 멀티 채널 변환 하단 버튼 정렬 박스 */
+.video-btn-wrapper {
+	margin-top: 15px;
+	display: flex;
+	gap: 10px;
+}
 
-        /* 10. 실시간 드론 CAM (ESP32) 전용 녹색 강조 버튼 양식 */
-        .btn-esp { 
-            background-color: #157347; 
-        } 
-        
-        .btn-esp:hover { 
-            background-color: #1e7e34; 
-        }
-    </style>
+/* 9. 동영상 1, 2, 3번 스위칭 기본 버튼 양식 */
+.btn-change {
+	display: inline-block;
+	padding: 8px 16px;
+	background-color: #2c313d;
+	color: #fff;
+	text-decoration: none;
+	border-radius: 5px;
+	font-size: 14px;
+	font-weight: 500;
+	transition: background 0.2s;
+	border: none;
+	cursor: pointer;
+}
+
+.btn-change:hover {
+	background-color: #414858;
+}
+
+/* 10. 실시간 드론 CAM (ESP32) 전용 녹색 강조 버튼 양식 */
+.btn-esp {
+	background-color: #157347;
+}
+
+.btn-esp:hover {
+	background-color: #1e7e34;
+}
+</style>
 </head>
 <body>
 
-    <jsp:include page="/WEB-INF/views/menu.jsp" />
-    <jsp:include page="/WEB-INF/views/header.jsp" />
-	
-    <div class="control-content-wrapper" style="position: absolute !important; top: 80px !important; left: 250px !important; width: calc(100% - 250px) !important; margin: 0 !important; padding: 20px 30px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; z-index: 50 !important;">
-        <h2 class="section-title">실시간 유기동물 드론 관제 영상 (YOLOv8)</h2>
-        
-        <div class="video-display-box">
-            <img id="droneVideo" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="실시간 드론 관제 AI 분석 스트리밍" />
-            <canvas id="aiCanvas" class="ai-canvas-overlay"></canvas>
-        </div>
-        
-        <div class="video-btn-wrapper">
-            <!-- 🌟 [동작 원리 최적화] 복잡한 백엔드 경로 탐색 오류를 차단하기 위해 버튼을 클릭하면 자바스크립트 함수(switchMode)가 즉시 낚아채서 경로를 직통 맵핑하도록 버튼 구조 개량 -->
-            <button type="button" onclick="switchMode('video_1')" class="btn-change">동영상 1번</button> 
-            <button type="button" onclick="switchMode('video_2')" class="btn-change">동영상 2번</button> 
-            <button type="button" onclick="switchMode('video_3')" class="btn-change">동영상 3번</button>
-            <button type="button" onclick="switchMode('esp32')" class="btn-change btn-esp">실시간 드론 CAM (ESP32)</button>
-        </div>
-        
-       	<!-- ================================================================ -->
+	<jsp:include page="/WEB-INF/views/menu.jsp" />
+	<jsp:include page="/WEB-INF/views/header.jsp" />
+
+	<div class="control-content-wrapper"
+		style="position: absolute !important; top: 80px !important; left: 250px !important; width: calc(100% - 250px) !important; margin: 0 !important; padding: 20px 30px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; z-index: 50 !important;">
+		<h2 class="section-title">실시간 유기동물 드론 관제 영상 (YOLOv8)</h2>
+
+		<div class="video-display-box">
+			<img id="droneVideo"
+				src="${pageContext.request.contextPath}/yolo/videoFeed"
+				class="streaming-frame" alt="실시간 드론 관제 AI 분석 스트리밍" />
+			<canvas id="aiCanvas" class="ai-canvas-overlay"></canvas>
+		</div>
+
+		<div class="video-btn-wrapper">
+			<!-- 🌟 [동작 원리 최적화] 복잡한 백엔드 경로 탐색 오류를 차단하기 위해 버튼을 클릭하면 자바스크립트 함수(switchMode)가 즉시 낚아채서 경로를 직통 맵핑하도록 버튼 구조 개량 -->
+			<button type="button" onclick="switchMode('video_1')"
+				class="btn-change">동영상 1번</button>
+			<button type="button" onclick="switchMode('video_2')"
+				class="btn-change">동영상 2번</button>
+			<button type="button" onclick="switchMode('video_3')"
+				class="btn-change">동영상 3번</button>
+			<button type="button" onclick="switchMode('esp32')"
+				class="btn-change btn-esp">실시간 드론 CAM (ESP32)</button>
+		</div>
+
+		<!-- ================================================================ -->
 		<!--  [위치 이상 완치] 비디오 박스 상단 자석 고정형 드롭다운 설정 컴포넌트 -->
 		<!-- ================================================================ -->
-		<div class="drone-dropdown-wrapper" style="
-		    width: 100%; 
-		    max-width: 640px; 
-		    display: flex !important; 
-		    justify-content: flex-end !important; 
-		    position: relative !important; /* 상단 헤더로 뚫고 올라가는 현상 원천 차단 */
-		    margin-top: 15px;
-		    margin-bottom: 10px; 
-		    box-sizing: border-box;
-		    z-index: 1000 !important; /* 영상 및 캔버스보다 무조건 위 레이어 배치 */
-		">
-		    <!-- 토글 트리거 버튼 -->
-		    <button type="button" id="btnToggleDroneSetting" style="
-		        background-color: #2c313d; 
-		        color: #ffffff; 
-		        border: 1px solid #414858; 
-		        padding: 6px 14px; 
-		        border-radius: 5px; 
-		        cursor: pointer; 
-		        font-size: 13px; 
-		        font-weight: 500;
-		        transition: background 0.2s;
-		    " onmouseover="this.style.backgroundColor='#414858'" onmouseout="this.style.backgroundColor='#2c313d'">
-		        ⚙ 드론 설정
-		    </button>
-		
-		    <!-- 클릭 시 아래로 정위치 팝업 처리되는 드롭다운 창 -->
-		    <div id="droneSettingDropdown" style="
-		        display: none; 
-		        position: absolute; 
-		        top: 35px; 
-		        right: 0; 
-		        width: 320px; 
-		        background-color: #222733; 
-		        border: 1px solid #2c313d; 
-		        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); 
-		        border-radius: 8px; 
-		        padding: 15px; 
-		        box-sizing: border-box;
-		        z-index: 9999 !important;
-		    ">
-		        <h4 style="color: #ffffff; font-size: 13px; margin-top: 0; margin-bottom: 12px; font-weight: 600; border-bottom: 1px solid #3b4252; padding-bottom: 8px;">
-		            ⚙ 채널별 드론 배정 실시간 매핑
-		        </h4>
-		        
+		<div class="drone-dropdown-wrapper"
+			style="width: 100%; max-width: 640px; display: flex !important; justify-content: flex-end !important; position: relative !important; /* 상단 헤더로 뚫고 올라가는 현상 원천 차단 */ margin-top: 15px; margin-bottom: 10px; box-sizing: border-box; z-index: 1000 !important;">
+			<!-- 토글 트리거 버튼 -->
+			<button type="button" id="btnToggleDroneSetting"
+				style="background-color: #2c313d; color: #ffffff; border: 1px solid #414858; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 500; transition: background 0.2s;"
+				onmouseover="this.style.backgroundColor='#414858'"
+				onmouseout="this.style.backgroundColor='#2c313d'">⚙ 드론 설정</button>
+
+			<!-- 클릭 시 아래로 정위치 팝업 처리되는 드롭다운 창 -->
+			<div id="droneSettingDropdown"
+				style="display: none; position: absolute; top: 35px; right: 0; width: 320px; background-color: #222733; border: 1px solid #2c313d; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); border-radius: 8px; padding: 15px; box-sizing: border-box; z-index: 9999 !important;">
+				<h4
+					style="color: #ffffff; font-size: 13px; margin-top: 0; margin-bottom: 12px; font-weight: 600; border-bottom: 1px solid #3b4252; padding-bottom: 8px;">
+					⚙ 채널별 드론 배정 실시간 매핑</h4>
+
 				<div style="display: flex; flex-direction: column; gap: 10px;">
-				    <!-- 동영상 1번 -->
-				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-				        <span style="width: 100px;">동영상 1번</span>
-				        <select id="drone_select_video_1" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
-				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
-				        </select>
-				        <button type="button" onclick="fn_saveDroneMapping('video_1')" style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
-				    </div>
-				    <!-- 동영상 2번 -->
-				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-				        <span style="width: 100px;">동영상 2번</span>
-				        <select id="drone_select_video_2" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
-				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
-				        </select>
-				        <button type="button" onclick="fn_saveDroneMapping('video_2')" style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
-				    </div>
-				    <!-- 동영상 3번 -->
-				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-				        <span style="width: 100px;">동영상 3번</span>
-				        <select id="drone_select_video_3" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
-				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
-				        </select>
-				        <button type="button" onclick="fn_saveDroneMapping('video_3')" style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
-				    </div>
-				    <!-- 실시간 CAM -->
-				    <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-				        <span style="width: 100px; color: #5ddcff;">실시간 CAM</span>
-				        <select id="drone_select_esp32" class="drone-map-select" style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
-				            <!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
-				        </select>
-				        <button type="button" onclick="fn_saveDroneMapping('esp32')" style="background: #157347; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
-				    </div>
+					<!-- 동영상 1번 -->
+					<div
+						style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+						<span style="width: 100px;">동영상 1번</span> <select
+							id="drone_select_video_1" class="drone-map-select"
+							style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+							<!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+						</select>
+						<button type="button" onclick="fn_saveDroneMapping('video_1')"
+							style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+					</div>
+					<!-- 동영상 2번 -->
+					<div
+						style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+						<span style="width: 100px;">동영상 2번</span> <select
+							id="drone_select_video_2" class="drone-map-select"
+							style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+							<!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+						</select>
+						<button type="button" onclick="fn_saveDroneMapping('video_2')"
+							style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+					</div>
+					<!-- 동영상 3번 -->
+					<div
+						style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+						<span style="width: 100px;">동영상 3번</span> <select
+							id="drone_select_video_3" class="drone-map-select"
+							style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+							<!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+						</select>
+						<button type="button" onclick="fn_saveDroneMapping('video_3')"
+							style="background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+					</div>
+					<!-- 실시간 CAM -->
+					<div
+						style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
+						<span style="width: 100px; color: #5ddcff;">실시간 CAM</span> <select
+							id="drone_select_esp32" class="drone-map-select"
+							style="background: #161920; color: #fff; border: 1px solid #414858; padding: 4px; border-radius: 4px; width: 120px; font-size: 12px; cursor: pointer;">
+							<!-- DB 데이터가 들어올 공간 (하드코딩 삭제) -->
+						</select>
+						<button type="button" onclick="fn_saveDroneMapping('esp32')"
+							style="background: #157347; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">적용</button>
+					</div>
 				</div>
-		    </div>
+			</div>
 		</div>
-    </div>
-    
+	</div>
+
 </body>
 
-<script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
-    
-    <script>
+<script
+	src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
+
+<script>
         // 현재 브라우저 페이지 세션 안에서 사용할 라우팅 메모리 상태 변수 정의 (기본값: videoFeed 기본 통로)
         let activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels';
         const esp32VideoUrl = "${flaskEsp32VideoUrl}" || "http://localhost:5000/esp32_yolov12/video_feed";
@@ -371,7 +362,7 @@
         });
     </script>
 
-    <script>
+<script>
 		// 알림이 도착했을 때 동적으로 HTML 리스트를 밀어 넣는 공통 함수
 	    function appendRealtimeAlarm(message) {
 	        // '알림이 없습니다' 문구가 있으면 먼저 지우기
@@ -397,8 +388,8 @@
 	    }
 
     </script>
-    
-    <script>
+
+<script>
     
 	 // 1. 드론 설정 버튼 클릭 시 팝업 창 슬라이드/페이드 토글
 	    $('#btnToggleDroneSetting').on('click', function(e) {

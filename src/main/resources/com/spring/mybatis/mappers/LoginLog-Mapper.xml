@@ -30,7 +30,7 @@
                 SELECT 
                     LOG_ID, LOGIN_IP, LOGIN_STATUS, LOGIN_DATE, MEMBER_ID
                 FROM 
-                    LOGIN_LOG_TABLE <!-- 📌 실물 DB 테이블명에 맞게 필요시 교체하세요 -->
+                    MEMBER_LOG
                 WHERE 
                     LOG_ID &gt; 0
                     <include refid="search" />
@@ -47,7 +47,7 @@
         SELECT 
             COUNT(*)
         FROM 
-            LOGIN_LOG_TABLE
+            MEMBER_LOG
         WHERE 
             LOG_ID &gt; 0
             <include refid="search" />

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
@@ -30,14 +30,14 @@
 				<tr>
 					<th>축종 구분</th>
 					<td>
-						<!-- 💡 DB 목록을 뽑으면서 기존에 선택된 축종에 selected 자동 매핑 --> 
-						<select name="animalType" style="width: 256px;">
+						<!-- 💡 DB 목록을 뽑으면서 기존에 선택된 축종에 selected 자동 매핑 --> <select
+						name="animalType" style="width: 256px;">
 							<c:forEach var="code" items="${animalTypeList}">
 								<option value="${code.code}"
 									${animal.animalType == code.code ? 'selected="selected"' : ''}>
 									${code.codeName} (${code.code})</option>
 							</c:forEach>
-						</select>
+					</select>
 					</td>
 				</tr>
 				<tr>
@@ -93,30 +93,30 @@
 	<a href="${pageContext.request.contextPath}/">메인으로</a>
 
 </body>
-	<script>
-		// 💡 버튼 하나로 수정/삭제 주소를 동적으로 분기하는 레거시 표준 자바스크립트 함수
-		function fn_submit(mode) {
-			var form = document.getElementById("detailForm");
+<script>
+	// 💡 버튼 하나로 수정/삭제 주소를 동적으로 분기하는 레거시 표준 자바스크립트 함수
+	function fn_submit(mode) {
+		var form = document.getElementById("detailForm");
 
-			if (mode === 'modify') {
-				if (!confirm("동물 정보를 수정하시겠습니까?"))
-					return;
-				form.action = "${pageContext.request.contextPath}/animal/modify";
-			} else if (mode === 'remove') {
-				if (!confirm("정말로 이 동물 데이터를 삭제하시겠습니까?\n(삭제 시 개체수 대시보드에서 1마리가 자동 감소합니다.)"))
-					return;
-				form.action = "${pageContext.request.contextPath}/animal/remove";
-			}
-
-			form.submit();
+		if (mode === 'modify') {
+			if (!confirm("동물 정보를 수정하시겠습니까?"))
+				return;
+			form.action = "${pageContext.request.contextPath}/animal/modify";
+		} else if (mode === 'remove') {
+			if (!confirm("정말로 이 동물 데이터를 삭제하시겠습니까?\n(삭제 시 개체수 대시보드에서 1마리가 자동 감소합니다.)"))
+				return;
+			form.action = "${pageContext.request.contextPath}/animal/remove";
 		}
 
-		// 기존 검색조건과 페이지 번호를 유지한 채 목록으로 안전하게 튕겨주는 함수
-		function fn_goList() {
-			location.href = "${pageContext.request.contextPath}/animal/list"
-					+ "?page=${pageMaker.page}"
-					+ "&searchType=${pageMaker.searchType}"
-					+ "&keyword=${pageMaker.keyword}";
-		}
-	</script>
+		form.submit();
+	}
+
+	// 기존 검색조건과 페이지 번호를 유지한 채 목록으로 안전하게 튕겨주는 함수
+	function fn_goList() {
+		location.href = "${pageContext.request.contextPath}/animal/list"
+				+ "?page=${pageMaker.page}"
+				+ "&searchType=${pageMaker.searchType}"
+				+ "&keyword=${pageMaker.keyword}";
+	}
+</script>
 </html>

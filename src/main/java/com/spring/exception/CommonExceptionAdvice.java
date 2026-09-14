@@ -1,10 +1,13 @@
 package com.spring.exception;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.dao.DataAccessException;
-import org.mybatis.spring.MyBatisSystemException;
 
 @ControllerAdvice // 💡 1. 모든 컨트롤러에서 발생하는 에러를 감시하는 스프링 전용 어노테이션
 public class CommonExceptionAdvice {
@@ -30,7 +33,7 @@ public class CommonExceptionAdvice {
     }
     
     // 💡 CommonExceptionAdvice.java 내부에 추가할 오라클 제약조건 최후의 보루
-    @ExceptionHandler(java.sql.SQLIntegrityConstraintViolationException.class)
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ModelAndView handleBulkKeyException(Exception ex) {
         ModelAndView mav = new ModelAndView();
         
@@ -48,7 +51,7 @@ public class CommonExceptionAdvice {
     }
     
     // CommonExceptionAdvice.java 클래스 내부에 핸들러 추가
-    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    @ExceptionHandler(DataIntegrityViolationException.class)
     public ModelAndView handleDataIntegrityException(Exception ex) {
         ModelAndView mav = new ModelAndView();
         

@@ -62,4 +62,22 @@ public class PatrolReportDAOImpl implements PatrolReportDAO {
         // 🔥 [버그 픽스] 중복 마침표 수식 분쇄 정정 (PatrolReport-Mapper.. -> PatrolReport-Mapper.)
         return sqlSession.selectOne(NAMESPACE + ".getReportTotalCount", pageMaker);
     }
+
+    @Override
+    public List<PatrolReportVO> getPendingReportListWithPaging(PageMaker pageMaker) throws Exception {
+        return sqlSession.selectList(NAMESPACE + ".getPendingReportListWithPaging", pageMaker);
+    }
+
+    @Override
+    public int getPendingReportTotalCount(PageMaker pageMaker) throws Exception {
+        return sqlSession.selectOne(NAMESPACE + ".getPendingReportTotalCount", pageMaker);
+    }
+
+    @Override
+    public int updateConfirmStatus(int reportId, String confirmStatus) {
+        java.util.Map<String, Object> params = new java.util.HashMap<>();
+        params.put("reportId", reportId);
+        params.put("confirmStatus", confirmStatus);
+        return sqlSession.update(NAMESPACE + ".updateConfirmStatus", params);
+    }
 }

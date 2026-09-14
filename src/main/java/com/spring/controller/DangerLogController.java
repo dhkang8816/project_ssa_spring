@@ -2,9 +2,12 @@ package com.spring.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils; // 💡 아파치 commons 라이브러리 연동
 import org.springframework.beans.factory.annotation.Autowired; // 💡 프로젝트 스타일 동기화
@@ -29,6 +32,7 @@ import com.spring.service.DangerDetailService;
 import com.spring.service.DangerLogService;
 import com.spring.util.RuntimeSettings;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest; // 💡 Tomcat 10 사양 완벽 준수
 import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 통합 완료
 
@@ -61,13 +65,13 @@ public class DangerLogController {
         File noImageFile = new File(uploadDir, "noImage.jpg");
         if (!noImageFile.exists()) {
             // 프로젝트 내부(/resources/images/member/noImage.jpg) 원본 경로 지정
-            jakarta.servlet.ServletContext context = request.getServletContext();
+            ServletContext context = request.getServletContext();
             String resourcePath = context.getRealPath("/resources/images/member/noImage.jpg");
             File originFile = new File(resourcePath);
             
             if (originFile.exists()) {
                 try (InputStream in = new FileInputStream(originFile);
-                     java.io.FileOutputStream out = new java.io.FileOutputStream(noImageFile)) {
+                     FileOutputStream out = new FileOutputStream(noImageFile)) {
                     
                     // IOUtils를 활용하여 단 한 줄로 원본 이미지를 C드라이브로 안전하게 복사 생성!
                     IOUtils.copy(in, out);
@@ -97,7 +101,7 @@ public class DangerLogController {
         List<DangerDetailVO> dangerMasterList = dangerDetailService.getDangerList(pm);
         
         // C. 마스터 데이터를 시스템 코드 맵(Map) 구조로 변환 (Key: ID, Value: 이름)
-        java.util.Map<Integer, String> dangerCodeMap = new java.util.HashMap<>();
+        Map<Integer, String> dangerCodeMap = new HashMap<>();
         for (DangerDetailVO master : dangerMasterList) {
             dangerCodeMap.put(master.getDangerId(), master.getDangerName());
         }
@@ -129,7 +133,7 @@ public class DangerLogController {
         pm.setPerPageNum(1000);
         List<DangerDetailVO> dangerMasterList = dangerDetailService.getDangerList(pm);
         
-        java.util.Map<Integer, String> dangerCodeMap = new java.util.HashMap<>();
+        Map<Integer, String> dangerCodeMap = new HashMap<>();
         for (DangerDetailVO master : dangerMasterList) {
             dangerCodeMap.put(master.getDangerId(), master.getDangerName());
         }

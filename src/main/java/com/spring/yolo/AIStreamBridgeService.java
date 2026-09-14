@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.spring.cmd.PageMaker;
 import com.spring.dao.VideoDroneMapDAO;
@@ -14,6 +13,7 @@ import com.spring.dto.AlertLogVO;
 import com.spring.dto.AnimalCounterVO;
 import com.spring.dto.DangerLogVO;
 import com.spring.dto.DetectionLogVO;
+import com.spring.dto.VideoDroneMapVO;
 import com.spring.service.AlertLogService;
 import com.spring.service.AnimalCounterService;
 import com.spring.service.DangerLogService;
@@ -58,9 +58,9 @@ public class AIStreamBridgeService {
         if (!isDroneCacheLoaded) {
             try {
                 // 주입받은 DAO를 직접 찔러서 리스트 추출
-                java.util.List<com.spring.dto.VideoDroneMapVO> list = videoDroneMapDAO.selectAllMappings();
+                List<VideoDroneMapVO> list = videoDroneMapDAO.selectAllMappings();
                 if (list != null) {
-                    for (com.spring.dto.VideoDroneMapVO vo : list) {
+                    for (VideoDroneMapVO vo : list) {
                         videoDroneCache.put(vo.getSourceKey(), vo.getDroneId());
                     }
                 }
@@ -85,7 +85,7 @@ public class AIStreamBridgeService {
 		this.isMetadataLoaded = true;
 	}
 
-	public java.util.Map<String, String> getRawDroneCache() {
+	public Map<String, String> getRawDroneCache() {
 		if (!isDroneCacheLoaded)
 			initDroneCache();
 		return this.videoDroneCache;

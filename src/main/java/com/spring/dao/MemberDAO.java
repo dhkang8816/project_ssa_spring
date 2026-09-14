@@ -28,6 +28,10 @@ public interface MemberDAO {
 	// 5. ⭕ 한 직원이 여러 권한을 가질 수 있으므로 List 구조가 완벽히 맞습니다.
 	List<MemberRoleVO> selectMemberRoles(String memberId) throws Exception;
 
+	List<MemberVO> selectAdminMembers() throws Exception;
+
+	boolean isAdminMember(String memberId) throws Exception;
+
 	// 6. 회원 정보 등록
 	void insertMember(MemberVO member) throws Exception;
 

@@ -108,6 +108,21 @@
 		WHERE MEMBER_ID = #{memberId}
 	</select>
 
+	<select id="selectAdminMembers" resultMap="memberMap">
+		SELECT DISTINCT M.MEMBER_ID, M.NAME, M.DEPARTMENT, M.STATUS
+		FROM MEMBER M
+		INNER JOIN MEMBER_ROLE MR ON MR.MEMBER_ID = M.MEMBER_ID
+		WHERE MR.ROLE_CODE = 'ROLE_ADMIN'
+		ORDER BY M.NAME, M.MEMBER_ID
+	</select>
+
+	<select id="countAdminMember" parameterType="string" resultType="int">
+		SELECT COUNT(*)
+		FROM MEMBER_ROLE
+		WHERE MEMBER_ID = #{memberId}
+		  AND ROLE_CODE = 'ROLE_ADMIN'
+	</select>
+
 	<!-- 6. 회원 기본 권한 등록 -->
 	<insert id="insertMemberRole" parameterType="com.spring.dto.MemberRoleVO">
 		INSERT INTO MEMBER_ROLE (

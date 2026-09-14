@@ -1,6 +1,8 @@
 package com.spring.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,8 +51,8 @@ public class AlertLogController {
             
             // 3. 자바 스트림(Stream)을 이용해 공통 코드를 [코드값 : 한글명] 형태의 Map으로 빠른 변환
             // 예: {"ALT01"="드론 상태 경보", "ALT02"="위험 동물 탐지", ...}
-            java.util.Map<String, String> codeMap = commonCodeList.stream()
-                .collect(java.util.stream.Collectors.toMap(
+            Map<String, String> codeMap = commonCodeList.stream()
+                .collect(Collectors.toMap(
                     CommonCodeVO::getCode, 
                     CommonCodeVO::getCodeName,
                     (existing, replacement) -> existing // 중복 키 방어
@@ -129,8 +131,8 @@ public class AlertLogController {
             searchCodeCmd.setSearchGrpCode("ALERT_TYPE");
             List<CommonCodeVO> commonCodeList = commonCodeService.getCommonCodeList(searchCodeCmd);
             
-            java.util.Map<String, String> codeMap = commonCodeList.stream()
-                .collect(java.util.stream.Collectors.toMap(
+            Map<String, String> codeMap = commonCodeList.stream()
+                .collect(Collectors.toMap(
                     CommonCodeVO::getCode, 
                     CommonCodeVO::getCodeName,
                     (existing, replacement) -> existing

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
@@ -8,8 +8,138 @@
 <head>
 <meta charset="UTF-8">
 <title>보호 동물 목록</title>
+<style>
+body {
+	margin: 0;
+	padding: 32px;
+	background: #28283a;
+	color: #fff;
+	font-family: 'Malgun Gothic', sans-serif
+}
+
+h2 {
+	margin: 0 0 24px;
+	font-size: 26px;
+	color: #fff
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 18px 0;
+	background: #323244;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, .22)
+}
+
+th {
+	padding: 15px 16px;
+	background: #242434 !important;
+	color: #b0b5c0;
+	border: 0 !important;
+	border-bottom: 2px solid #48485e !important;
+	text-align: left
+}
+
+td {
+	padding: 14px 16px;
+	background: #323244;
+	color: #fff;
+	border: 0 !important;
+	border-bottom: 1px solid #48485e !important
+}
+
+tr:hover td {
+	background: #3a3a51
+}
+
+a {
+	color: #68d6de;
+	text-decoration: none
+}
+
+button {
+	padding: 9px 16px;
+	background: #6366f1;
+	color: #fff;
+	border: 0;
+	border-radius: 6px;
+	font-weight: 700;
+	cursor: pointer
+}
+
+button:hover {
+	background: #4f46e5
+}
+
+form {
+	margin-top: 18px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center
+}
+
+input, select {
+	padding: 8px 10px;
+	background: #242434;
+	color: #fff;
+	border: 1px solid #48485e;
+	border-radius: 5px
+}
+
+.pagination {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: center;
+	margin: 22px 0 !important;
+	padding: 0 !important
+}
+
+.pagination li {
+	margin: 0 !important
+}
+
+.pagination a, .pagination strong {
+	display: block;
+	padding: 6px 10px;
+	background: #242434;
+	border-radius: 5px
+}
+
+.pagination .active strong {
+	color: #00f0ff !important
+}
+
+@media ( max-width :760px) {
+	body {
+		padding: 20px
+	}
+	h2 {
+		font-size: 22px
+	}
+	table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap
+	}
+}
+</style>
+<style>
+body {
+	padding: 100px 32px 32px 282px;
+}
+
+@media ( max-width : 760px) {
+	body {
+		padding: 84px 20px 20px 230px;
+	}
+}
+</style>
 </head>
 <body>
+	<jsp:include page="/WEB-INF/views/menu.jsp" />
+	<jsp:include page="/WEB-INF/views/header.jsp" />
 	<h2>보호 동물 목록 화면</h2>
 
 	<!-- 기존 코드 중 '신규 동물 등록' 버튼 옆에 나란히 붙여줍니다 -->
