@@ -101,7 +101,7 @@ body {
 						<c:otherwise>
 							<c:forEach var="report" items="${reportList}">
 								<tr>
-									<td><a style="color: #5ddcff;"
+									<td><a data-detail-popup data-popup-name="patrolReportDetail" style="color: #5ddcff;"
 										href="${pageContext.request.contextPath}/patrolreport/detail/${report.reportId}">${report.reportId}</a></td>
 									<td><fmt:formatDate value="${report.reportDate}"
 											pattern="yyyy-MM-dd" /></td>

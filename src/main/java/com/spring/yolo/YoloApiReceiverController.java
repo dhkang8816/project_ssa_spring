@@ -12,9 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import com.spring.dto.DangerLogVO;
 import com.spring.dto.DetectionLogVO;
 import com.spring.dto.AlertLogVO;
-import com.spring.service.DangerLogService;
-import com.spring.service.DetectionLogService;
-import com.spring.dao.AlertLogDAO; 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -23,13 +20,7 @@ import lombok.extern.log4j.Log4j2;
 public class YoloApiReceiverController {
 
     @Autowired
-    private DetectionLogService detectionLogService;
-    
-    @Autowired
-    private DangerLogService dangerLogService;
-    
-    @Autowired
-    private AlertLogDAO alertLogDAO; 
+    private AlertLinkingService alertLinkingService;
     
     @Autowired
     private HttpSession session; 
@@ -47,10 +38,7 @@ public class YoloApiReceiverController {
                     vo.setDroneId("DRONE01");
                 }
                 
-                // 1. 부모 테이블(DETECTION_LOG) 적재 실행
-                detectionLogService.registerDetectionLog(vo); 
-                
-                // 2. 다이렉트 DAO 연동 1
+                // 1. 부모 로그와 ALERT_LOG를 하나의 트랜잭션으로 적재
                 try {
                     // 🌟 [데이터 왜곡 완치] 수신된 vo의 animalType을 보고 알림 메시지를 동적으로 바인딩합니다.
                     String animalName = "0".equals(vo.getAnimalType()) ? "반려견(dog)" : "고양이(cat)";
@@ -63,7 +51,7 @@ public class YoloApiReceiverController {
                          .firstSendTime(new Timestamp(System.currentTimeMillis()))
                          .build();
                          
-                    alertLogDAO.insertAlertLog(avo); 
+                    alertLinkingService.recordDetectionAlert(vo, avo);
                     log.info(" [다이렉트 적재 성공] '동물미달(0)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
                     
                     // 실시간 팝업 브릿지 세션 주머니 연동
@@ -72,6 +60,7 @@ public class YoloApiReceiverController {
              
                 } catch (Exception alertEx) {
                     log.error("❌ [DAO 적재 에러] 트랙 A ALERT_LOG 직통 인서트 실패: ", alertEx);
+                    throw new IllegalStateException("Detection alert persistence failed.", alertEx);
                 }
                 return new ResponseEntity<>("{\"status\":\"SUCCESS\"}", HttpStatus.OK);
             } catch (Exception e) {
@@ -94,10 +83,7 @@ public class YoloApiReceiverController {
                     // 혹은 현재 활성화된 드론을 찾아오는 로직 연동
                     vo.setDroneId("DRONE01"); 
                 }
-                // 1. 부모 위험 테이블(DANGER_LOG) 적재 실행
-                dangerLogService.registerDangerLog(vo); 
-                
-                // 2. 다이렉트 DAO 연동 2
+                // 1. 부모 로그와 ALERT_LOG를 하나의 트랜잭션으로 적재
                 try {
                     String dangerName = "확인불명 이상객체";
                     if (vo.getDangerType() == 2) dangerName = "외계 생물(블루)";
@@ -113,7 +99,7 @@ public class YoloApiReceiverController {
                          .firstSendTime(new Timestamp(System.currentTimeMillis()))
                          .build();
                          
-                    alertLogDAO.insertAlertLog(avo); 
+                    alertLinkingService.recordDangerAlert(vo, avo);
                     log.info(" [다이렉트 적재 성공] '이상개체(1)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
                     
                     // 실시간 팝업 브릿지 세션 주머니 연동
@@ -122,6 +108,7 @@ public class YoloApiReceiverController {
              
                 } catch (Exception alertEx) {
                     log.error("❌ [DAO 적재 에러] 트랙 B ALERT_LOG 직통 인서트 실패: ", alertEx);
+                    throw new IllegalStateException("Danger alert persistence failed.", alertEx);
                 }
                 return new ResponseEntity<>("{\"status\":\"SUCCESS\"}", HttpStatus.OK); 
             } catch (Exception e) {

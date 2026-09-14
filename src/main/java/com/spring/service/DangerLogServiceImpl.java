@@ -21,8 +21,9 @@ public class DangerLogServiceImpl implements DangerLogService {
     @Override
     @Transactional
     public void registerDangerLog(DangerLogVO dlv) {
-        // [CREATE] 관제 탐지 로그 등록
-        dangerLogDAO.insertDangerLog(dlv);
+        if (dangerLogDAO.insertDangerLog(dlv) != 1) {
+            throw new IllegalStateException("Danger log was not inserted.");
+        }
     }
 
     @Override

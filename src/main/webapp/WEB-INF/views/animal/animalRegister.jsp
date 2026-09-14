@@ -14,6 +14,7 @@
 	<!-- 스프링 폼 태그를 활용한 데이터 전송 (POST) -->
 	<form:form action="${pageContext.request.contextPath}/animal/register"
 		method="post">
+		<c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
 		<table border="1">
 			<tbody>
 				<tr>

@@ -34,6 +34,9 @@
 
 	<!-- [CREATE] 1. 관제 탐지 로그 등록 (2번 방식: 비인가 드론 유입 시 에러 없이 무시 방어선 적용) -->
 	<insert id="insertDangerLog" parameterType="com.spring.dto.DangerLogVO">
+	    <selectKey keyProperty="danlogId" resultType="int" order="BEFORE">
+	        SELECT DANGER_LOG_SEQ.NEXTVAL FROM DUAL
+	    </selectKey>
 	    INSERT INTO DANGER_LOG (
 	        DANLOG_ID, 
 	        DANGER_TYPE, 
@@ -45,7 +48,7 @@
 	        DRONE_ID
 	    )
 	    SELECT 
-	        (SELECT NVL(MAX(DANLOG_ID), 0) + 1 FROM DANGER_LOG), -- 💡 시퀀스 대체 서브쿼리
+	        #{danlogId, jdbcType=INTEGER},
 	        #{dangerType, jdbcType=INTEGER},
 	        CURRENT_TIMESTAMP, -- 밀리초 단위를 위해 TIMESTAMP 표준 적용
 	        '0', -- 최초 포착 시 기본값 '0'(미확인) 적재

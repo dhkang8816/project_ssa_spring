@@ -21,8 +21,9 @@ public class DetectionLogServiceImpl implements DetectionLogService {
     @Override
     @Transactional
     public void registerDetectionLog(DetectionLogVO dlv) {
-        // [CREATE] 관제 탐지 로그 등록
-        detectionLogDAO.insertDetectionLog(dlv);
+        if (detectionLogDAO.insertDetectionLog(dlv) != 1) {
+            throw new IllegalStateException("Detection log was not inserted.");
+        }
     }
 
     @Override

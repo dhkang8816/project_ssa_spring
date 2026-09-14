@@ -165,12 +165,9 @@ body {
 				</c:when>
 				<c:otherwise>
 					<c:forEach var="history" items="${flightHistoryList}">
-						<tr>
-							<td style="padding: 8px;">
-								<!-- 상세 보기 및 제어 화면 이동 링크 --> <a
-								href="${pageContext.request.contextPath}/flighthistory/detail?flightId=${history.flightId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
-									${history.flightId} </a>
-							</td>
+						<tr style="cursor: pointer;"
+							onclick="return openDetailPopup('${pageContext.request.contextPath}/flighthistory/detail?flightId=${history.flightId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'flightHistoryDetail');">
+							<td style="padding: 8px;">${history.flightId}</td>
 							<td style="padding: 8px; font-weight: bold;"><c:choose>
 									<c:when test="${empty history.droneId}">
 										<span style="color: gray;">알수없음</span>

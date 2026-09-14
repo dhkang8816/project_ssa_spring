@@ -143,11 +143,11 @@ body {
 	<h2>시스템 경보 이력 목록 화면</h2>
 
 	<!-- 버튼 및 상단 영역 -->
-	<div style="margin-bottom: 10px;">
+	<%-- <div style="margin-bottom: 10px;">
 		<button type="button"
 			onclick="location.href='${pageContext.request.contextPath}/alert/register'">수동
 			경보 등록</button>
-	</div>
+	</div> --%>
 
 	<!-- 데이터 테이블 리스트 -->
 	<table border="1">
@@ -159,13 +159,14 @@ body {
 				<th>전송성공여부</th>
 				<th>최초경보시각</th>
 				<th>경보전송일시</th>
+				<th>연결 로그</th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:choose>
 				<c:when test="${empty alertList}">
 					<tr>
-						<td colspan="6" align="center">조회된 경보 이력 데이터가 없습니다.</td>
+						<td colspan="7" align="center">조회된 경보 이력 데이터가 없습니다.</td>
 					</tr>
 				</c:when>
 				<c:otherwise>
@@ -177,6 +178,17 @@ body {
 									${alert.alertId} </a></td>
 							<!-- 2. 경보대상구분 -->
 							<td>${alert.alertType}</td>
+							<td><c:choose>
+									<c:when test="${not empty alert.dlogId}">
+										<a data-detail-popup data-popup-name="detectionDetail"
+											href="${pageContext.request.contextPath}/detection/detail?dlogId=${alert.dlogId}">일반 탐지 #${alert.dlogId}</a>
+									</c:when>
+									<c:when test="${not empty alert.danlogId}">
+										<a data-detail-popup data-popup-name="dangerLogDetail"
+											href="${pageContext.request.contextPath}/dangerlog/detail?danlogId=${alert.danlogId}">이상개체 #${alert.danlogId}</a>
+									</c:when>
+									<c:otherwise><span>연결 로그 없음</span></c:otherwise>
+								</c:choose></td>
 
 							<!-- 3. 알림 메시지 내용 -->
 							<td><c:out value="${alert.alertMsg}" /></td>

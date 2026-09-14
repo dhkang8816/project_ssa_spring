@@ -42,7 +42,8 @@ public class DangerDetailController {
     // 3. 이상 객체 등록 처리 (/danger/register - POST)
     // [DangerDetailController.java] 신규 객체 등록 처리 고도화
     @PostMapping("/register")
-    public String register(DangerDetailVO ddv, Model model) {
+    public String register(DangerDetailVO ddv, Model model,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         
         // 💡 [중복 에러 처리] 이미 마스터에 존재하는 이름인지 유효성 검증 수행
         PageMaker pm = new PageMaker();
@@ -61,7 +62,7 @@ public class DangerDetailController {
 
         // 중복 검사를 무사히 통과했을 때만 오라클 DB에 최종 저장 실행
         dangerDetailService.registerDanger(ddv);
-        return "redirect:/danger/list";
+        return popup ? "redirect:/danger/list?popupSaved=true" : "redirect:/danger/list";
     }
 
 

@@ -5,6 +5,9 @@
     <!-- 💡 [추가] 신규 경보 이력 등록 (MyBatis 런타임 오류 해결) -->
     <!-- 신규 경보 이력 등록 (오라클 시퀀스 오브젝트 없이 내부 해결 버전) -->
     <insert id="insertAlertLog" parameterType="com.spring.dto.AlertLogVO">
+        <selectKey keyProperty="alertId" resultType="int" order="BEFORE">
+            SELECT ALERT_LOG_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
         INSERT INTO ALERT_LOG (
             ALERT_ID,
             ALERT_TYPE,
@@ -16,7 +19,7 @@
             FIRST_SEND_TIME
         ) VALUES (
             <!-- 💡 DB에 시퀀스가 없어도 기존 최대값에 +1을 해주는 안전한 서브쿼리 배치 -->
-            (SELECT NVL(MAX(ALERT_ID), 0) + 1 FROM ALERT_LOG), 
+            #{alertId, jdbcType=INTEGER},
             #{alertType, jdbcType=VARCHAR},      
             #{dlogId, jdbcType=INTEGER},         
             #{danlogId, jdbcType=INTEGER},       

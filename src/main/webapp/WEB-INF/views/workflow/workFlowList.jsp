@@ -9,252 +9,306 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 관리</title>
 <style>
+/* 1. 글로벌 바디 및 레이아웃 정의 */
 body {
-	font-family: Arial, sans-serif;
-	margin: 30px;
-	background: #f6f7fb
+    background-color: #0b0f19 !important; /* 메인 관제소와 동기화된 깊은 블랙네이비 톤 */
+    color: #e2e8f0 !important;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
+/* 2. 초슬림 사이드바(150px) 너비에 맞게 본문 위치 좌측 정밀 밀착 */
+.control-page-content {
+    position: absolute !important;
+    top: 80px !important; /* 상단 헤더 높이 반영 */
+    left: 150px !important; /* ⭕ 줄어든 메뉴바 너비 150px 선에 밀착 */
+    width: calc(100% - 150px) !important; /* 우측 잔여 공간 100% 바인딩 */
+    padding: 30px 40px;
+    box-sizing: border-box;
+    z-index: 50 !important;
+}
+
+@media (max-width: 760px) {
+    .control-page-content {
+        left: 0 !important;
+        width: 100% !important;
+        padding: 20px 16px;
+    }
+}
+
+/* 3. 하이테크 스타일 메인 패널 프레임 */
 .panel {
-	background: #fff;
-	padding: 24px;
-	border: 1px solid #ddd;
-	border-radius: 8px
+    background: rgba(20, 26, 42, 0.85) !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 16px !important;
+    padding: 28px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(4px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.status {
-	font-weight: bold
+.panel h2 {
+    color: #ffffff !important;
+    margin: 0 0 6px 0 !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
 }
 
-.pending {
-	color: #d99000
+.panel p {
+    color: #94a3b8 !important;
+    font-size: 13.5px;
+    margin: 0 0 24px 0;
 }
 
-.approved {
-	color: #16803c
-}
-
-.rejected {
-	color: #c42d2d
-}
-
+/* 4. 관제 대시보드 전용 와이드 핏 데이터 테이블 */
 table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 16px
-}
-
-th, td {
-	padding: 11px;
-	border-bottom: 1px solid #ddd;
-	text-align: left
-}
-
-a {
-	color: #1769aa;
-	text-decoration: none
-}
-
-.pager {
-	margin-top: 20px;
-	display: flex;
-	gap: 10px;
-	justify-content: center
-}
-</style>
-<style>
-body {
-	margin: 0;
-	padding: 32px;
-	background: #28283a;
-	color: #fff;
-	font-family: 'Malgun Gothic', sans-serif
-}
-
-h2 {
-	margin: 0 0 24px;
-	font-size: 26px;
-	color: #fff
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin: 18px 0;
-	background: #323244;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, .22)
+    width: 100%;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    margin-top: 16px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 th {
-	padding: 15px 16px;
-	background: #242434 !important;
-	color: #b0b5c0;
-	border: 0 !important;
-	border-bottom: 2px solid #48485e !important;
-	text-align: left
+    background-color: #111827 !important; /* 사이드바 다크 톤과 일체화 */
+    color: #38bdf8 !important; /* 네온 블루 폰트 */
+    padding: 14px 16px !important;
+    border: 0 !important;
+    border-bottom: 2px solid #1e293b !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center !important; /* 가독성을 위한 전체 중앙 정렬 */
 }
 
 td {
-	padding: 14px 16px;
-	background: #323244;
-	color: #fff;
-	border: 0 !important;
-	border-bottom: 1px solid #48485e !important
+    padding: 14px 16px !important;
+    background-color: transparent !important;
+    color: #cbd5e1 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #1e293b !important;
+    text-align: center !important;
+    font-size: 13.5px;
 }
 
-tr:hover td {
-	background: #3a3a51
+/* 행(Row) 호버 시 피드백 */
+tr {
+    transition: background-color 0.15s ease;
+}
+tbody tr:hover td {
+    background-color: rgba(30, 41, 59, 0.6) !important;
+    color: #ffffff !important;
 }
 
+/* 링크 인덱스 모던 블루 튜닝 */
 a {
-	color: #68d6de;
-	text-decoration: none
+    color: #38bdf8 !important;
+    text-decoration: none !important;
+    font-weight: 600;
+}
+a:hover {
+    color: #7dd3fc !important;
+    text-decoration: underline !important;
 }
 
-button {
-	padding: 9px 16px;
-	background: #6366f1;
-	color: #fff;
-	border: 0;
-	border-radius: 6px;
-	font-weight: 700;
-	cursor: pointer
+/* 상세/처리 버튼 링크 스타일 */
+.btn-action-link {
+    display: inline-block;
+    padding: 5px 12px;
+    background-color: #1e293b;
+    color: #cbd5e1 !important;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+.btn-action-link:hover {
+    background-color: #0ea5e9;
+    color: #ffffff !important;
+    border-color: #38bdf8;
+    text-decoration: none !important;
 }
 
-button:hover {
-	background: #4f46e5
+/* 5. 모던 알약 배지 컴포넌트 */
+.badge-status {
+    padding: 4px 12px !important;
+    border-radius: 20px !important; /* 타원형 알약 마감 */
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    display: inline-block;
+}
+.pending {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+.approved {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    color: #10b981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+.rejected {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
 }
 
-form {
-	margin-top: 18px;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	align-items: center
-}
-
-input, select {
-	padding: 8px 10px;
-	background: #242434;
-	color: #fff;
-	border: 1px solid #48485e;
-	border-radius: 5px
-}
-
+/* 6. 하단 페이징 내비게이션 다크 스킨 */
 .pagination {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	justify-content: center;
-	margin: 22px 0 !important;
-	padding: 0 !important
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 25px 0 0 0 !important;
 }
-
-.pagination li {
-	margin: 0 !important
-}
-
 .pagination a, .pagination strong {
-	display: block;
-	padding: 6px 10px;
-	background: #242434;
-	border-radius: 5px
+    display: block;
+    padding: 6px 12px;
+    background: #111827 !important;
+    color: #94a3b8 !important;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
 }
-
-.pagination .active strong {
-	color: #00f0ff !important
+.pagination a:hover {
+    color: #ffffff !important;
+    background: #1f2937 !important;
+    border-color: #334155;
 }
-
-@media ( max-width :760px) {
-	body {
-		padding: 20px
-	}
-	h2 {
-		font-size: 22px
-	}
-	table {
-		display: block;
-		overflow-x: auto;
-		white-space: nowrap
-	}
-}
-</style>
-<style>
-body {
-	padding: 100px 32px 32px 282px;
-}
-
-@media ( max-width : 760px) {
-	body {
-		padding: 84px 20px 20px 230px;
-	}
+.pagination strong {
+    color: #38bdf8 !important; /* 현재 페이지 */
+    background: rgba(14, 165, 233, 0.15) !important;
+    border-color: #0ea5e9;
 }
 </style>
 </head>
 <body>
-	<jsp:include page="/WEB-INF/views/menu.jsp" />
-	<jsp:include page="/WEB-INF/views/header.jsp" />
-	<div class="panel">
-		<h2>결재 관리</h2>
-		<p>내게 지정된 일일 관제 업무 보고서입니다.</p>
-		<table>
-			<thead>
-				<tr>
-					<th>결재 번호</th>
-					<th>보고서</th>
-					<th>기안자</th>
-					<th>요청일</th>
-					<th>상태</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:choose>
-					<c:when test="${empty workflowList}">
-						<tr>
-							<td colspan="6">배정된 결재 문서가 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:otherwise>
-						<c:forEach var="workflow" items="${workflowList}">
-							<tr>
-								<td>${workflow.approvalId}</td>
-								<td><a
-									href="${pageContext.request.contextPath}/patrolreport/detail/${workflow.reportId}">#${workflow.reportId}</a></td>
-								<td>${workflow.drafterName}(${workflow.drafterId})</td>
-								<td><fmt:formatDate value="${workflow.requestDate}"
-										pattern="yyyy-MM-dd HH:mm" /></td>
-								<td
-									class="status ${workflow.appStatus eq '0' ? 'pending' : (workflow.appStatus eq '1' ? 'approved' : 'rejected')}"><c:choose>
-										<c:when test="${workflow.appStatus eq '0'}">승인 대기</c:when>
-										<c:when test="${workflow.appStatus eq '1'}">승인 완료</c:when>
-										<c:otherwise>반려</c:otherwise>
-									</c:choose></td>
-								<td><a
-									href="${pageContext.request.contextPath}/workflow/detail/${workflow.approvalId}">상세/처리</a></td>
-							</tr>
-						</c:forEach>
-					</c:otherwise>
-				</c:choose>
-			</tbody>
-		</table>
-		<c:if test="${pageMaker.totalCount gt 0}">
-			<div class="pager pagination">
-				<c:if test="${pageMaker.prev}">
-					<a href="${pageContext.request.contextPath}/workflow/list?page=${pageMaker.startPage - 1}">이전</a>
-				</c:if>
-				<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}"
-					var="num">
-					<c:choose>
-						<c:when test="${pageMaker.page eq num}"><strong>${num}</strong></c:when>
-						<c:otherwise><a href="${pageContext.request.contextPath}/workflow/list?page=${num}">${num}</a></c:otherwise>
-					</c:choose>
-				</c:forEach>
-				<c:if test="${pageMaker.next}">
-					<a href="${pageContext.request.contextPath}/workflow/list?page=${pageMaker.endPage + 1}">다음</a>
-				</c:if>
-			</div>
-		</c:if>
-	</div>
+
+<jsp:include page="/WEB-INF/views/menu.jsp" />
+<jsp:include page="/WEB-INF/views/header.jsp" />
+
+<div class="control-page-content">
+    <div class="panel">
+        <h2>결재 관리</h2>
+        <p>내게 지정된 일일 관제 업무 보고서입니다.</p>
+        
+ <table>
+            <thead>
+                <tr>
+                    <th>결재 번호</th>
+                    <th>기안자</th>
+                    <th>요청일</th>
+                    <th>보고서</th>
+                    <th>작업</th>
+                    <th>상태</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:choose>
+                    <c:when test="${empty workflowList}">
+                        <tr>
+                            <td colspan="6" style="color: #64748b; padding: 60px; font-size: 14px;">배정된 결재 문서가 없습니다.</td>
+                        </tr>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach var="workflow" items="${workflowList}">
+                            <tr>
+                                <!-- 1. 결재 번호 -->
+                                <td>${workflow.approvalId}</td>
+                                
+                                <!-- 2. 기안자 -->
+                                <td>${workflow.drafterName} (${workflow.drafterId})</td>
+                                
+                                <!-- 3. 요청일 -->
+                                <td><fmt:formatDate value="${workflow.requestDate}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                
+                                <!-- 4. 보고서 버튼 (⭕ 마우스 오버 시 파란색 하이라이트 활성화 스타일 주입) -->
+                                <td>
+                                    <a class="btn-action-link" style="background-color: #242b35 !important; border-color: #3e4b5b !important; color: #38bdf8 !important; transition: all 0.15s ease;" 
+                                       onmouseover="this.style.backgroundColor='#0ea5e9'; this.style.borderColor='#38bdf8'; this.style.color='#ffffff';"
+                                       onmouseout="this.style.backgroundColor='#242b35'; this.style.borderColor='#3e4b5b'; this.style.color='#38bdf8';"
+                                       data-detail-popup data-popup-name="patrolReportDetail" 
+                                       href="${pageContext.request.contextPath}/patrolreport/detail/${workflow.reportId}">
+                                        📄 #${workflow.reportId} 보고서
+                                    </a>
+                                </td>
+                                
+                                <!-- 5. 작업 버튼 (⭕ 마우스 오버 시 파란색 하이라이트 활성화 스타일 주입) -->
+                                <td>
+                                    <a class="btn-action-link" style="background-color: #1e293b !important; border-color: #334155 !important; color: #cbd5e1 !important; transition: all 0.15s ease;"
+                                       onmouseover="this.style.backgroundColor='#0ea5e9'; this.style.borderColor='#38bdf8'; this.style.color='#ffffff';"
+                                       onmouseout="this.style.backgroundColor='#1e293b'; this.style.borderColor='#334155'; this.style.color='#cbd5e1';"
+                                       data-detail-popup data-popup-name="workFlowDetail" 
+                                       href="${pageContext.request.contextPath}/workflow/detail/${workflow.approvalId}">
+                                        상세/처리
+                                    </a>
+                                </td>
+                                
+                                <!-- 6. 상태 -->
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${workflow.appStatus eq '0'}">
+                                            <span class="badge-status pending">승인 대기</span>
+                                        </c:when>
+                                        <c:when test="${workflow.appStatus eq '1'}">
+                                            <span class="badge-status approved">승인 완료</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge-status rejected">반려</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
+            </tbody>
+        </table>
+        
+        <!-- 하단 페이징 랙 -->
+        <c:if test="${pageMaker.totalCount gt 0}">
+            <div class="pager">
+                <ul class="pagination">
+                    <c:if test="${pageMaker.prev}">
+                        <li>
+                            <a href="${pageContext.request.contextPath}/workflow/list?page=${pageMaker.startPage - 1}">이전</a>
+                        </li>
+                    </c:if>
+                    <c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="num">
+                        <li>
+                            <c:choose>
+                                <c:when test="${pageMaker.page eq num}">
+                                    <strong>${num}</strong>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/workflow/list?page=${num}">${num}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </li>
+                    </c:forEach>
+                    <c:if test="${pageMaker.next}">
+                        <li>
+                            <a href="${pageContext.request.contextPath}/workflow/list?page=${pageMaker.endPage + 1}">다음</a>
+                        </li>
+                    </c:if>
+                </ul>
+            </div>
+        </c:if>
+        
+    </div>
+</div>
+
 </body>
 </html>

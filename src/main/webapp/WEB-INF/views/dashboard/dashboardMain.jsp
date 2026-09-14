@@ -234,6 +234,12 @@ opacity
 	#dashboardGraphZone>div>div {
 		break-inside: avoid;
 	}
+	/* A4 세로 폭에서는 화면용 auto-fit/minmax(380px)가 1열로 전환된다.
+	   인쇄물은 네 차트를 동일한 2열 구성으로 유지한다. */
+	#dashboardGraphZone>div[style*="display: grid"] {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+		gap: 10px !important;
+	}
 	.dashboard-container .print-chart-card, .dashboard-container .print-chart-card div
 		{
 		background: #222733 !important;

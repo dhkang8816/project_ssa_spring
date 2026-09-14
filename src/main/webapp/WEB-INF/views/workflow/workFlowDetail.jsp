@@ -10,131 +10,287 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>전자결재</title>
 <style>
+/* 1. 글로벌 바디 스타일 (팝업 창 내 여백 및 스크롤 최적화) */
 body {
-	font-family: Arial, sans-serif;
-	margin: 30px;
-	background: #f6f7fb
+    background-color: #0b0f19 !important; /* 메인 시스템과 일치하는 다크 테마 */
+    color: #e2e8f0 !important;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+/* 2. 글래스모피즘 기반 관제소 메인 판넬 */
 .panel {
-	max-width: 850px;
-	background: #fff;
-	padding: 24px;
-	border: 1px solid #ddd;
-	border-radius: 8px
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+    background: rgba(20, 26, 42, 0.85) !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 14px !important;
+    padding: 28px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px);
+    box-sizing: border-box;
 }
 
+.panel h2 {
+    color: #ffffff !important;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 16px;
+}
+
+/* 3. 성공 및 오류 알림 메시지 상자 */
+.message {
+    background-color: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: #10b981;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+.error {
+    background-color: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: #ef4444;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+/* 4. 정보 출력 로우(Row) 및 라벨 그리드 튜닝 */
 .row {
-	margin: 12px 0
+    display: flex;
+    align-items: flex-start;
+    margin: 14px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    width: 100%;
 }
 
 .label {
-	display: inline-block;
-	width: 130px;
-	font-weight: bold
+    display: inline-block;
+    width: 140px;
+    color: #94a3b8 !important; /* 슬레이트 그레이 서브 라벨 지정 */
+    font-weight: 600;
+    flex-shrink: 0;
 }
 
+/* 상태 표시 전용 알약 컴포넌트 */
+.badge-status {
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+}
+.status-0 { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+.status-1 { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+.status-2 { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+/* 5. 현장 조치 및 특이사항 내용 텍스트 박스 */
 .content {
-	white-space: pre-wrap;
-	background: #fafafa;
-	border: 1px solid #ddd;
-	padding: 12px
+    flex: 1;
+    white-space: pre-wrap;
+    background: #111827 !important; /* 리스트 검색창과 동일한 반전 인풋 암청색 */
+    border: 1px solid #1e293b !important;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #cbd5e1;
+    font-size: 13.5px;
 }
 
+/* 6. [구조 대개편] 하단 승인/반려 조작 액션 영역 */
 .actions {
-	margin-top: 24px;
-	border-top: 1px solid #ddd;
-	padding-top: 20px
+    margin-top: 28px;
+    border-top: 1px solid #1e293b;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-textarea {
-	width: 100%;
-	min-height: 80px
-}
-
+/* 결재 승인 및 반려 실행 버튼 모던 마감 */
 button {
-	padding: 9px 14px;
-	margin-right: 8px
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
 }
 
-.error {
-	color: #b52b27
+/* [결재 승인] 네온 블루 버튼 사양 */
+.btn-approve {
+    background-color: #0ea5e9 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+.btn-approve:hover {
+    background-color: #0284c7 !important;
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.35);
+    transform: translateY(-1px);
 }
 
-.message {
-	color: #18753c
+/* [반려] 네온 레드 버튼 사양 */
+.btn-reject {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+.btn-reject:hover {
+    background-color: #dc2626 !important;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+    transform: translateY(-1px);
+}
+button:active { transform: translateY(0); }
+
+/* 반려 사유 입력 폼 컨테이너 구조화 */
+.reject-form-box {
+    background: rgba(30, 41, 59, 0.2);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 반려 텍스트 입력창 스타일링 */
+textarea {
+    width: 100%;
+    min-height: 90px;
+    background: #111827 !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px !important;
+    padding: 12px 16px;
+    color: #ffffff;
+    font-size: 13.5px;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease;
+}
+textarea:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* 목록으로 이동 링크 인터랙션 */
+.back-link-box {
+    margin-top: 20px;
+    text-align: left;
+}
+.back-link-box a {
+    color: #94a3b8 !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+.back-link-box a:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
 }
 </style>
 </head>
 <body>
-	<div class="panel">
-		<h2>일일 관제 업무 전자결재</h2>
-		<c:if test="${not empty message}">
-			<p class="message">${message}</p>
-		</c:if>
-		<c:if test="${not empty error}">
-			<p class="error">${error}</p>
-		</c:if>
-		<div class="row">
-			<span class="label">결재 번호</span>${workflow.approvalId}</div>
-		<div class="row">
-			<span class="label">보고서 번호</span>${workflow.reportId}</div>
-		<div class="row">
-			<span class="label">기안자</span>${workflow.drafterName}
-			(${workflow.drafterId})
-		</div>
-		<div class="row">
-			<span class="label">결재자</span>${workflow.approverName}
-			(${workflow.approverId})
-		</div>
-		<div class="row">
-			<span class="label">요청일</span>
-			<fmt:formatDate value="${workflow.requestDate}"
-				pattern="yyyy-MM-dd HH:mm" />
-		</div>
-		<div class="row">
-			<span class="label">결재 상태</span>
-			<c:choose>
-				<c:when test="${workflow.appStatus eq '0'}">승인 대기</c:when>
-				<c:when test="${workflow.appStatus eq '1'}">승인 완료</c:when>
-				<c:otherwise>반려</c:otherwise>
-			</c:choose>
-		</div>
-		<div class="row">
-			<div class="label">현장 조치 내역</div>
-			<div class="content">${workflow.actionTaken}</div>
-		</div>
-		<div class="row">
-			<div class="label">특이사항</div>
-			<div class="content">${workflow.remark}</div>
-		</div>
-		<c:if test="${not empty workflow.rejectReason}">
-			<div class="row">
-				<div class="label">반려 사유</div>
-				<div class="content">${workflow.rejectReason}</div>
-			</div>
-		</c:if>
-		<c:if test="${workflow.appStatus eq '0'}">
-			<div class="actions">
-				<form:form action="${pageContext.request.contextPath}/workflow/approve"
-					method="post" style="display: inline">
-					<input type="hidden" name="approvalId"
-						value="${workflow.approvalId}">
-					<button type="submit">결재 승인</button>
-				</form:form>
-				<form:form action="${pageContext.request.contextPath}/workflow/reject"
-					method="post">
-					<input type="hidden" name="approvalId"
-						value="${workflow.approvalId}"><label for="rejectReason">반려
-						사유</label>
-					<textarea id="rejectReason" name="rejectReason" required></textarea>
-					<button type="submit">반려</button>
-				</form:form>
-			</div>
-		</c:if>
-		<p>
-			<a href="${pageContext.request.contextPath}/workflow/list">목록으로</a>
-		</p>
-	</div>
+<div class="panel">
+    <h2>📋 일일 관제 업무 전자결재 상세</h2>
+    
+    <!-- 비즈니스 알림 레이어 바인딩 -->
+    <c:if test="${not empty message}">
+        <p class="message">${message}</p>
+    </c:if>
+    <c:if test="${not empty error}">
+        <p class="error">${error}</p>
+    </c:if>
+    
+    <!-- 상세 정보 출력 데이터 그리드 -->
+    <div class="row">
+        <span class="label">결재 번호</span>
+        <strong style="color: #ffffff;">${workflow.approvalId}</strong>
+    </div>
+    <div class="row">
+        <span class="label">보고서 번호</span>
+        <strong style="color: #38bdf8;">#${workflow.reportId}</strong>
+    </div>
+    <div class="row">
+        <span class="label">기안자</span>
+        <span>${workflow.drafterName} (${workflow.drafterId})</span>
+    </div>
+    <div class="row">
+        <span class="label">결재자</span>
+        <span>${workflow.approverName} (${workflow.approverId})</span>
+    </div>
+    <div class="row">
+        <span class="label">요청일</span>
+        <span style="color: #94a3b8;"><fmt:formatDate value="${workflow.requestDate}" pattern="yyyy-MM-dd HH:mm" /></span>
+    </div>
+    <div class="row">
+        <span class="label">결재 상태</span>
+        <c:choose>
+            <c:when test="${workflow.appStatus eq '0'}"><span class="badge-status status-0">승인 대기</span></c:when>
+            <c:when test="${workflow.appStatus eq '1'}"><span class="badge-status status-1">승인 완료</span></c:when>
+            <c:otherwise><span class="badge-status status-2">반려</span></c:otherwise>
+        </c:choose>
+    </div>
+    
+    <!-- 관제 보고서 본문 로그 데이터 박스 -->
+    <div class="row">
+        <div class="label">현장 조치 내역</div>
+        <div class="content">${workflow.actionTaken}</div>
+    </div>
+    <div class="row">
+        <div class="label">특이사항</div>
+        <div class="content">${workflow.remark}</div>
+    </div>
+    
+    <%-- 반려된 문서일 경우 저장된 반려 사유 박스 상시 표출 --%>
+    <c:if test="${not empty workflow.rejectReason}">
+        <div class="row">
+            <div class="label" style="color: #f87171 !important;">반려 사유</div>
+            <div class="content" style="border-color: rgba(239, 68, 68, 0.2) !important; color: #f87171;">${workflow.rejectReason}</div>
+        </div>
+    </c:if>
+    
+    <%-- 결재 전 상태(0)일 경우에만 승인/반려 조작 액션 패널 작동 --%>
+    <c:if test="${workflow.appStatus eq '0'}">
+        <div class="actions">
+            <!-- 1. 승인 처리 폼 (인라인 배치) -->
+            <form:form action="${pageContext.request.contextPath}/workflow/approve" method="post" style="display: inline; margin:0; padding:0;">
+                <input type="hidden" name="approvalId" value="${workflow.approvalId}">
+                <button type="submit" class="btn-approve">✔ 결재 승인</button>
+            </form:form>
+            
+            <!-- 2. 반려 처리 폼 (하단 영역 캡슐화 박스) -->
+            <form:form action="${pageContext.request.contextPath}/workflow/reject" method="post" style="margin:0; padding:0;">
+                <input type="hidden" name="approvalId" value="${workflow.approvalId}">
+                <div class="reject-form-box">
+                    <label for="rejectReason" style="font-size: 13.5px; font-weight: 600; color: #cbd5e1;">⚠️ 서류 반려 사유 입력</label>
+                    <textarea id="rejectReason" name="rejectReason" placeholder="반려 사유를 상세히 기술해 주세요." required></textarea>
+                    <div style="text-align: right; margin-top: 4px;">
+                        <button type="submit" class="btn-reject">✖ 반려 실행</button>
+                    </div>
+                </div>
+            </form:form>
+        </div>
+    </c:if>
+    
+    <!-- 하단 백 가이드 링크 -->
+    <div class="back-link-box">
+        <a href="${pageContext.request.contextPath}/workflow/list">🔙 목록으로 돌아가기</a>
+    </div>
+</div>
 </body>
 </html>

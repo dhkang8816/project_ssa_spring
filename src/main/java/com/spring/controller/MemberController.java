@@ -92,6 +92,7 @@ public class MemberController {
     @PostMapping("/regist")
     public String regist(MemberVO member, 
                          @RequestParam(value = "pictureFile", required = false) MultipartFile pictureFile,
+                         @RequestParam(value = "popup", defaultValue = "false") boolean popup,
                          HttpServletRequest request) throws Exception {
         log.info("회원가입 요청 진입: 사번(아이디) = {}", member.getMemberId());
         
@@ -109,7 +110,7 @@ public class MemberController {
         }
         
         memberService.regist(member);
-        return "redirect:/login"; 
+        return popup ? "redirect:/member/list?popupSaved=true" : "redirect:/login"; 
     }
 
     /**
@@ -184,6 +185,7 @@ public class MemberController {
     public String modify(MemberVO member,
                          @RequestParam(value = "pictureFile", required = false) MultipartFile pictureFile,
                          @RequestParam(value = "deleteOldPicture", defaultValue = "false") String deleteOldPicture,
+                         @RequestParam(value = "popup", defaultValue = "false") boolean popup,
                          HttpServletRequest request) throws Exception {
         
         log.info("직원 정보 수정 요청 최종 진입: 사번 = {}, 사진삭제플래그 = {}", member.getMemberId(), deleteOldPicture);
@@ -220,9 +222,11 @@ public class MemberController {
 
         int result = memberService.modifyMember(member);
         if (result > 0) {
-            return "redirect:/member/detail?memberId=" + member.getMemberId();
+            return popup ? "redirect:/member/list?popupSaved=true"
+                    : "redirect:/member/detail?memberId=" + member.getMemberId();
         } else {
-            return "redirect:/member/modifyForm?memberId=" + member.getMemberId() + "&error=true";
+            return "redirect:/member/modifyForm?memberId=" + member.getMemberId()
+                    + "&error=true" + (popup ? "&popup=true" : "");
         }
     }
 }

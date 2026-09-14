@@ -145,13 +145,13 @@ body {
 	<!-- 기존 코드 중 '신규 동물 등록' 버튼 옆에 나란히 붙여줍니다 -->
 	<div style="margin-bottom: 10px;">
 		<button type="button"
-			onclick="location.href='${pageContext.request.contextPath}/animal/register'">신규
+			onclick="return openFormPopup('${pageContext.request.contextPath}/animal/register', 'animalRegister');">신규
 			동물 등록</button>
 
 		<!-- 💡 [추가] 실시간 개체수 현황판으로 즉시 이동하는 버튼 링크 -->
 		<button type="button"
 			style="margin-left: 5px; background-color: #4CAF50; color: white;"
-			onclick="location.href='${pageContext.request.contextPath}/animal/counterList'">📊
+			onclick="return openDetailPopup('${pageContext.request.contextPath}/animal/counterList', 'animalCounterList');">📊
 			개체수 현황 조회</button>
 	</div>
 
@@ -176,10 +176,9 @@ body {
 				</c:when>
 				<c:otherwise>
 					<c:forEach var="animal" items="${animalList}">
-						<tr>
-							<td><a
-								href="${pageContext.request.contextPath}/animal/detail?animalId=${animal.animalId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
-									${animal.animalId} </a></td>
+						<tr style="cursor: pointer;"
+							onclick="return openDetailPopup('${pageContext.request.contextPath}/animal/detail?animalId=${animal.animalId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'animalDetail');">
+							<td>${animal.animalId}</td>
 							<td>
 								<!-- 프론트엔드 코드 매핑 (0: 개, 1: 고양이) --> <c:choose>
 									<c:when test="${animal.animalType == '0'}">개</c:when>

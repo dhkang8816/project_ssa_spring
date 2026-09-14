@@ -144,7 +144,7 @@ body {
 	<!-- 신규 드론 등록 페이지로 이동하는 버튼 -->
 	<div style="margin-bottom: 10px;">
 		<button type="button"
-			onclick="location.href='${pageContext.request.contextPath}/drone/register'">신규
+			onclick="return openFormPopup('${pageContext.request.contextPath}/drone/register', 'droneRegister');">신규
 			드론 등록</button>
 	</div>
 
@@ -164,10 +164,9 @@ body {
 				</c:when>
 				<c:otherwise>
 					<c:forEach var="drone" items="${droneList}">
-						<tr>
-							<td align="center"><a
-								href="${pageContext.request.contextPath}/drone/detail?droneId=${drone.droneId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
-									${drone.droneId} </a></td>
+						<tr style="cursor: pointer;"
+							onclick="return openDetailPopup('${pageContext.request.contextPath}/drone/detail?droneId=${drone.droneId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'droneDetail');">
+							<td align="center">${drone.droneId}</td>
 							<td align="center"><c:choose>
 									<c:when test="${empty drone.memberId}">
 										<span style="color: gray;">미배정</span>

@@ -14,6 +14,7 @@
 
 	<form:form action="${pageContext.request.contextPath}/danger/register"
 		method="post">
+		<c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
 		<table border="1">
 			<tbody>
 				<tr>

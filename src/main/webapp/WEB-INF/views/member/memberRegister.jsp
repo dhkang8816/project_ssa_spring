@@ -9,77 +9,267 @@
 <meta charset="UTF-8">
 <title>회원가입</title>
 <style>
+/* 1. 글로벌 바디 및 레이아웃 정의 */
+body {
+    background-color: #0b0f19 !important; /* 메인 관제소와 일치하는 다크 테마 */
+    color: #e2e8f0 !important;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+/* 2. 글래스모피즘 스타일의 메인 입력 판넬 */
+.form-panel {
+    width: 100%;
+    max-width: 520px; /* 상세/수정창과 싱크를 맞춘 슬림 수직 구조 */
+    margin: 0 auto;
+    background: rgba(20, 26, 42, 0.85) !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 14px !important;
+    padding: 32px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px);
+    box-sizing: border-box;
+}
+
+.form-panel h2 {
+    color: #ffffff !important;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 16px;
+    text-align: center;
+}
+
+/* 3. 상단 파일 업로드 및 이미지 프리뷰 레이아웃 */
 .profile-upload-wrapper {
-	margin-bottom: 20px;
-	padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 24px;
+    box-sizing: border-box;
 }
 
+.profile-upload-wrapper label {
+    margin-bottom: 10px;
+    color: #94a3b8 !important;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+/* 프리뷰 상자 네온 블루 튜닝 */
 .preview-box {
-	width: 150px;
-	height: 180px;
-	border: 1px solid #ccc;
-	object-fit: cover;
-	background-color: #f0f0f0;
-	display: block;
-	margin-bottom: 8px;
+    width: 150px;
+    height: 185px;
+    border: 2px solid #0ea5e9;
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+    border-radius: 12px;
+    object-fit: cover;
+    background-color: #111827;
+    display: block;
+    margin-bottom: 12px;
 }
 
-.btn-photo-action {
-	margin-top: 5px;
+/* 파일 업로드 쌩 input 컴포넌트 텍스트 보정 */
+#fileInput {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 8px;
 }
+
+/* 4. 구조화한 신규 등록 폼 카드 랙 */
+.form-grid-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: rgba(17, 24, 39, 0.5);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+}
+.form-row:last-child {
+    border-bottom: none;
+}
+
+.form-label {
+    color: #94a3b8 !important;
+    font-weight: 600;
+    width: 110px;
+    flex-shrink: 0;
+    text-align: left;
+}
+
+.form-value-slot {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 5. 입력 상자 다크 고도화 */
+.form-grid-card input[type="text"], 
+.form-grid-card input[type="password"], 
+.form-grid-card input[type="email"] {
+    width: 220px !important; /* 적정 입력폭 고정 */
+    background: #111827 !important;
+    padding: 8px 12px !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    border-radius: 6px !important;
+    outline: none;
+    font-size: 13.5px;
+    box-sizing: border-box;
+    transition: all 0.15s ease-in-out;
+    text-align: left;
+}
+
+.form-grid-card input:focus {
+    border-color: #0ea5e9 !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25) !important;
+}
+
+/* 6. 조작 버튼 세부 마감 */
+button, input[type="submit"] {
+    padding: 9px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
+}
+
+/* 사진 조작 및 취소 단추용 차분한 무채색 스킨 */
+.btn-photo-action, .btn-back {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #334155 !important;
+    font-size: 12px;
+    padding: 6px 14px;
+}
+.btn-photo-action:hover, .btn-back:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+/* [가입하기] 실행 버튼 사양 */
+.btn-submit {
+    background-color: #10b981 !important; /* 등록 액션에 맞춤형 네온 그린 할당 */
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+.btn-submit:hover {
+    background-color: #059669 !important;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    transform: translateY(-1px);
+}
+
+.action-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+}
+button:active { transform: translateY(0); }
 </style>
-
 </head>
 <body>
-	<h2>회원가입</h2>
 
-	<form:form action="${pageContext.request.contextPath}/member/regist"
-		method="post" enctype="multipart/form-data">
-
-		<!-- 스프링 시큐리티 POST 필수 토큰 -->
-		<input type="hidden" name="${_csrf.parameterName}"
-			value="${_csrf.token}" />
-
-		<!-- 💡 최상단 프로필 사진 등록 및 실시간 미리보기 영역 -->
-		<div class="profile-upload-wrapper">
-			<label style="display: block; margin-bottom: 5px; font-weight: bold;">프로필
-				사진 등록</label> <img id="imagePreview"
-				src="${pageContext.request.contextPath}/resources/images/member/noImage.jpg"
-				alt="미리보기" class="preview-box" />
-
-			<!-- ⚠️ name 속성은 컨트롤러의 MultipartFile 수신 변수명인 pictureFile 과 무조건 일치해야 합니다 -->
-			<input type="file" name="pictureFile" id="fileInput" accept="image/*"
-				onchange="previewImage(this);" />
-			<button type="button" class="btn-photo-action"
-				onclick="removeSelectedImage();">사진 삭제</button>
-		</div>
-
-		<hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-
-		<div>
-			<label>아이디:</label> <input type="text" name="memberId" required>
-		</div>
-		<div>
-			<label>비밀번호:</label> <input type="password" name="password" required>
-		</div>
-		<div>
-			<label>이름:</label> <input type="text" name="name" required>
-		</div>
-		<div>
-			<label>부서:</label> <input type="text" name="department">
-		</div>
-		<div>
-			<label>전화번호:</label> <input type="text" name="phone">
-		</div>
-		<div>
-			<label>이메일:</label> <input type="email" name="email">
-		</div>
-		<div style="margin-top: 15px;">
-			<button type="submit">가입하기</button>
-			<button type="button"
-				onclick="location.href='${pageContext.request.contextPath}/member/list'">취소</button>
-		</div>
-	</form:form>
+<div class="form-panel">
+    <h2>➕ 관제소 신규 계정 등록</h2>
+    
+    <!-- 오리지널 멀티파트 서브밋 포맷 및 컨트롤러 액션 바인딩 100% 보존선 -->
+    <form:form action="${pageContext.request.contextPath}/member/regist" method="post" enctype="multipart/form-data">
+        
+        <!-- 팝업 파라미터 및 스프링 시큐리티 필수 보안 토큰 유지 -->
+        <c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        
+        <!-- 상단 파일 업로드 및 실시간 미리보기 영역 -->
+        <div class="profile-upload-wrapper">
+            <label>프로필 사진 등록</label>
+            <img id="imagePreview" src="${pageContext.request.contextPath}/resources/images/member/noImage.jpg" alt="미리보기" class="preview-box" />
+            
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                <input type="file" name="pictureFile" id="fileInput" accept="image/*" onchange="previewImage(this);" />
+                <button type="button" class="btn-photo-action" onclick="removeSelectedImage();">❌ 사진 삭제</button>
+            </div>
+        </div>
+        
+        <!-- 내부 입력 필드 전용 그리드 카드 -->
+        <div class="form-grid-card">
+            <!-- 아이디(사번) -->
+            <div class="form-row">
+                <span class="form-label">사번 (아이디)</span>
+                <div class="form-value-slot">
+                    <input type="text" name="memberId" required placeholder="사번을 입력하세요">
+                </div>
+            </div>
+            
+            <!-- 비밀번호 -->
+            <div class="form-row">
+                <span class="form-label">비밀번호</span>
+                <div class="form-value-slot">
+                    <input type="password" name="password" required placeholder="초기 비밀번호 셋업">
+                </div>
+            </div>
+            
+            <!-- 이름 -->
+            <div class="form-row">
+                <span class="form-label">이름</span>
+                <div class="form-value-slot">
+                    <input type="text" name="name" required placeholder="성명 입력">
+                </div>
+            </div>
+            
+            <!-- 부서 -->
+            <div class="form-row">
+                <span class="form-label">소속 부서</span>
+                <div class="form-value-slot">
+                    <input type="text" name="department" placeholder="부서명 입력">
+                </div>
+            </div>
+            
+            <!-- 전화번호 -->
+            <div class="form-row">
+                <span class="form-label">전화번호</span>
+                <div class="form-value-slot">
+                    <input type="text" name="phone" placeholder="ex) 010-1234-5678">
+                </div>
+            </div>
+            
+            <!-- 이메일 -->
+            <div class="form-row">
+                <span class="form-label">이메일 주소</span>
+                <div class="form-value-slot">
+                    <input type="email" name="email" placeholder="example@domain.com">
+                </div>
+            </div>
+        </div> <!-- .form-grid-card END -->
+        
+        <!-- 하단 실행 제어바 -->
+        <div class="action-bar">
+            <button type="submit" class="btn-submit">🚀 가입 완료</button>
+            <button type="button" class="btn-back" onclick="location.href='${pageContext.request.contextPath}/member/list'">취소</button>
+        </div>
+        
+    </form:form>
+</div> <!-- .form-panel END -->
 </body>
 <script>
 	// 💡 선택한 사진 파일 실시간 미리보기 스크립트

@@ -34,6 +34,9 @@
 
 	 <!-- [CREATE] 1. 관제 탐지 로그 등록 (오라클 시퀀스 없이 최대값 자동 일련번호 처리) -->
 	 <insert id="insertDetectionLog" parameterType="com.spring.dto.DetectionLogVO">
+	     <selectKey keyProperty="dlogId" resultType="int" order="BEFORE">
+	         SELECT DETECTION_LOG_SEQ.NEXTVAL FROM DUAL
+	     </selectKey>
 	     INSERT INTO DETECTION_LOG (
 	         DLOG_ID, 
 	         DETECT_TIME, 
@@ -46,7 +49,7 @@
 	         DETECT_COUNT
 	     )
 	     SELECT 
-	         (SELECT NVL(MAX(DLOG_ID), 0) + 1 FROM DETECTION_LOG), -- 💡 시퀀스 대체 서브쿼리
+	         #{dlogId, jdbcType=INTEGER},
 	         CURRENT_TIMESTAMP,
 	         
 	         /* 🎯 [1111 에러 원천 파괴 철벽 방어선 장착] 

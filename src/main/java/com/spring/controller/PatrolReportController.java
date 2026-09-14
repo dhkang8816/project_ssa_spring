@@ -137,7 +137,8 @@ public class PatrolReportController {
     // 💡 [버그 픽스] 끝에 붙어있던 원치 않는 마침표(.)를 완벽하게 제거하여 405 에러를 박멸합니다.
     @PostMapping("/register")
     public String register(@ModelAttribute("reportVO") PatrolReportVO reportVO,
-            @RequestParam("approverId") String approverId) throws Exception {
+            @RequestParam("approverId") String approverId,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentMemberId = auth != null && auth.isAuthenticated() ? auth.getName() : null;
         if (auth != null && auth.getPrincipal() instanceof CustomUser) {
@@ -190,7 +191,7 @@ public class PatrolReportController {
         reportVO.setCompletionRate(Math.round(actionCompleteRate * 100) / 100.0);
 
         reportService.insertReportWithWorkflow(reportVO, approverId);
-        return "redirect:/patrolreport/list";
+        return popup ? "redirect:/patrolreport/list?popupSaved=true" : "redirect:/patrolreport/list";
     }
 
 

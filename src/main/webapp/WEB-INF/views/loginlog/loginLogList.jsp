@@ -31,8 +31,38 @@
 }
 
 .pagination li.active strong {
-	color: #6366f1;
+	display: block;
+	padding: 6px 10px;
+	border-radius: 5px;
+	background: #00a8a8;
+	color: #ffffff;
 	font-weight: bold;
+}
+
+.loginlog-pagination {
+	display: flex;
+	justify-content: center;
+	margin-top: 24px;
+}
+
+.loginlog-pagination .pagination {
+	margin: 0;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.loginlog-pagination .pagination a {
+	display: block;
+	padding: 6px 10px;
+	border-radius: 5px;
+	background: #242434;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.loginlog-pagination .pagination a:hover {
+	background: #35354b;
+	color: #5ddcff;
 }
 
 /* ★ 상단 여백 제거 및 밀어올리기 서식 추가 ★ */
@@ -204,7 +234,7 @@ body {
 			</div>
 
 			<!-- 페이징 내비게이션 영역 -->
-			<div>
+			<div class="loginlog-pagination">
 				<ul class="pagination">
 					<c:if test="${pageMaker.prev}">
 						<li><a
@@ -215,7 +245,7 @@ body {
 						end="${pageMaker.endPage}">
 						<li class="${pageMaker.page == pageNum ? 'active' : ''}"><c:choose>
 								<c:when test="${pageMaker.page == pageNum}">
-									<strong>[${pageNum}]</strong>
+									<strong>${pageNum}</strong>
 								</c:when>
 								<c:otherwise>
 									<a

@@ -59,12 +59,13 @@ public class CommonCodeController {
 	 * 3. 공통코드 등록 처리
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String registerCommonCode(@ModelAttribute("ccVO") CommonCodeVO ccVO) throws Exception {
+	public String registerCommonCode(@ModelAttribute("ccVO") CommonCodeVO ccVO,
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup) throws Exception {
 
 		commonCodeService.registerCommonCode(ccVO);
 
 		// 💡 .do가 제거된 새로운 주소 규칙 적용 리다이렉트
-		return "redirect:/commoncode/list";
+		return popup ? "redirect:/commoncode/list?popupSaved=true" : "redirect:/commoncode/list";
 	}
 
 	/**

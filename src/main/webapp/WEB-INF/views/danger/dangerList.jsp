@@ -145,7 +145,7 @@ body {
 	<!-- 신규 이상 객체 등록 페이지로 이동하는 버튼 -->
 	<div style="margin-bottom: 10px;">
 		<button type="button"
-			onclick="location.href='${pageContext.request.contextPath}/danger/register'">신규
+			onclick="return openFormPopup('${pageContext.request.contextPath}/danger/register', 'dangerRegister');">신규
 			객체 등록</button>
 	</div>
 
@@ -166,10 +166,9 @@ body {
 				</c:when>
 				<c:otherwise>
 					<c:forEach var="danger" items="${dangerList}">
-						<tr>
-							<td align="center"><a
-								href="${pageContext.request.contextPath}/danger/detail?dangerId=${danger.dangerId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
-									${danger.dangerId} </a></td>
+						<tr style="cursor: pointer;"
+							onclick="return openDetailPopup('${pageContext.request.contextPath}/danger/detail?dangerId=${danger.dangerId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'dangerDetail');">
+							<td align="center">${danger.dangerId}</td>
 							<td>&nbsp;<c:out value="${danger.dangerName}" /></td>
 							<td align="center"><fmt:formatDate
 									value="${danger.dangerDate}" pattern="yyyy-MM-dd" /></td>

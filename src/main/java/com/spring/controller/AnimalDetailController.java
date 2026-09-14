@@ -59,10 +59,11 @@ public class AnimalDetailController {
 
     // 3. 동물 등록 처리 (/animal/register - POST)
     @PostMapping("/register")
-    public String register(AnimalDetailVO vo, RedirectAttributes rttr) {
+    public String register(AnimalDetailVO vo, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         animalDetailService.registerAnimal(vo);
         rttr.addFlashAttribute("msg", "REGISTER_SUCCESS");
-        return "redirect:/animal/list";
+        return popup ? "redirect:/animal/list?popupSaved=true" : "redirect:/animal/list";
     }
 
     // 4. 동물 상세 조회 및 수정 폼 이동

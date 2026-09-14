@@ -73,6 +73,7 @@ body {
 		<form:form
 			action="${pageContext.request.contextPath}/patrolreport/register"
 			method="post" modelAttribute="reportVO">
+			<c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
 
 			<!-- ==========================================
                  [1. HEADER 자동 출력 프리뷰] 

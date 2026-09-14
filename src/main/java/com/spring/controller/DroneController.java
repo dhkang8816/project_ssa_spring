@@ -51,7 +51,8 @@ public class DroneController {
     
     // 💡 오직 이 Model 기반 튜닝 메서드 하나만 남겨두셔야 중복 매핑(Ambiguous)이 해결됩니다.
     @PostMapping("/register")
-    public String register(DroneVO dvo, Model model) throws Exception {
+    public String register(DroneVO dvo, Model model,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) throws Exception {
         
         // 1. 이미 존재하는 드론 ID 중복 체크
         DroneVO existDrone = droneService.getDroneById(dvo.getDroneId());
@@ -72,7 +73,7 @@ public class DroneController {
 
         // 3. 중복 및 유효성 검사를 모두 통과하면 드론 등록 실행
         droneService.registerDrone(dvo);
-        return "redirect:/drone/list";
+        return popup ? "redirect:/drone/list?popupSaved=true" : "redirect:/drone/list";
     }
 
 

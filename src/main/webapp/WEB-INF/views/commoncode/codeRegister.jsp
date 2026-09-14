@@ -37,6 +37,7 @@ input, select {
 	<form:form
 		action="${pageContext.request.contextPath}/commoncode/register"
 		method="post">
+		<c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
 		<div class="form-group">
 			<label>그룹코드:</label> <input type="text" name="grpCode" required
 				placeholder="예: SYS_01" />

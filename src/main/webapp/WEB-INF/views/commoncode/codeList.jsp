@@ -199,7 +199,7 @@ body {
 	</p>
 
 	<button type="button"
-		onclick="location.href='${pageContext.request.contextPath}/commoncode/registerForm'">신규
+		onclick="return openFormPopup('${pageContext.request.contextPath}/commoncode/registerForm', 'codeRegister');">신규
 		코드 등록</button>
 
 	<!-- 💡 검색 폼 영역 추가 -->
@@ -234,11 +234,10 @@ body {
 			<c:choose>
 				<c:when test="${not empty codeList}">
 					<c:forEach var="cc" items="${codeList}" varStatus="status">
-						<tr>
+						<tr style="cursor: pointer;"
+							onclick="return openDetailPopup('${pageContext.request.contextPath}/commoncode/detail?grpCode=${cc.grpCode}&code=${cc.code}', 'codeDetail');">
 							<td>${status.count}</td>
-							<td><a
-								href="${pageContext.request.contextPath}/commoncode/detail?grpCode=${cc.grpCode}&code=${cc.code}">
-									${cc.grpCode} </a></td>
+							<td>${cc.grpCode}</td>
 							<td>${cc.code}</td>
 							<td style="text-align: left; padding-left: 15px;">${cc.codeName}</td>
 							<td>${cc.sortSeq}</td>

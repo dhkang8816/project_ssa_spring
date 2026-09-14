@@ -183,21 +183,19 @@ body {
 				</c:when>
 				<c:otherwise>
 					<c:forEach var="detection" items="${detectionList}">
-						<tr>
+						<tr style="cursor: pointer;"
+							onclick="return openDetailPopup('${pageContext.request.contextPath}/detection/detail?dlogId=${detection.dlogId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'detectionDetail');">
 							<td style="padding: 8px;">
-								<!-- 상세 보기 및 현장 조치 화면 이동 링크 --> <a
-								href="${pageContext.request.contextPath}/detection/detail?dlogId=${detection.dlogId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
-									${detection.dlogId} </a>
+								${detection.dlogId}
 							</td>
 
 							<!-- 💡 [추가] 컨트롤러의 getSnapshot 주소를 호출하여 물리 폴더 내부의 캡쳐 이미지 출력 -->
-							<td style="padding: 4px;"><a
-								href="${pageContext.request.contextPath}/detection/detail?dlogId=${detection.dlogId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
+							<td style="padding: 4px;">
 									<img
 									src="${pageContext.request.contextPath}/detection/getSnapshot?dlogId=${detection.dlogId}"
 									alt="탐지 스냅샷" class="mini-snapshot"
 									onerror="this.src='${pageContext.request.contextPath}/resources/images/member/noImage.jpg';" />
-							</a></td>
+							</td>
 
 							<td style="padding: 8px;"><c:choose>
 									<c:when test="${empty detection.droneId}">
