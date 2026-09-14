@@ -233,6 +233,7 @@
     <script>
         // 현재 브라우저 페이지 세션 안에서 사용할 라우팅 메모리 상태 변수 정의 (기본값: videoFeed 기본 통로)
         let activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/labels';
+        const esp32VideoUrl = "${flaskEsp32VideoUrl}" || "http://localhost:5000/esp32_yolov12/video_feed";
 
         const switchMode = (modeKey) => {
             const video = document.getElementById('droneVideo');
@@ -246,7 +247,7 @@
                     
                     setTimeout(() => {
                         // 2. 7일 버전의 무결점 하이브리드 워프 가동 (Flask 다이렉트 주소 주입)
-                        video.src = "http://localhost:5000/esp32_yolov12/video_feed";
+                        video.src = esp32VideoUrl;
                         
                         // 3. 7일 버전의 ESP32 전용 라벨 배관 완벽 복구
                         activeLabelUrl = window.location.origin + '${pageContext.request.contextPath}/yolo/espLabels';

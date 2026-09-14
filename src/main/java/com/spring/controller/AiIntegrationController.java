@@ -29,7 +29,7 @@ public class AiIntegrationController {
 
     private final AnimalCounterService animalCounterService;
     private final DetectionLogService detectionLogService;
-    private CommonCodeService commonCodeService; // 공통코드 서비스 주입
+    private final CommonCodeService commonCodeService; // 공통코드 서비스 주입
 
     /**
      * [Pipeline 1] Flask가 실시간으로 목표 기준 마리수를 조회해가는 API

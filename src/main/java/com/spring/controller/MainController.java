@@ -7,6 +7,7 @@ import org.springframework.ui.Model; // 🛠️ Model 클래스 표준 임포트
 import org.springframework.web.bind.annotation.GetMapping;
 import com.spring.cmd.PageMaker;
 import com.spring.dto.AlertLogVO;
+import com.spring.util.RuntimeSettings;
 import com.spring.dao.AlertLogDAO; // 🛠️ DAO 인터페이스 표준 임포트
 
 @Controller
@@ -21,6 +22,8 @@ public class MainController {
      */
     @GetMapping("/")
     public String main(Model model) {
+        model.addAttribute("flaskEsp32VideoUrl", RuntimeSettings.text(
+                "SSA_FLASK_ESP32_VIDEO_URL", "http://localhost:5000/esp32_yolov12/video_feed"));
         try {
             // 🚀 1. 최신 5건만 고속 스캔하기 위한 페이징/검색어 필터링 무력화 조건 조립
             PageMaker alertPageCmd = new PageMaker();

@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.spring.cmd.PageMaker;
 import com.spring.dto.DetectionLogVO;
 import com.spring.service.DetectionLogService;
+import com.spring.util.RuntimeSettings;
 
 import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 추가
 
@@ -33,12 +34,14 @@ import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 추가
 @RequestMapping("/detection")
 public class DetectionLogController {
 
+    private static final String SNAPSHOT_UPLOAD_ROOT = RuntimeSettings.text("SSA_UPLOAD_ROOT", "C:" + File.separator + "upload");
+
     @Autowired
     private DetectionLogService detectionLogService; // 💡 깔끔하게 의존성 주입 구조 변경
 
     // 독립된 영구 물리 디렉토리 경로 추출 및 자가 치유 메서드
     private String getUploadPath(HttpServletRequest request) {
-        String path = "C:" + File.separator + "upload" + File.separator + "detection";
+        String path = new File(SNAPSHOT_UPLOAD_ROOT, "detection").getPath();
         File uploadDir = new File(path);
         if (!uploadDir.exists()) {
             if (uploadDir.mkdirs()) {

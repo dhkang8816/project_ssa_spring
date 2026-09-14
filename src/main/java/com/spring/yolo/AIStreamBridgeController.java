@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,13 +30,23 @@ import com.spring.dto.FlightHistoryVO;
 import com.spring.service.DroneService;
 import com.spring.service.FlightHistoryService;
 import com.spring.service.VideoDroneMapService;
+import com.spring.util.RuntimeSettings;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class AIStreamBridgeController {
 
-	private final String FLASK_SERVER_URL = "http://localhost:5000/stream";
+	private static final String FLASK_SERVER_URL = RuntimeSettings.text(
+			"SSA_FLASK_STREAM_URL", "http://localhost:5000/stream");
+	private static final String FLASK_ESP32_VIDEO_URL = RuntimeSettings.text(
+			"SSA_FLASK_ESP32_VIDEO_URL", "http://localhost:5000/esp32_yolov12/video_feed");
+	private static final int FLASK_VIDEO_CONNECT_TIMEOUT_MS = RuntimeSettings.positiveInt(
+			"SSA_FLASK_VIDEO_CONNECT_TIMEOUT_MS", 3000);
+	private static final int FLASK_VIDEO_READ_TIMEOUT_MS = RuntimeSettings.positiveInt(
+			"SSA_FLASK_VIDEO_READ_TIMEOUT_MS", 3000);
+	private static final int FLASK_LABEL_TIMEOUT_MS = RuntimeSettings.positiveInt(
+			"SSA_FLASK_LABEL_TIMEOUT_MS", 1500);
 	private static String currentMode = "local";
 	private static String lastActiveSourceKey = "video_1";
 
@@ -55,7 +66,8 @@ public class AIStreamBridgeController {
 	private static final Map<String, Long> activeFlightStartMap = new ConcurrentHashMap<>();
 
 	@GetMapping("/yolo/view")
-	public String showMainControlPage() {
+	public String showMainControlPage(Model model) {
+		model.addAttribute("flaskEsp32VideoUrl", FLASK_ESP32_VIDEO_URL);
 		return "main";
 	}
 
@@ -80,7 +92,7 @@ public class AIStreamBridgeController {
 			System.out.println(" [최초 화면 진입 이륙] 채널 [" + lastActiveSourceKey + "]의 첫 비행 타이머가 가동되었습니다.");
 		}
 		String pythonServerUrl = FLASK_SERVER_URL + "/video_feed";
-		executeProxy(pythonServerUrl, response, 3000, 3000, false);
+		executeProxy(pythonServerUrl, response, FLASK_VIDEO_CONNECT_TIMEOUT_MS, FLASK_VIDEO_READ_TIMEOUT_MS, false);
 	}
 
 	@RequestMapping("/yolo/changeVideo/{sourceKey}")
@@ -125,8 +137,8 @@ public class AIStreamBridgeController {
 			java.net.URL url = new java.net.URL(pythonJsonUrl);
 			java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
-			conn.setConnectTimeout(1500);
-			conn.setReadTimeout(1500);
+			conn.setConnectTimeout(FLASK_LABEL_TIMEOUT_MS);
+			conn.setReadTimeout(FLASK_LABEL_TIMEOUT_MS);
 
 			if (conn.getResponseCode() == 200) {
 				isFlaskAlive = true;
@@ -141,7 +153,7 @@ public class AIStreamBridgeController {
 		}
 
 		if (isFlaskAlive) {
-			executeProxy(pythonJsonUrl, response, 2000, 2000, true);
+			executeProxy(pythonJsonUrl, response, FLASK_LABEL_TIMEOUT_MS, FLASK_LABEL_TIMEOUT_MS, true);
 		}
 	}
 

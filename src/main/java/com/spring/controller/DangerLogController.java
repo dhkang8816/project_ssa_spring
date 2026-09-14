@@ -27,6 +27,7 @@ import com.spring.dto.DangerDetailVO;
 import com.spring.dto.DangerLogVO;
 import com.spring.service.DangerDetailService;
 import com.spring.service.DangerLogService;
+import com.spring.util.RuntimeSettings;
 
 import jakarta.servlet.http.HttpServletRequest; // 💡 Tomcat 10 사양 완벽 준수
 import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 통합 완료
@@ -36,6 +37,8 @@ import lombok.extern.log4j.Log4j2; // 💡 로그 어노테이션 통합 완료
 @RequestMapping("/dangerlog")
 public class DangerLogController {
 
+    private static final String SNAPSHOT_UPLOAD_ROOT = RuntimeSettings.text("SSA_UPLOAD_ROOT", "C:" + File.separator + "upload");
+
     @Autowired
     private DangerLogService dangerLogService;
     
@@ -44,7 +47,7 @@ public class DangerLogController {
 
     // 💡 이상개체 스냅샷 보관용 독립 영구 물리 디렉토리 경로 추출 및 noImage.jpg 자동 복사 메서드
     private String getUploadPath(HttpServletRequest request) {
-        String path = "C:" + File.separator + "upload" + File.separator + "dangerlog";
+        String path = new File(SNAPSHOT_UPLOAD_ROOT, "dangerlog").getPath();
         
         File uploadDir = new File(path);
         // 1. 디렉토리가 없다면 전체 자동 생성 (상위 폴더 포함)
