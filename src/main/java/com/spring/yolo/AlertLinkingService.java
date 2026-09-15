@@ -1,4 +1,4 @@
-package com.spring.yolo;
+﻿package com.spring.yolo;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +12,7 @@ import com.spring.service.DetectionLogService;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * Persists one source log and its alert record as a single unit of work.
- */
+
 @Service
 @RequiredArgsConstructor
 public class AlertLinkingService {

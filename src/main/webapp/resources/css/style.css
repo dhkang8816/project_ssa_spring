@@ -1,6 +1,6 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 
-/* 1. 글로벌 초기화 및 박스 모델 잠금 */
+
 * {
     box-sizing: border-box;
 }
@@ -19,13 +19,13 @@ a {
     text-decoration: none;
 }
 body {
-    background: #0b0f19; /* ⭕ 메인 관제소 깊은 다크 테마 색상으로 전면 통일 */
+    background: #0b0f19; 
     color: #e2e8f0;
     font-family: "Segoe UI", Roboto, "Malgun Gothic", Arial, sans-serif;
     overflow-x: hidden;
 }
 
-/* 2. 상단 관제소 탑 헤더 바 아키텍처 */
+
 header, .top-header {
     position: fixed;
     top: 0;
@@ -35,16 +35,16 @@ header, .top-header {
     height: 80px;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* 양끝 정렬 보정 */
+    justify-content: space-between; 
     padding: 0 30px;
-    background: #111827; /* ⭕ 헤더 다크 스킨 일치화 */
-    border-bottom: 1px solid #1e293b; /* 투박한 5px 흰색 테두리 삭제 후 슬림 1px 라인 변경 */
+    background: #111827; 
+    border-bottom: 1px solid #1e293b; 
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .system-title {
     margin: 0;
-    font-size: 20px; /* ⭕ 관제 타이틀 폰트 크기 모던하게 압축 */
+    font-size: 20px; 
     font-weight: 800;
     letter-spacing: -0.03em;
 }
@@ -54,27 +54,27 @@ header, .top-header {
     right: 30px;
 }
 
-/* 3. [구조 대개편] 초슬림 자석 밀착형 사이드바 내비게이션 */
+
 nav {
     position: fixed;
     top: 80px;
     left: 0;
-    width: 150px; /* ⭕ 여백을 완전히 걷어내고 150px 초슬림 스펙으로 변경 고정 */
+    width: 150px; 
     height: calc(100vh - 80px);
     display: flex;
     flex-direction: column;
-    background: #111827; /* 헤더와 패밀리 룩 통일 */
+    background: #111827; 
     border-right: 1px solid #1e293b;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
     overflow: visible !important;
     z-index: 20000;
 }
 
-/* ⭕ 시각적 공분산 오류를 일으키던 옛날 세로 텍스트 'sidebar-header' 및 'main-tag' 구조부 완전 삭제 청소 */
+
 
 .sidebar-list {
     flex: 1;
-    padding: 10px 0; /* 내부 핏 정돈 */
+    padding: 10px 0; 
     margin: 0;
     width: 100%;
 }
@@ -86,44 +86,44 @@ nav {
     margin: 0 !important;
 }
 
-/* 대분류 링크 즉시 피드백 장착 */
+
 .sidebar-list > li > a {
     display: block;
-    padding: 14px 14px; /* 인풋 핏 밀착 여백 압축 */
+    padding: 14px 14px; 
     color: #94a3b8;
     font-size: 14px;
     font-weight: 600;
-    border-left: 4px solid transparent; /* 피드백 인디케이터 바 사전 공간 확보 */
-    transition: none !important; /* 요란한 효과 원천 차단 */
+    border-left: 4px solid transparent; 
+    transition: none !important; 
 }
 
-/* 대분류 마우스 호버 시 0초 만에 네온 블루 점등 확실한 피드백 */
+
 .sidebar-list > li:hover > a {
     color: #38bdf8;
     background: linear-gradient(90deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0) 100%);
     border-left: 4px solid #38bdf8;
 }
 
-/* 4. [오류 완치] 마우스 탈출 버그 차단막이 탑재된 서브메뉴 플라이아웃 */
+
 .submenu {
-    display: none; /* 평소 기본 상태 숨김 */
+    display: none; 
     position: absolute;
-    left: 149px; /* ⭕ 줄어든 nav 너비에 정확히 자석 밀착 매핑 */
+    left: 149px; 
     top: 0;
     width: 160px;
     padding: 6px 0 !important;
-    background: #1e293b; /* 관제 카드 테마와 색상 동기화 */
+    background: #1e293b; 
     border: 1px solid #334155;
     border-radius: 0 8px 8px 0;
     box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.4);
     z-index: 10001;
 
-    /* 💡 [핵심 해결책 반영] 마우스 이동 안전지대 확장 배관 */
+    
     padding-left: 15px !important;
     margin-left: -15px !important;
 }
 
-/* ⭕ 요란한 서브메뉴 트랜지션 슬라이드 애니메이션 완전 삭제 ➔ 0초 즉시 점등 */
+
 .sidebar-list > li:hover .submenu {
     display: block !important;
 }
@@ -133,7 +133,7 @@ nav {
     margin: 0 !important;
 }
 
-/* 서브메뉴 텍스트 아이템 아이디 핏 */
+
 .submenu li a {
     display: block;
     padding: 10px 16px;
@@ -144,7 +144,7 @@ nav {
     box-sizing: border-box;
 }
 
-/* 서브메뉴 마우스 호버 시 칼같은 영역 반전 피드백 */
+
 .submenu li a:hover {
     color: #ffffff;
     background: #0ea5e9;
@@ -152,13 +152,13 @@ nav {
     font-weight: 600;
 }
 
-/* 5. 콘텐츠 페이지 배치 균형 자동 정렬 연동 가이드 */
+
 .control-content-wrapper, .patrol-list-content, .control-page-content {
-    left: 150px !important; /* ⭕ 다른 jsp 본문들도 자동으로 줄어든 150px 우측 뒤로 밀착 고정 */
+    left: 150px !important; 
     width: calc(100% - 150px) !important;
 }
 
-/* 6. 모바일 반응형 콤팩트 디펜스 랙 */
+
 @media (max-width: 760px) {
     header, .top-header {
         height: 64px;
@@ -172,7 +172,7 @@ nav {
     }
     nav {
         top: 64px;
-        width: 100% !important; /* 모바일은 가로 전체 랙 전막 스왑 */
+        width: 100% !important; 
         height: calc(100vh - 64px);
     }
     .submenu {
@@ -186,9 +186,7 @@ nav {
     }
 }
 
-/* ==========================================
-   공통 CSV 다운로드 버튼 기본 스킨 (기존 화면 유지용) 
-   ========================================== */
+
 .csv-download-btn {
     display: inline-flex !important;
     align-items: center !important;
@@ -219,11 +217,8 @@ button[class*="register"] + .csv-download-btn {
 }
 
 
-/* ==========================================
-   💡 [격리 및 안전 정렬] 결재 관리 전용 네온 블루 레이아웃 
-   ========================================== */
-/* 네온 테마 버튼(.neon-theme)이 있을 때만 이 요약 박스를 flex로 가로 정렬합니다. 
-   검색창이 있는 다른 직원 관리 페이지 등의 Grid 구조를 절대로 방해하지 않습니다. */
+
+
 .panel > .staff-list-summary:has(.neon-theme) {
     grid-area: summary !important;
     display: flex !important;
@@ -236,12 +231,12 @@ button[class*="register"] + .csv-download-btn {
     box-sizing: border-box !important;
 }
 
-/* 🎨 네온 블루 버튼 스킨 재정의 및 불필요한 주황색 여백(Margin) 제거 */
+
 button.csv-download-btn.neon-theme {
     appearance: none !important;
     -webkit-appearance: none !important;
     
-    /* 하이테크 네온 블루 테마 셋업 */
+    
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -259,30 +254,28 @@ button.csv-download-btn.neon-theme {
     box-shadow: 0 0 12px rgba(56, 189, 248, 0.05) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     
-    /* ⭕ 기존 에메랄드 버튼의 float 및 하단 주황색 여백(16px 마진)을 원천 차단 */
+    
     float: none !important; 
     margin: 0 !important;   
 }
 
-/* 마우스 올렸을 때 (Hover 효과 고도화) */
+
 button.csv-download-btn.neon-theme:hover {
     background: #38bdf8 !important;
-    color: #0b0f19 !important; /* 깊은 다크 관제소 배경색 */
+    color: #0b0f19 !important; 
     border-color: #38bdf8 !important;
     box-shadow: 0 0 18px rgba(56, 189, 248, 0.5) !important;
     transform: translateY(-1px) !important;
 }
 
-/* 클릭했을 때 (Active 클릭 반응 고정) */
+
 button.csv-download-btn.neon-theme:active {
     transform: translateY(1px) !important;
     box-shadow: 0 0 8px rgba(56, 189, 248, 0.2) !important;
 }
 
 
-/* ==========================================
-   기존 그리드 유연성 패널 레이아웃 홀딩 
-   ========================================== */
+
 .panel:has(> .csv-download-btn:not(.neon-theme)) {
     grid-template-areas: "title search" "summary action" "export export" "table table" "pager pager" !important;
 }

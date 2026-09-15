@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -6,6 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
 <title>일일 관제 업무 보고서</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -46,7 +47,7 @@ body {
 	border-bottom: 2px solid #5ddcff;
 }
 
-/* 🔴 🟡 🟢 [요구사항 2] 드롭다운 상태 제어용 콤보박스 디자인 */
+
 .status-select {
 	padding: 6px 16px;
 	border-radius: 6px;
@@ -61,15 +62,15 @@ body {
 .sel-0 {
 	color: #f1c40f;
 	border: 1px solid #f1c40f;
-} /* 대기 */
+} 
 .sel-1 {
 	color: #2ecc71;
 	border: 1px solid #2ecc71;
-} /* 완료 */
+} 
 .sel-2 {
 	color: #e74c3c;
 	border: 1px solid #e74c3c;
-} /* 반려 */
+} 
 .grid-metrics {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -132,7 +133,7 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="popup-page">
 	<div class="report-frame">
 		<div
 			class="d-flex justify-content-between align-items-center mb-3 pb-2"
@@ -140,7 +141,7 @@ body {
 			<h2 style="color: #ffffff; margin: 0; font-weight: bold;">일일
 				관제 업무 보고서</h2>
 
-			<!-- 🔴 🟡 🟢 [요구사항 2] 공통코드를 참조하여 동적으로 상태를 수정 및 적재하는 셀렉트 박스 박벽 가동 -->
+			
 			<div class="d-flex gap-2 align-items-center no-print">
 				<button type="button" class="btn btn-outline-light"
 					onclick="window.print();">인쇄</button>
@@ -155,7 +156,7 @@ body {
 			</div>
 		</div>
 
-		<!-- HEADER ZONE -->
+		
 		<div class="layout-segment">
 			<div class="segment-title text-info">☝️ 관제 책임자 식별 레코드</div>
 			<div class="row" style="font-size: 14px; row-gap: 8px;">
@@ -179,7 +180,7 @@ body {
 			</div>
 		</div>
 
-		<!-- CONTENT ZONE -->
+		
 		<div class="layout-segment">
 			<div class="segment-title" style="color: #ffae19;">📝 현장 조치 내역
 				및 종합 비고 이력</div>
@@ -202,7 +203,7 @@ body {
 			</div>
 		</div>
 
-		<!-- FOOTER ZONE -->
+		
 		<div class="layout-segment">
 			<div class="segment-title text-success">📊 라이브 관제 통계 수치 및 트렌드
 				분석 차트</div>
@@ -234,7 +235,7 @@ body {
 				</div>
 			</div>
 
-			<!-- 📊 [요구사항 1] 무슨 그래프인지 명확한 타이틀 및 단위 이름 가이드라인 마킹 적용 단 -->
+			
 			<div class="row g-3 mb-3">
 				<div class="col-6">
 					<div class="chart-box">
@@ -276,7 +277,7 @@ body {
 			</div>
 		</div>
 
-		<!-- 하단 액션 제어 바 -->
+		
 		<div class="d-flex justify-content-between no-print">
 			<button type="button" class="btn btn-primary fw-bold"
 				onclick="fn_triggerForceUpdate();">🔄 대시보드 수동 강제 재실행</button>
@@ -297,39 +298,8 @@ body {
 	</div>
 
 	<script>
-// 🟢 [지표 1] 셀렉트 박스 값 변경 시 즉각 오라클 DB에 실시간 적재 연동하는 함수
-/* Detail-page status mutation removed; approval changes are handled by the approval list.
-function fn_changeReportStatus(targetValue) {
-    var $selector = $("#confirmStatusSelector");
-    
-    // UI 테마 색상 즉시 동적 스위칭 포인터 보정
-    $selector.removeClass("sel-0 sel-1 sel-2");
-    if(targetValue === "1") $selector.addClass("sel-1");
-    else if(targetValue === "2") $selector.addClass("sel-2");
-    else $selector.addClass("sel-0");
 
-    // 백엔드로 변경 상태 실시간 비동기 적재 타격
-    $.ajax({
-        url: "${pageContext.request.contextPath}/patrolreport/updateStatus",
-        type: "POST",
-        data: {
-            reportId: "${report.reportId}",
-            confirmStatus: targetValue
-        },
-        success: function(response) {
-            if(response === "SUCCESS") {
-                console.log("✔ [오라클 적재 성공] 결재 확정 여부 상태가 정상 동기화되었습니다.");
-            } else {
-                alert("❌ 상태 변경 반영에 실패했습니다.");
-            }
-        }
-    });
-}
-
-// 📊 [지표 2] 붕괴했던 Chart.js 그래픽 엔진 구조 무결점 복구 영역
-*/
 $(document).ready(function() {
-    // A. 최근 5일간 누적 이상객체 검출 추이 라인 차트
     new Chart(document.getElementById('miniTrendChart'), {
         type: 'line',
         data: {
@@ -350,8 +320,6 @@ $(document).ready(function() {
             plugins: { legend: { display: false } } 
         }
     });
-
-    // B. 🔥 [버그 픽스 완료] 문법 꼬임 현상을 원천 해결한 당일 시간대별 분포 바 차트
     new Chart(document.getElementById('miniHourChart'), {
         type: 'bar',
         data: {
@@ -374,20 +342,15 @@ $(document).ready(function() {
     });
 }); // 💡 유실되었던 도큐먼트 레디 닫는 괄호선 완벽 수리 완료!
 
-/**
- * 라이브 관제 대시보드 코어 엔진 수동 강제 재실행 함수
- */
+
 function fn_triggerForceUpdate() {
     if (!confirm("라이브 관제 대시보드 코어 엔진에서 최신 데이터를 긁어와 수동 강제 재실행을 격발하시겠습니까?")) {
         return;
     }
-    
-    // 1단계: AI 브리핑 최신 데이터 조회 (GET)
     $.ajax({
         url: "${pageContext.request.contextPath}/dashboard/api/ai-briefing",
         type: "GET",
         success: function(res) {
-            // 2단계: 조회한 데이터를 바탕으로 순찰 리포트 재계산 요청 (POST)
             $.ajax({
                 url: "${pageContext.request.contextPath}/patrolreport/recalculate",
                 type: "POST",

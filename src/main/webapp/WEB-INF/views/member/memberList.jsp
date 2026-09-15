@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -9,13 +9,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>직원관리</title>
-<!-- 기존 프로젝트 공통 css 경로가 다를 경우 고쳐서 사용하세요 -->
+
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
-/* [1. 글로벌 바디 최적화] */
+
 body.login-page {
-    background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤으로 강제 통일 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
@@ -23,24 +23,24 @@ body.login-page {
     overflow-x: hidden;
 }
 
-/* [2. 구조 개량 - 150px 초슬림 사이드바 정밀 정렬 싱크] */
+
 .main-container {
-    display: block !important; /* flex 레이아웃으로 인한 꼬임 전면 파쇄 */
+    display: block !important; 
     margin-top: 0 !important;
 }
 
-/* 옛날 250px 폭의 유령 블록 엘리먼트 비활성화 청소 */
+
 #menu-placeholder {
     display: none !important;
     width: 0 !important;
 }
 
-/* 실제 우측 본문 콘텐츠 영역을 150px 내비게이션 바로 옆에 자석 정렬 */
+
 .content-area {
     position: absolute !important;
-    top: 80px !important; /* 상단 고정 헤더 영역 확보 */
-    left: 150px !important; /* 얇아진 150px 메뉴바 경계선에 완벽 밀착 */
-    width: calc(100% - 150px) !important; /* 우측 남은 공간 100% 락 */
+    top: 80px !important; 
+    left: 150px !important; 
+    width: calc(100% - 150px) !important; 
     padding: 30px 40px !important;
     background: transparent !important;
     box-sizing: border-box;
@@ -55,7 +55,7 @@ body.login-page {
     }
 }
 
-/* [3. 상단 제어 바 및 검색 랙 정밀 위치 수정 마스크] */
+
 .staff-top-bar {
     display: flex;
     justify-content: space-between;
@@ -83,7 +83,7 @@ body.login-page {
     width: 100%;
 }
 
-/* 검색 셀렉트 박스 및 입력창 모던화 */
+
 .search-group form {
     display: flex;
     gap: 6px;
@@ -102,11 +102,11 @@ body.login-page {
 }
 
 .search-group .search-input {
-    width: 240px !important; /* 콤팩트한 실무 폭으로 정돈 */
+    width: 240px !important; 
     padding: 9px 16px !important;
     background: #111827 !important;
     border: 1px solid #334155 !important;
-    border-radius: 8px !important; /* 세련된 사각 주축 래핑 */
+    border-radius: 8px !important; 
     color: #ffffff !important;
     font-size: 13.5px;
     outline: none;
@@ -118,7 +118,7 @@ body.login-page {
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* [4. 서머리 정보 랙 텍스트 가독성 고도화] */
+
 .staff-count {
     color: #94a3b8 !important;
     font-size: 14px;
@@ -126,19 +126,19 @@ body.login-page {
 }
 
 .staff-count .count-num {
-    color: #38bdf8 !important; /* 관제 브랜드 아이덴티티 네온 블루 */
+    color: #38bdf8 !important; 
     font-weight: 700;
     background: rgba(56, 189, 248, 0.1);
     padding: 2px 6px;
     border-radius: 4px;
 }
 
-/* [계정 등록] 청량한 네온 그린 액센트 단추 장착 */
+
 .staff-register-btn {
     padding: 9px 18px !important;
     border: 0 !important;
     border-radius: 8px !important;
-    background: #10b981 !important; /* 관제소 전용 네온 그린 스킨 */
+    background: #10b981 !important; 
     color: #ffffff !important;
     font-weight: 700;
     font-size: 13.5px;
@@ -153,12 +153,12 @@ body.login-page {
     transform: translateY(-1px);
 }
 
-/* [5. 와이드 관제 데이터 그리드 프레임 테마] */
+
 .staff-table-wrapper {
     overflow-x: auto;
     overflow-y: hidden;
     border-radius: 12px !important;
-    background: rgba(20, 26, 42, 0.85) !important; /* 반투명 글래스 패널 */
+    background: rgba(20, 26, 42, 0.85) !important; 
     border: 1px solid #1e293b !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
     width: 100%;
@@ -174,12 +174,12 @@ body.login-page {
 .staff-table th {
     white-space: nowrap;
     padding: 14px 16px !important;
-    background: #111827 !important; /* 묵직한 다크 인프라 행 적용 */
+    background: #111827 !important; 
     border-bottom: 2px solid #1e293b !important;
-    color: #38bdf8 !important; /* 네온 블루 레이블 각인 */
+    color: #38bdf8 !important; 
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 전체 중앙 고정 마스크 */
+    text-align: center !important; 
 }
 
 .staff-table td {
@@ -193,7 +193,7 @@ body.login-page {
     white-space: nowrap;
 }
 
-/* 리스트 행 스캔 모션 피드백 */
+
 .staff-table tbody tr {
     cursor: pointer;
     transition: background-color 0s ease;
@@ -204,10 +204,10 @@ body.login-page {
     color: #ffffff !important;
 }
 
-/* [6. 상태 배지 신호등 알약 마감 처리] */
+
 .badge-status {
     padding: 4px 12px !important;
-    border-radius: 20px !important; /* 완벽한 타원 알약 핏 */
+    border-radius: 20px !important; 
     font-size: 11.5px !important;
     font-weight: 700 !important;
     display: inline-block;
@@ -217,21 +217,21 @@ body.login-page {
     background-color: rgba(16, 185, 129, 0.15) !important;
     color: #10b981 !important;
     border: 1px solid rgba(16, 185, 129, 0.3) !important;
-} /* 정상 */
+} 
 
 .status-stop {
     background-color: rgba(239, 68, 68, 0.15) !important;
     color: #ef4444 !important;
     border: 1px solid rgba(239, 68, 68, 0.3) !important;
-} /* 정지 */
+} 
 
 .status-dormant {
     background-color: rgba(148, 163, 184, 0.15) !important;
     color: #94a3b8 !important;
     border: 1px solid rgba(148, 163, 184, 0.3) !important;
-} /* 휴면 */
+} 
 
-/* [7. 하단 페이징 내비게이션 랙] */
+
 .pagination {
     display: flex;
     list-style: none;
@@ -259,7 +259,7 @@ body.login-page {
     border-color: #334155;
 }
 
-/* 페이징 활성화 버튼 네온 하이라이팅 각인 */
+
 .pagination li.active strong {
     color: #38bdf8 !important;
     background: rgba(14, 165, 233, 0.15) !important;
@@ -270,17 +270,17 @@ body.login-page {
 </head>
 <body class="login-page">
 
-<!-- 1. 가장 상단 공통 헤더 로드 -->
+
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="main-container">
-    <!-- 2. 본문 컨테이너 시작 직후 좌측 슬림 메뉴 조립 -->
+    
     <jsp:include page="/WEB-INF/views/menu.jsp" />
     
-    <!-- 3. 우측 본문 콘텐츠 영역 정위치 인착 -->
+    
     <main class="content-area">
         
-        <!-- 상단 타이틀 및 검색 바 바인딩 랙 -->
+        
         <div class="staff-top-bar">
             <h2 class="page-title">직원관리</h2>
             
@@ -295,13 +295,13 @@ body.login-page {
             </div>
         </div>
         
-        <!-- 서머리 정보 바 (총원 출력 및 등록 버튼) -->
-		<!-- [수정 후] -->
+        
+		
 		<div class="staff-summary-bar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 		    <div class="staff-count">
 		        총 직원수: <span class="count-num">${empty memberList ? 0 : memberList.size()}</span>명
 		    </div>
-		    <!-- ⭕ [계정 등록]과 [CSV 다운로드] 버튼을 감싸서 우측에 나란히 배치하는 그룹 -->
+		    
 		    <div class="summary-action-group" style="display: flex; gap: 8px; align-items: center;">
    	 		<button class="csv-download-btn neon-theme" onclick="downloadTableAsCsv('#memberTable', 'member-list')">
 			        <i class="fa-solid fa-file-csv" style="font-size: 14px;"></i>
@@ -310,7 +310,7 @@ body.login-page {
 		        <button type="button" class="staff-register-btn" onclick="return openFormPopup('${pageContext.request.contextPath}/member/registForm', 'memberRegister');">계정 등록</button>
 		    </div>
 		</div>
-        <!-- 메인 데이터 테이블 프레임 랙 -->
+        
         <div class="staff-table-wrapper">
             <table id="memberTable" class="staff-table" data-csv-export data-csv-filename="member-list">
                 <thead>
@@ -320,7 +320,7 @@ body.login-page {
                         <th>이름</th>
                         <th>소속(부서)</th>
                         <th>이메일 주소</th>
-                        <th>휴대전화 번호</th> <!-- ⭕ "휴дзен화" 오타를 "휴대전화"로 정밀 수정 완료 -->
+                        <th>휴대전화 번호</th> 
                         <th>가입일</th>
                         <th style="width: 110px;">상태</th>
                     </tr>
@@ -335,13 +335,13 @@ body.login-page {
                         <c:otherwise>
                             <c:forEach var="member" items="${memberList}">
                                 <tr onclick="return openDetailPopup('${pageContext.request.contextPath}/member/detail?memberId=${member.memberId}', 'memberDetail');">
-                                    <!-- 미니 프로필 이미지 출력 랙 -->
+                                    
                                     <td style="padding: 6px;">
                                         <img src="${pageContext.request.contextPath}/member/getPicture?id=${member.memberId}" alt="미니프로필" class="mini-profile"
                                              onerror="this.src='${pageContext.request.contextPath}/resources/images/member/noImage.jpg';"
                                              style="width: 35px; height: 35px; border-radius: 50%; border: 1px solid #1e293b; object-fit: cover; vertical-align: middle;" />
                                     </td>
-                                    <!-- 데이터 매핑 필드 바인딩 -->
+                                    
                                     <td style="color: #38bdf8; font-weight: 600;">${member.memberId}</td>
                                     <td><strong>${member.name}</strong></td>
                                     <td>${member.department}</td>
@@ -372,7 +372,7 @@ body.login-page {
             </table>
         </div>
         
-        <!-- 하단 페이징 내비게이션 영역 -->
+        
         <div class="text-center" style="margin-top: 25px; display: flex; justify-content: center; width: 100%;">
             <ul class="pagination">
                 <c:if test="${pageMaker.prev}">
@@ -399,7 +399,7 @@ body.login-page {
     </main>
 </div>
 
-<!-- 공통 레이아웃 호출 스크립트 (기존 제공 소스 유지) -->
+
 <script>
  const contextPath = '<%=request.getContextPath()%>';
 </script>

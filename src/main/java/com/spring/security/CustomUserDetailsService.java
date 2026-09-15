@@ -1,4 +1,4 @@
-package com.spring.security;
+﻿package com.spring.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
         MemberVO member = null;
         try {
-            // DAO 호출 시 발생하는 체크 예외를 잡아서 런타임 예외로 감싸줍니다.
             member = memberDAO.selectMemberById(memberId);
         } catch (Exception e) {
             throw new RuntimeException("회원 조회 중 DB 에러가 발생했습니다: " + e.getMessage(), e);

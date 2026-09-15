@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@
 		<h2 style="color: red;">⚠️ 서비스 이용에 불편을 드려 죄송합니다.</h2>
 		<p style="font-size: 16px; font-weight: bold;">${errorMsg}</p>
 
-		<!-- 💡 개발자 전용 디버깅 에러 메시지 (테스트 기간에만 켜두고 나중에 주석 처리) -->
+		
 		<div
 			style="text-align: left; background: #eee; padding: 15px; overflow: auto; max-height: 200px; font-family: monospace;">
 			<strong>[Error Message]</strong> : ${exception.message}

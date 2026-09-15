@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -6,12 +6,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
 <title>회원가입</title>
 <style>
-/* 1. 글로벌 바디 및 레이아웃 정의 */
+
 body {
-    background-color: #0b0f19 !important; /* 메인 관제소와 일치하는 다크 테마 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
@@ -19,10 +20,10 @@ body {
     box-sizing: border-box;
 }
 
-/* 2. 글래스모피즘 스타일의 메인 입력 판넬 */
+
 .form-panel {
     width: 100%;
-    max-width: 520px; /* 상세/수정창과 싱크를 맞춘 슬림 수직 구조 */
+    max-width: 520px; 
     margin: 0 auto;
     background: rgba(20, 26, 42, 0.85) !important;
     border: 1px solid #1e293b !important;
@@ -45,7 +46,7 @@ body {
     text-align: center;
 }
 
-/* 3. 상단 파일 업로드 및 이미지 프리뷰 레이아웃 */
+
 .profile-upload-wrapper {
     display: flex;
     flex-direction: column;
@@ -62,7 +63,7 @@ body {
     font-weight: 600;
 }
 
-/* 프리뷰 상자 네온 블루 튜닝 */
+
 .preview-box {
     width: 150px;
     height: 185px;
@@ -75,14 +76,14 @@ body {
     margin-bottom: 12px;
 }
 
-/* 파일 업로드 쌩 input 컴포넌트 텍스트 보정 */
+
 #fileInput {
     font-size: 12px;
     color: #94a3b8;
     margin-bottom: 8px;
 }
 
-/* 4. 구조화한 신규 등록 폼 카드 랙 */
+
 .form-grid-card {
     width: 100%;
     display: flex;
@@ -121,11 +122,11 @@ body {
     justify-content: flex-end;
 }
 
-/* 5. 입력 상자 다크 고도화 */
+
 .form-grid-card input[type="text"], 
 .form-grid-card input[type="password"], 
 .form-grid-card input[type="email"] {
-    width: 220px !important; /* 적정 입력폭 고정 */
+    width: 220px !important; 
     background: #111827 !important;
     padding: 8px 12px !important;
     color: #ffffff !important;
@@ -143,7 +144,7 @@ body {
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25) !important;
 }
 
-/* 6. 조작 버튼 세부 마감 */
+
 button, input[type="submit"] {
     padding: 9px 18px;
     font-size: 13.5px;
@@ -154,7 +155,7 @@ button, input[type="submit"] {
     border: none;
 }
 
-/* 사진 조작 및 취소 단추용 차분한 무채색 스킨 */
+
 .btn-photo-action, .btn-back {
     background-color: #1e293b !important;
     color: #cbd5e1 !important;
@@ -167,9 +168,9 @@ button, input[type="submit"] {
     color: #ffffff !important;
 }
 
-/* [가입하기] 실행 버튼 사양 */
+
 .btn-submit {
-    background-color: #10b981 !important; /* 등록 액션에 맞춤형 네온 그린 할당 */
+    background-color: #10b981 !important; 
     color: #ffffff !important;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
@@ -188,19 +189,19 @@ button, input[type="submit"] {
 button:active { transform: translateY(0); }
 </style>
 </head>
-<body>
+<body class="popup-page">
 
 <div class="form-panel">
     <h2>➕ 관제소 신규 계정 등록</h2>
     
-    <!-- 오리지널 멀티파트 서브밋 포맷 및 컨트롤러 액션 바인딩 100% 보존선 -->
+    
     <form:form action="${pageContext.request.contextPath}/member/regist" method="post" enctype="multipart/form-data">
         
-        <!-- 팝업 파라미터 및 스프링 시큐리티 필수 보안 토큰 유지 -->
+        
         <c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         
-        <!-- 상단 파일 업로드 및 실시간 미리보기 영역 -->
+        
         <div class="profile-upload-wrapper">
             <label>프로필 사진 등록</label>
             <img id="imagePreview" src="${pageContext.request.contextPath}/resources/images/member/noImage.jpg" alt="미리보기" class="preview-box" />
@@ -211,9 +212,9 @@ button:active { transform: translateY(0); }
             </div>
         </div>
         
-        <!-- 내부 입력 필드 전용 그리드 카드 -->
+        
         <div class="form-grid-card">
-            <!-- 아이디(사번) -->
+            
             <div class="form-row">
                 <span class="form-label">사번 (아이디)</span>
                 <div class="form-value-slot">
@@ -221,7 +222,7 @@ button:active { transform: translateY(0); }
                 </div>
             </div>
             
-            <!-- 비밀번호 -->
+            
             <div class="form-row">
                 <span class="form-label">비밀번호</span>
                 <div class="form-value-slot">
@@ -229,7 +230,7 @@ button:active { transform: translateY(0); }
                 </div>
             </div>
             
-            <!-- 이름 -->
+            
             <div class="form-row">
                 <span class="form-label">이름</span>
                 <div class="form-value-slot">
@@ -237,7 +238,7 @@ button:active { transform: translateY(0); }
                 </div>
             </div>
             
-            <!-- 부서 -->
+            
             <div class="form-row">
                 <span class="form-label">소속 부서</span>
                 <div class="form-value-slot">
@@ -245,7 +246,7 @@ button:active { transform: translateY(0); }
                 </div>
             </div>
             
-            <!-- 전화번호 -->
+            
             <div class="form-row">
                 <span class="form-label">전화번호</span>
                 <div class="form-value-slot">
@@ -253,27 +254,26 @@ button:active { transform: translateY(0); }
                 </div>
             </div>
             
-            <!-- 이메일 -->
+            
             <div class="form-row">
                 <span class="form-label">이메일 주소</span>
                 <div class="form-value-slot">
                     <input type="email" name="email" placeholder="example@domain.com">
                 </div>
             </div>
-        </div> <!-- .form-grid-card END -->
+        </div> 
         
-        <!-- 하단 실행 제어바 -->
+        
         <div class="action-bar">
             <button type="submit" class="btn-submit">🚀 가입 완료</button>
             <button type="button" class="btn-back" onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/member/list');">취소</button>
         </div>
         
     </form:form>
-</div> <!-- .form-panel END -->
+</div> 
 <script src="${pageContext.request.contextPath}/resources/js/popup-support.js"></script>
 </body>
 <script>
-	// 💡 선택한 사진 파일 실시간 미리보기 스크립트
 	function previewImage(input) {
 		var preview = document.getElementById('imagePreview');
 		if (input.files && input.files[0]) {
@@ -284,8 +284,6 @@ button:active { transform: translateY(0); }
 			reader.readAsDataURL(input.files[0]);
 		}
 	}
-
-	// 💡 사진 선택 취소 및 기본 이미지 복구 스크립트
 	function removeSelectedImage() {
 		var preview = document.getElementById('imagePreview');
 		var fileInput = document.getElementById('fileInput');

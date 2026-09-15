@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 💡 지정하신 네임스페이스 규칙 반영 -->
+
 <mapper namespace="DetectionLog-Mapper">
 
-    <!-- DB 실물 컬럼명과 자카르타 자바 VO 1:1 정밀 매핑 -->
+    
     <resultMap id="detectionLogMap" type="com.spring.dto.DetectionLogVO">
         <id property="dlogId" column="DLOG_ID" />
         <result property="detectTime" column="DETECT_TIME" />
         <result property="animalType" column="ANIMAL_TYPE" />
-        <result property="snapshotPath" column="SNAPSHOT_PATH" /> <!-- 오타 수정 반영 완료 -->
+        <result property="snapshotPath" column="SNAPSHOT_PATH" /> 
         <result property="detectionDate" column="DETECTION_DATE" />
         <result property="droneId" column="DRONE_ID" />
         <result property="actionStatus" column="ACTION_STATUS" />
@@ -17,7 +17,7 @@
         <result property="detectCount" column="DETECT_COUNT" />
     </resultMap>
 
-    <!-- PageMaker 연동 다조건 동적 검색 조건 (a: 축종/이상객체명, d: 드론ID, s: 조치상태) -->
+    
     <sql id="searchCondition">
         <where>
             <if test="searchType == 'a'.toString() and keyword != null and keyword != ''">
@@ -32,7 +32,7 @@
         </where>
     </sql>
 
-	 <!-- [CREATE] 1. 관제 탐지 로그 등록 (오라클 시퀀스 없이 최대값 자동 일련번호 처리) -->
+	 
 	 <insert id="insertDetectionLog" parameterType="com.spring.dto.DetectionLogVO">
 	     <selectKey keyProperty="dlogId" resultType="int" order="BEFORE">
 	         SELECT DETECTION_LOG_SEQ.NEXTVAL FROM DUAL
@@ -52,9 +52,7 @@
 	         #{dlogId, jdbcType=INTEGER},
 	         CURRENT_TIMESTAMP,
 	         
-	         /* 🎯 [1111 에러 원천 파괴 철벽 방어선 장착] 
-	            모든 가변 변수 뒤에 명시적으로 jdbcType 수식을 결합하여, 
-	            빈 값(null)이나 자료형 엇박자가 유입되더라도 오라클이 거부 없이 무조건 100% 강제 적재하도록 길을 뚫어줍니다. */
+	         
 	         #{animalType, jdbcType=VARCHAR},
 	         NVL(#{snapshotPath, jdbcType=VARCHAR}, 'NONE'), -- NOT NULL 제약조건 완벽 방어
 	         SYSDATE,
@@ -64,7 +62,7 @@
 	         #{detectCount, jdbcType=INTEGER}
 	         
 	     FROM DUAL
-	     /* 💡 [정석 방어선] 오직 부모 테이블(DRONE)에 해당 기체 아이디가 실존할 때만 데이터가 인서트됨 */
+	     
 	     WHERE EXISTS (
 	         SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId, jdbcType=VARCHAR}
 	     )
@@ -72,7 +70,7 @@
 
 
 
-    <!-- [READ] 2. 페이징 및 다조건 검색 처리된 목록 조회 (PageMaker 구조 연동) -->
+    
     <select id="selectDetectionLogList" resultMap="detectionLogMap" parameterType="com.spring.cmd.PageMaker">
         SELECT * FROM (
             SELECT ROWNUM AS rn, a.* FROM (
@@ -88,20 +86,20 @@
                     DETECT_COUNT
                 FROM DETECTION_LOG
                 <include refid="searchCondition" />
-                /* 최신 탐지 이력이 가장 위로 오도록 역순 정렬 */
+                
                 ORDER BY DLOG_ID DESC
             ) a WHERE ROWNUM &lt;= #{endRow}
         ) WHERE rn &gt;= #{startRow}
     </select>
 
-    <!-- [READ] 3. 페이징 계산용 전체 로그 건수 카운트 -->
+    
     <select id="selectDetectionLogCount" resultType="int" parameterType="com.spring.cmd.PageMaker">
         SELECT COUNT(*) 
         FROM DETECTION_LOG
         <include refid="searchCondition" />
     </select>
 
-    <!-- [READ] 4. 스냅샷 모달 열람 및 현장 조치를 위한 단건 상세 조회 -->
+    
     <select id="selectDetectionLogById" resultMap="detectionLogMap" parameterType="int">
         SELECT 
             DLOG_ID, 
@@ -117,7 +115,7 @@
         WHERE DLOG_ID = #{dlogId}
     </select>
 
-    <!-- [UPDATE] 5. 관제원 현장 조치 상태 및 사유 내용 업데이트 -->
+    
     <update id="updateActionStatus" parameterType="com.spring.dto.DetectionLogVO">
         UPDATE DETECTION_LOG
         SET 
@@ -126,7 +124,7 @@
         WHERE DLOG_ID = #{dlogId}
     </update>
     
-    <!-- [DASHBOARD] 당일 일반관제 탐지수 및 조치완료수 고속 집계 -->
+    
 	<select id="selectTodayDetectionStats" resultType="java.util.HashMap">
 	    SELECT 
 	        COUNT(*) AS "TOTAL_COUNT",

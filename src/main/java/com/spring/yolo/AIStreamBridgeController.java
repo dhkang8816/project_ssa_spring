@@ -1,4 +1,4 @@
-package com.spring.yolo;
+﻿package com.spring.yolo;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -57,8 +57,6 @@ public class AIStreamBridgeController {
 			RuntimeSettings.enabled("SSA_ENABLE_LEGACY_LABEL_EVENT_SIDE_EFFECTS", false);
 	private static String currentMode = "local";
 	private static String lastActiveSourceKey = "video_1";
-
-	//  복잡한 다중 서비스 주입을 철폐하고 단 하나의 비즈니스 코어 서비스로 통합 단일화!
 	@Autowired
 	private AIStreamBridgeService aiStreamBridgeService;
 
@@ -85,7 +83,6 @@ public class AIStreamBridgeController {
 			@RequestParam("droneId") String droneId) {
 		try {
 			videoDroneMapService.modifyDroneMapping(sourceKey, droneId);
-			// 외부에 분리 개설된 서비스의 메모리 캐시 서랍장도 실시간 새로고침
 			aiStreamBridgeService.updateInmemoryDroneCache(sourceKey, droneId);
 			return new ResponseEntity<>("{\"status\":\"SUCCESS\"}", HttpStatus.OK);
 		} catch (Exception e) {
@@ -156,13 +153,10 @@ public class AIStreamBridgeController {
 				if (LEGACY_LABEL_EVENT_SIDE_EFFECTS_ENABLED) {
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode root = mapper.readTree(conn.getInputStream());
-
-				// ➔ 핵심 분리 포인트: 비대하던 오라클 인서트 로직 전체를 분리해낸 전문 서비스 레이어로 위임 슛!
 				aiStreamBridgeService.processYoloLabels(root, currentMode, lastActiveSourceKey);
 				}
 			}
 		} catch (Exception e) {
-			// 통신 노이즈 패스
 		}
 
 		if (isFlaskAlive) {
@@ -246,7 +240,6 @@ public class AIStreamBridgeController {
 		} catch (InterruptedIOException e) {
 			Thread.currentThread().interrupt();
 		} catch (Exception e) {
-			// 패스
 		} finally {
 			try {
 				if (is != null)

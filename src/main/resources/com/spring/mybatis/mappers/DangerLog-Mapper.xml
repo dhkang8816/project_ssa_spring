@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 💡 지정하신 네임스페이스 규칙 반영 -->
+
 <mapper namespace="DangerLog-Mapper">
 
-    <!-- DB 실물 컬럼명과 자바 VO 1:1 정밀 매핑 -->
+    
     <resultMap id="dangerLogMap" type="com.spring.dto.DangerLogVO">
         <id property="danlogId" column="DANLOG_ID" />
         <result property="dangerType" column="DANGER_TYPE" />
@@ -16,7 +16,7 @@
         <result property="droneId" column="DRONE_ID" />
     </resultMap>
 
-    <!-- PageMaker 연동 다조건 동적 검색 조건 (t: 이상객체종류코드, d: 드론ID, s: 조치상태) -->
+    
     <sql id="searchCondition">
         <where>
             <if test="searchType == 't'.toString() and keyword != null and keyword != ''">
@@ -32,7 +32,7 @@
     </sql>
 
 
-	<!-- [CREATE] 1. 관제 탐지 로그 등록 (2번 방식: 비인가 드론 유입 시 에러 없이 무시 방어선 적용) -->
+	
 	<insert id="insertDangerLog" parameterType="com.spring.dto.DangerLogVO">
 	    <selectKey keyProperty="danlogId" resultType="int" order="BEFORE">
 	        SELECT DANGER_LOG_SEQ.NEXTVAL FROM DUAL
@@ -54,15 +54,13 @@
 	        '0', -- 최초 포착 시 기본값 '0'(미확인) 적재
 	        #{dactionReason, jdbcType=VARCHAR},
 	        
-	        /* 🎯 [ORA-01400 원천 박멸 치트키] 
-	           자바 가로채기 엔진이 빈값(null)을 보내더라도 오라클 NVL 함수가 감지하여 
-	           강제로 'NONE'이라는 기본 임시 텍스트 주소로 치환 적재하여 철홍 제약조건을 통과시킵니다! */
+	        
 	        NVL(#{dsnapshotPath, jdbcType=VARCHAR}, 'NONE'), 
 	        
 	        SYSDATE,
 	        #{droneId, jdbcType=VARCHAR}
 	    FROM DUAL
-	    /* 💡 [정석 방어선] 오직 부모 테이블(DRONE)에 해당 기체 아이디가 실존할 때만 데이터가 인서트됨 */
+	    
 	    WHERE EXISTS (
 	        SELECT 1 FROM DRONE WHERE DRONE_ID = #{droneId, jdbcType=VARCHAR}
 	    )
@@ -70,7 +68,7 @@
 
 
 
-    <!-- [READ] 2. 페이징 및 다조건 검색 처리된 목록 조회 (PageMaker 구조 연동) -->
+    
     <select id="selectDangerLogList" resultMap="dangerLogMap" parameterType="com.spring.cmd.PageMaker">
         SELECT * FROM (
             SELECT ROWNUM AS rn, a.* FROM (
@@ -85,20 +83,20 @@
                     DRONE_ID
                 FROM DANGER_LOG
                 <include refid="searchCondition" />
-                /* 최신 탐지 이력이 가장 위로 오도록 역순 정렬 */
+                
                 ORDER BY DANLOG_ID DESC
             ) a WHERE ROWNUM &lt;= #{endRow}
         ) WHERE rn &gt;= #{startRow}
     </select>
 
-    <!-- [READ] 3. 페이징 계산용 전체 로그 건수 카운트 -->
+    
     <select id="selectDangerLogCount" resultType="int" parameterType="com.spring.cmd.PageMaker">
         SELECT COUNT(*) 
         FROM DANGER_LOG
         <include refid="searchCondition" />
     </select>
 
-    <!-- [READ] 4. 스냅샷 모달 열람 및 현장 조치를 위한 단건 상세 조회 -->
+    
     <select id="selectDangerLogById" resultMap="dangerLogMap" parameterType="int">
         SELECT 
             DANLOG_ID, 
@@ -113,7 +111,7 @@
         WHERE DANLOG_ID = #{danlogId}
     </select>
 
-    <!-- [UPDATE] 5. 관제원 현장 조치 상태 및 사유 내용 업데이트 -->
+    
     <update id="updateDactionStatus" parameterType="com.spring.dto.DangerLogVO">
         UPDATE DANGER_LOG
         SET 
@@ -122,7 +120,7 @@
         WHERE DANLOG_ID = #{danlogId}
     </update>
     
-    <!-- [DASHBOARD] 당일 이상객체 탐지수 및 조치완료수 고속 집계 -->
+    
 	<select id="selectTodayDangerStats" resultType="java.util.HashMap">
 	    SELECT 
 	        COUNT(*) AS "TOTAL_COUNT",

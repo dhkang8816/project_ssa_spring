@@ -1,4 +1,4 @@
-package com.spring.dao;
+﻿package com.spring.dao;
 
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -28,7 +28,6 @@ public class AlertLogDAOImpl implements AlertLogDAO {
 
     @Override
     public List<AlertLogVO> getAlertLogListWithPaging(PageMaker pageMaker) throws Exception {
-        // 소유하고 계신 PageMaker 객체를 그대로 전달
         return sqlSession.selectList(NAMESPACE + "getAlertLogListWithPaging", pageMaker);
     }
 

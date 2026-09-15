@@ -1,4 +1,4 @@
-package com.spring.controller;
+﻿package com.spring.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,9 +25,7 @@ public class LoginLogController {
     @Autowired
     private LoginLogDAO loginLogDAO;
 
-    /**
-     * 1. 로그인 이력 페이징 목록 조회 (/loginlog/list)
-     */
+    
     @GetMapping("/list")
     public String loginLogList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) {
         log.info("📢 [화면 프로토타입] 로그인 이력 페이징 목록 요청 진입 - 페이지: {}", pageMaker.getPage());
@@ -36,12 +34,9 @@ public class LoginLogController {
         int totalCount = 0;
         
         try {
-            // [실물 작동 시도] DB 연동이 성공하면 실물 데이터를 가져옵니다.
             totalCount = loginLogDAO.selectLoginLogListCount(pageMaker);
             pageMaker.setTotalCount(totalCount);
             loginLogList = loginLogDAO.selectLoginLogList(pageMaker);
-            
-            // 만약 DB 테이블이 비어있거나 에러 상태라면 가짜(더미) 데이터 전면 가동!
             if (loginLogList == null || loginLogList.isEmpty()) {
                 log.warn("⚠️ 실물 DB에 로그인 로그가 없어 프로토타입용 가짜(더미) 데이터를 생성합니다.");
                 loginLogList = generateDummyData(pageMaker);
@@ -60,15 +55,11 @@ public class LoginLogController {
         return "loginlog/loginLogList"; // WEB-INF/views/loginlog/loginLogList.jsp 매핑
     }
 
-    /**
-     * 💡 [화면구현 전용 스마트 치유] 시연 및 기획서 제출용 가짜 데이터 생성 알고리즘
-     */
+    
     private List<LoginLogVO> generateDummyData(PageMaker pageMaker) {
         List<LoginLogVO> dummyList = new ArrayList<>();
         int currentPage = pageMaker.getPage();
         int perPageNum = pageMaker.getPerPageNum();
-        
-        // 현재 페이지 범위에 맞게 역순으로 인덱싱 계산
         int startNum = 55 - ((currentPage - 1) * perPageNum);
         
         for (int i = 0; i < perPageNum; i++) {
@@ -80,8 +71,6 @@ public class LoginLogController {
             
             String status = (currentLogId % 4 == 0) ? "FAIL" : "SUCCESS";
             String ip = "192.168.0." + (10 + (currentLogId % 15));
-            
-            // 약 10분 간격으로 과거 시간 차감 계산
             long timeOffset = (55 - currentLogId) * 10L * 60L * 1000L;
             Date logDate = new Date(System.currentTimeMillis() - timeOffset);
 

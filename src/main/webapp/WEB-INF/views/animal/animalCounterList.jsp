@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -6,13 +6,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
 <title>실시간 개체수 현황</title>
 </head>
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-    background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
     margin: 0;
@@ -25,13 +26,13 @@ body {
     box-sizing: border-box;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .control-page-content {
     position: relative !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    max-width: 850px !important; /* 현황판 테이블 가시성에 최적화된 가로 폭 락 */
+    max-width: 850px !important; 
     padding: 20px !important;
     box-sizing: border-box;
     z-index: 50 !important;
@@ -45,12 +46,12 @@ body {
     }
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .panel {
     background: rgba(20, 26, 42, 0.85) !important;
     border: 1px solid #1e293b !important;
     border-radius: 16px;
-    padding: 32px !important; /* 내부 밀도 보정 고도화 */
+    padding: 32px !important; 
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     width: 100%;
@@ -66,7 +67,7 @@ body {
     text-align: left;
 }
 
-/* 검색 상자 프레임 고도화 */
+
 .search-box {
     margin: 20px 0;
     padding: 20px;
@@ -75,7 +76,7 @@ body {
     border-radius: 12px;
 }
 
-/* [3. 데이터 테이블(그리드) 마스크 정의] */
+
 table {
     width: 100%;
     border-collapse: separate !important;
@@ -89,12 +90,12 @@ table {
 }
 
 th {
-    background-color: #111827 !important; /* 다크 톤 일체화 */
-    color: #38bdf8 !important; /* 브랜드 네온 블루 컬러 각인 */
+    background-color: #111827 !important; 
+    color: #38bdf8 !important; 
     padding: 14px 16px !important;
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 전체 중앙 정렬 마스크 */
+    text-align: center !important; 
     border: 0 !important;
     border-bottom: 2px solid #1e293b !important;
 }
@@ -104,12 +105,12 @@ td {
     background-color: transparent !important;
     color: #cbd5e1 !important;
     font-size: 13.5px;
-    text-align: center !important; /* 가독성을 위한 전체 중앙 정렬 */
+    text-align: center !important; 
     border: 0 !important;
     border-bottom: 1px solid #1e293b !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tr {
     transition: background-color 0s ease;
 }
@@ -125,7 +126,7 @@ tbody tr:hover td {
     font-size: 14px;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 form {
     display: flex;
     flex-wrap: wrap;
@@ -151,7 +152,7 @@ input[type="text"]:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 텍스트 링크 전용 튜닝 */
+
 a.main-link {
     color: #38bdf8 !important;
     font-weight: 600;
@@ -166,7 +167,7 @@ a.main-link:hover {
     text-decoration: underline !important;
 }
 
-/* 단순 목록 조작 단추: 차분한 무채색 다크 그레이 스킨 */
+
 button {
     padding: 10px 18px;
     background-color: #1e293b !important;
@@ -185,7 +186,7 @@ button:hover {
     border-color: #0ea5e9 !important;
 }
 
-/* [5. 하단 페이징 내비게이션 표준 규격] */
+
 .pagination {
     display: flex;
     list-style: none;
@@ -218,7 +219,7 @@ button:hover {
     border-color: #334155;
 }
 
-/* 현재 활성화된 페이지 번호 강조색 변경 (기존의 red 스타일 파쇄) */
+
 .pagination li.active strong, .pagination strong {
     color: #38bdf8 !important;
     background: rgba(14, 165, 233, 0.15) !important;
@@ -234,22 +235,22 @@ button:hover {
 }
 </style>
 
-<body>
+<body class="popup-page">
 
-<!-- 메인 관제 페이지 레이아웃 본문 래퍼 -->
+
 <div class="control-page-content">
     <div class="panel">
         
         <h2>개체수 현황</h2>
         
-        <!-- 동물관리 리스트 복귀 액션 단추 (사각 마감 스타일 동기화) -->
+        
         <div style="width: 100% !important; display: flex !important; justify-content: flex-end !important; margin-bottom: 15px !important; box-sizing: border-box;">
             <button type="button" onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/animal/list');">
                 동물 관리 목록
             </button>
         </div>
         
-        <!-- 하이테크 스타일 규격 연동 현황 테이블 그리드 -->
+        
         <table>
             <thead>
                 <tr>
@@ -271,7 +272,7 @@ button:hover {
                             <tr>
                                 <td>${counter.counterId}</td>
                                 <td style="font-weight: bold; color: #ffffff;">
-                                    <!-- 프론트엔드 코드 매핑 축종 분석 조건문 무결점 보존 -->
+                                    
                                     <c:choose>
                                         <c:when test="${counter.counterId == 0}">개</c:when>
                                         <c:when test="${counter.counterId == 1}">고양이</c:when>
@@ -286,7 +287,7 @@ button:hover {
                 </c:choose>
             </tbody>
         </table>
-        <!-- 검색 폼 영역 (AnimalDetailMapper 동적 조건 검색 랙 보존) -->
+        
         <div class="search-box">
             <form:form action="counterList" method="get">
                 <select name="searchType">
@@ -296,7 +297,7 @@ button:hover {
                 <button type="submit">검색</button>
             </form:form>
         </div>
-        <!-- 하단 페이징 버튼 영역 (기존 프로젝트 가이드 및 수식 매핑 무결점 보존) -->
+        
         <div style="margin-top: 25px;">
             <ul class="pagination">
                 <c:if test="${pageMaker.prev}">

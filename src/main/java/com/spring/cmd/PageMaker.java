@@ -34,8 +34,6 @@ public class PageMaker {
 		calcData();
 	}
 	
-	
-	// starPage,endPage, prev, next 설정. by totalCount
 	private void calcData() {
 		endPage = (int) (Math.ceil(page / (double) displayPageNum) * displayPageNum);
 		startPage = (endPage - displayPageNum) + 1;

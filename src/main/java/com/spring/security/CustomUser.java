@@ -1,4 +1,4 @@
-package com.spring.security;
+﻿package com.spring.security;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,6 @@ public class CustomUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // department나 권한 정보를 활용해 역할 부여 (예: ROLE_USER, ROLE_ADMIN 등)
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

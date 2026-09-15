@@ -1,4 +1,4 @@
-package com.spring.security;
+﻿package com.spring.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +47,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			
 			if (roleList != null && !roleList.isEmpty()) {
 				for (MemberRoleVO roleVo : roleList) {
-					// 💡 roleVo나 roleCode가 null인 경우를 방어하기 위한 안전장치
 					if (roleVo != null && roleVo.getRoleCode() != null) {
 						authorities.add(new SimpleGrantedAuthority(roleVo.getRoleCode()));
 					}
 				}
 			} 
-			
-			// 만약 유효한 권한이 하나도 안 담겼다면 기본 권한 부여
 			if (authorities.isEmpty()) {
 				authorities.add(new SimpleGrantedAuthority("ROLE_GUEST"));
 			}

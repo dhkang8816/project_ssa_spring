@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -6,19 +6,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
 <title>관제 탐지 상황 상세정보</title>
 <style>
-/* [1. 글로벌 바디 및 하이테크 레이아웃] */
+
 body {
-    background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
     padding: 32px !important;
     margin: 0;
 }
 
-/* [2. 메인 카드 프레임 스킨 및 타이틀] */
+
 .panel {
     background: rgba(20, 26, 42, 0.85) !important;
     border: 1px solid #1e293b !important;
@@ -26,7 +27,7 @@ body {
     padding: 28px !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    max-width: 750px; /* 상세조회 및 대형 스냅샷 배치 레이아웃 최적 너비 */
+    max-width: 750px; 
     margin: 0 auto;
 }
 
@@ -41,7 +42,7 @@ body {
     padding-bottom: 12px;
 }
 
-/* [3. 상세 데이터 테이블(그리드) 마스크 정의] */
+
 table {
     width: 100%;
     border-collapse: separate !important;
@@ -55,16 +56,16 @@ table {
 }
 
 th {
-    background-color: #111827 !important; /* 사이드바와 일치하는 다크 톤 */
-    color: #38bdf8 !important; /* 브랜드 정체성 네온 블루 컬러 각인 */
+    background-color: #111827 !important; 
+    color: #38bdf8 !important; 
     padding: 14px 16px !important;
     font-size: 13.5px;
     font-weight: 700;
-    text-align: left !important; /* 수직 뷰 가독성을 위해 헤더 좌측 정렬 */
+    text-align: left !important; 
     width: 160px;
     border: 0 !important;
     border-bottom: 1px solid #1e293b !important;
-    border-right: 1px solid #1e293b !important; /* 내부 데이터 세로 구분선 */
+    border-right: 1px solid #1e293b !important; 
 }
 
 td {
@@ -72,18 +73,18 @@ td {
     background-color: transparent !important;
     color: #cbd5e1 !important;
     font-size: 14px;
-    text-align: left !important; /* 콘텐츠 좌측 정렬 */
+    text-align: left !important; 
     border: 0 !important;
     border-bottom: 1px solid #1e293b !important;
     vertical-align: middle !important;
 }
 
-/* 마지막 행 하단 테두리선 잔여 클리어 마감 */
+
 tr:last-child th, tr:last-child td {
     border-bottom: 0 !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tbody tr:hover td {
     background-color: rgba(30, 41, 59, 0.4) !important;
     color: #ffffff !important;
@@ -92,7 +93,7 @@ tbody tr:hover th {
     background-color: rgba(17, 24, 39, 0.8) !important;
 }
 
-/* 📌 상세화면 전용 대형 이상객체 스냅샷 커스텀 스킨 */
+
 .detail-snapshot {
     max-width: 600px;
     width: 100%;
@@ -103,7 +104,7 @@ tbody tr:hover th {
     background-color: #111827;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 select, textarea {
     padding: 10px 12px !important;
     background: #111827 !important;
@@ -121,7 +122,7 @@ select {
 }
 
 textarea {
-    width: 100% !important; /* 부모 너비 맞춤 확장 */
+    width: 100% !important; 
     resize: vertical;
 }
 
@@ -147,7 +148,7 @@ button {
     transition: all 0.15s ease;
 }
 
-/* 조치 내용 저장 버튼: 선명한 네온 블루 스킨 */
+
 button[type="submit"] {
     background-color: #0ea5e9 !important;
     color: #ffffff !important;
@@ -156,7 +157,7 @@ button[type="submit"]:hover {
     background-color: #0284c7 !important;
 }
 
-/* 목록으로 돌아가기 버튼: 차분한 무채색 다크 그레이 스킨 */
+
 button.btn-list {
     background-color: #1e293b !important;
     color: #cbd5e1 !important;
@@ -169,19 +170,19 @@ button.btn-list:hover {
 </style>
 
 </head>
-<body>
+<body class="popup-page">
 <div class="panel">
     <h2>탐지 상황 상세 내용 및 현장 조치</h2>
     
     <form:form action="${pageContext.request.contextPath}/dangerlog/modify" method="post">
-        <!-- 페이징/검색 데이터 유지 상태값을 위한 하이딩 파라미터 셋 100% 보존 -->
+        
         <input type="hidden" name="page" value="${pageMaker.page}" />
         <input type="hidden" name="searchType" value="${pageMaker.searchType}" />
         <input type="hidden" name="keyword" value="${pageMaker.keyword}" />
         <input type="hidden" name="popup" value="true" />
         <input type="hidden" name="danlogId" value="${dangerLog.danlogId}" />
         
-        <!-- 구조적인 하이테크 스타일 수직 배열 그리드 매핑 마감 -->
+        
         <table>
             <tbody>
                 <tr>
@@ -203,7 +204,7 @@ button.btn-list:hover {
                 <tr>
                     <th>드론 스냅샷 영상</th>
                     <td>
-                        <!-- getDangerSnapshot 서블릿 물리 연동 스트림 경로 원본 구조 완벽 보존 -->
+                        
                         <img src="${pageContext.request.contextPath}/dangerlog/getDangerSnapshot?danlogId=${dangerLog.danlogId}" 
                              alt="드론 포착 스냅샷" 
                              class="detail-snapshot"
@@ -213,7 +214,7 @@ button.btn-list:hover {
                 <tr>
                     <th>관제원 현장 조치</th>
                     <td>
-                        <!-- 기존 변수 selected 검증 및 이름값 연동 무결점 유지 -->
+                        
         <select name="dactionStatus">
             <c:forEach var="actionStatus" items="${actionStatusList}">
                 <option value="${actionStatus.code}" ${dangerLog.dactionStatus == actionStatus.code ? 'selected' : ''}>${actionStatus.codeName}</option>
@@ -224,14 +225,14 @@ button.btn-list:hover {
                 <tr>
                     <th>현장 조치 사유/내용</th>
                     <td>
-                        <!-- c:out 변형 방지 태그 본문 보존 마스크 결합 -->
+                        
                         <textarea name="dactionReason" rows="5" placeholder="출동 요청, 상황 전파 등 구체적인 조치 이력을 기록하세요." required="required"><c:out value="${dangerLog.dactionReason}" /></textarea>
                     </td>
                 </tr>
             </tbody>
         </table>
         
-        <!-- 하이테크 관제 양식 규격에 맞춘 단추 배치 마감 -->
+        
         <div class="btn-group">
             <button type="submit">조치 내용 저장</button>
             <button type="button" class="btn-list" onclick="fn_goList()">목록으로</button>
@@ -242,7 +243,7 @@ button.btn-list:hover {
 </body>
 
 <script>
-/* 이전 보던 검색 페이지 컨텍스트 분기 원 복귀 스크립트 기능 100% 보존 */
+
 function fn_goList() {
     return closePopupAndRefreshParent("${pageContext.request.contextPath}/dangerlog/list"
         + "?page=${pageMaker.page}"

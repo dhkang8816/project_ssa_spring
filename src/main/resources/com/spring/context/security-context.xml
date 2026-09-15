@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:security="http://www.springframework.org/schema/security"
@@ -11,14 +11,14 @@
 
 	<mvc:annotation-driven />
 
-	<!-- ================================================================= -->
-	<!-- 💡 [필수 추가] 이미지/파일 등록 오류 완벽 해결을 위한 멀티파트 리졸버 등록 -->
-	<!-- ================================================================= -->
-	<!-- Tomcat 10(Jakarta) 이상 표준 스펙에 맞추어 빈 아이디를 무조건 'multipartResolver'로 명시해야 작동합니다. -->
+	
+	
+	
+	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />
-	<!-- ================================================================= -->
+	
 
-	<!-- 1. 이전에 작성하신 암호화 및 커스텀 핸들러 빈들 -->
+	
 	<bean id="encoder"
 		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
@@ -32,26 +32,20 @@
 	<bean id="loginFailureHandler" class="com.spring.security.LoginFailureHandler" />
 	<bean id="customDeniedHandler" class="com.spring.security.CustomDeniedHandler" />
 
-	<!-- ================================================================= -->
-	<!-- 🛡️ [401 보안 락 최종 파괴선] 시큐리티 필터 체인 완전 우회 (Bypass) -->
-	<!-- ================================================================= -->
-	<!-- ⚠️ 중요: 반드시 다른 <security:http> 태그 블록들보다 "최상단"에 위치해야 안전하게 가로챕니다. -->
-	<security:http pattern="/yolo/api/**" security="none" />
-	<security:http pattern="/resources/**" security="none" />
-	<security:http pattern="/js/**" security="none" />
-	<security:http pattern="/css/**" security="none" />
-	<security:http pattern="/yolo/**" security="none" />
-	<security:http pattern="/api/v1/ai/**" security="none" />
-	<security:http pattern="/**/yolo/api/**" security="none" />
+	
+	
+	
+	
+	<security:http pattern="/yolo/apiyolo/api/**" security="none" />
 	<security:http pattern="/api/event/**" security="none" />
 	<security:http pattern="/api/user/**" security="none" />
-	<!-- ================================================================= -->
-	<!-- 메인 시큐리티 정책 제어 벨트 (auto-config 고정 및 익스프레션 개통) -->
-	<!-- ================================================================= -->
+	
+	
+	
 	<security:http auto-config="false" use-expressions="true">
-	    <!-- 🔒 REST API 및 파이썬 통신 연동을 위한 CSRF 완전 해제 (필수) -->
+	    
 	    <security:csrf disabled="true" />
-	    <!-- 1. 내부 무조건 오픈 통로 명시적 선언 -->
+	    
 	    <security:intercept-url pattern="/login" access="permitAll" />
 	    <security:intercept-url pattern="/workflow/**" access="hasAuthority('ROLE_ADMIN')" />
 	    <security:intercept-url pattern="/patrolreport/legacy/**" access="denyAll" />
@@ -60,7 +54,7 @@
 	    <security:intercept-url pattern="/" access="permitAll" />
 	    <security:intercept-url pattern="/main" access="permitAll" />
 	    <security:intercept-url pattern="/guest/waiting" access="permitAll" />
-	    <!-- 2. 컨트롤러 서비스 배관 프리패스 명단 등록 (이중 잠금 방어벽) -->
+	    
 	    <security:intercept-url pattern="/admin/**" access="permitAll" />
 	    <security:intercept-url pattern="/member/**" access="permitAll" />
 	    <security:intercept-url pattern="/animal/**" access="permitAll" />
@@ -74,10 +68,10 @@
 	    <security:intercept-url pattern="/patrolreport/**" access="permitAll" />
 	    <security:intercept-url pattern="/loginlog/**" access="permitAll" />
 	    <security:intercept-url pattern="/api/**" access="permitAll" />
-	    <!-- ⚠️ 실무 팁: 개발 완료 후 실서버 배포 시에는 permitAll을 아래 주석처럼 authenticated()로 변경하세요. -->
+	    
 	    <security:intercept-url pattern="/**" access="permitAll" />
 	    
-	    <!-- 커스텀 로그인 폼 및 핸들러 연동 매핑 -->
+	    
 	    <security:form-login
 	        login-page="/login"
 	        username-parameter="memberId"
@@ -94,16 +88,9 @@
 	    <security:access-denied-handler ref="customDeniedHandler" />
 	</security:http>
 
-	<!-- 3. 커스텀 인증 프로바이더 및 임시 테스트 메모리 계정 등록 -->
+	
 	<security:authentication-manager>
 		<security:authentication-provider ref="customProvider" />
-
-		<!-- 🎯 [임시 치트키] 개발 중에 팝업창 뜨면 아이디: admin / 비번: 1234 치고 들어가기 -->
-		<security:authentication-provider>
-			<security:user-service>
-				<security:user name="admin" password="{noop}1234" authorities="ROLE_ADMIN" />
-			</security:user-service>
-		</security:authentication-provider>
 	</security:authentication-manager>
 
 	<context:component-scan base-package="com.spring.security" />

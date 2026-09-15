@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
@@ -10,12 +10,12 @@
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- 관제 아이콘 팩 연동 -->
+
 <link rel="stylesheet" href="https://cloudflare.com">
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-	background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+	background-color: #0b0f19 !important; 
 	color: #e2e8f0 !important;
 	font-family: 'Pretendard', -apple-system, 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
@@ -23,7 +23,7 @@ body {
 	overflow-x: hidden;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .dashboard-container {
 	position: absolute !important;
 	top: 80px !important;
@@ -48,16 +48,16 @@ body {
 	font-size: 24px;
 	font-weight: 700;
 	margin-bottom: 24px;
-	color: #38bdf8; /* 브랜드 네온 블루 마스크 각인 */
+	color: #38bdf8; 
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	letter-spacing: -0.02em;
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .ai-briefing-panel {
-	background: rgba(20, 26, 42, 0.85) !important; /* 반투명 글래스모피즘 */
+	background: rgba(20, 26, 42, 0.85) !important; 
 	border: 1px solid #1e293b !important;
 	border-radius: 16px !important;
 	padding: 28px !important;
@@ -88,9 +88,9 @@ body {
 	letter-spacing: -0.01em;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 .btn-refresh-ai {
-	background-color: #1e293b !important; /* 차분한 무채색 다크 그레이 스킨 */
+	background-color: #1e293b !important; 
 	color: #cbd5e1 !important;
 	border: 1px solid #334155 !important;
 	padding: 8px 16px !important;
@@ -118,7 +118,7 @@ body {
 	min-height: 80px;
 }
 
-/* 로딩 기어 애니메이션 룸 */
+
 .ai-loading {
 	color: #64748b;
 	display: flex;
@@ -135,7 +135,7 @@ body {
 	animation: spin 1s infinite linear;
 }
 
-/* 차트 카드 공통 프레임 스킨 지정 */
+
 .print-chart-card {
 	background: rgba(17, 24, 39, 0.6) !important;
 	border: 1px solid #1e293b !important;
@@ -152,7 +152,7 @@ body {
 	letter-spacing: -0.01em;
 }
 
-/* 반응형 및 크기 유연성 확보 레이어 */
+
 #aiBriefingContent>div {
 	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
 }
@@ -240,7 +240,7 @@ rotate
 		padding-bottom: 6px !important;
 	}
 
-	/* 상단 지표 */
+	
 	#aiBriefingContent>div {
 		grid-template-columns: repeat(4, 1fr) !important;
 		gap: 6px !important;
@@ -250,7 +250,7 @@ rotate
 		padding: 7px !important;
 	}
 
-	/* 그래프 2열 유지 */
+	
 	#dashboardGraphZone>div, .chart-row-zone {
 		width: 100% !important;
 		grid-template-columns: 1fr 1fr !important;
@@ -270,7 +270,7 @@ rotate
 		print-color-adjust: exact !important;
 	}
 
-	/* ★ 250px → 인쇄 전용 145px */
+	
 	.print-chart-card>div[style*="height: 250px"] {
 		height: 145px !important;
 	}
@@ -288,7 +288,7 @@ rotate
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
 	<div class="dashboard-container">
-		<!-- 변경 전 구역 (JSP 3~4페이지): 기존 샌드박스 박스를 아래 코드로 완전 대체하세요 -->
+		
 		<div class="ai-briefing-panel">
 			<div class="panel-header"
 				style="display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; gap: 10px;">
@@ -310,19 +310,19 @@ rotate
 				</div>
 			</div>
 
-			<!-- [블록 1] 오직 상단 일반 표시 카드 4개만 순수하게 가로로 담아낼 상자 -->
+			
 			<div id="aiBriefingContent" class="ai-content-box">
 				<div class="ai-loading">
 					<i class="fa-solid fa-gear"></i> 오라클 통합 로그 데이터 집계 엔진 가동 중...
 				</div>
 			</div>
 
-			<!-- [블록 2] 질문자님 의견 반영: 그래프 블럭을 완전히 따로 파서 아래로 내린 독립형 공간 -->
+			
 			<div id="dashboardGraphZone"
 				style="width: 100%; margin-top: 25px; display: none;">
 				<div
 					style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-					<!-- 좌측 그래프룸 -->
+					
 					<div class="print-chart-card"
 						style="background: #222733; padding: 20px; border-radius: 8px; border: 1px solid #2c313d;">
 						<div
@@ -334,7 +334,7 @@ rotate
 							<canvas id="trendChart"></canvas>
 						</div>
 					</div>
-					<!-- 우측 그래프룸 -->
+					
 					<div class="print-chart-card"
 						style="background: #222733; padding: 20px; border-radius: 8px; border: 1px solid #2c313d;">
 						<div
@@ -349,10 +349,10 @@ rotate
 				</div>
 			</div>
 
-			<!-- [블록 3] 축종별 / 이상객체별 분포 차트 공간 (기존 그래프존 바로 아래 추가 또는 내부에 배치) -->
+			
 			<div class="chart-row-zone"
 				style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px;">
-				<!-- 좌측: 축종별 미달 경보 비율 -->
+				
 				<div class="print-chart-card"
 					style="background: #222733; padding: 20px; border-radius: 8px; border: 1px solid #2c313d; min-width: 0;">
 					<div
@@ -365,7 +365,7 @@ rotate
 					</div>
 				</div>
 
-				<!-- 우측: 이상객체 종류별 포착 현황 -->
+				
 				<div class="print-chart-card"
 					style="background: #222733; padding: 20px; border-radius: 8px; border: 1px solid #2c313d; min-width: 0;">
 					<div
@@ -387,21 +387,16 @@ rotate
 </body>
 
 <script>
-	// 화면 로딩이 끝나면 지체 없이 제미나이 특공대 출격 격발
 	$(document).ready(function() {
 		fn_fetchAiBriefing();
 	});
 
 	function fn_fetchAiBriefing() {
 		var $contentBox = $("#aiBriefingContent");
-
-		// 1. 재조회 대비 화면 백화 및 기어 회전 마스크 기동
 		$contentBox
 				.html('<div class="ai-loading">'
 						+ '    <i class="fa-solid fa-gear"></i> 오라클 통합 수치 집계 및 Gemini AI 상황 분석 분석 중...'
 						+ '</div>');
-
-		// 2. DashboardController 독립 전용 관문 비동기 호출 타격
 		$
 				.ajax({
 					url : "${pageContext.request.contextPath}/dashboard/api/ai-briefing",
@@ -410,7 +405,6 @@ rotate
 					success : function(res) {
 						console.log("✈ [오라클 관제 데이터 수신 완료]:", res);
 						try {
-							// 데이터 누락을 대비한 기본 안전 처리
 							var danger = (res.dangerCount !== undefined && res.dangerCount !== null) ? res.dangerCount
 									: 0;
 							var detect = (res.detectionCount !== undefined && res.detectionCount !== null) ? res.detectionCount
@@ -437,12 +431,8 @@ rotate
 								statusText = "안전";
 								statusColor = "#2ecc71";
 							}
-
-							// B. [수정 핵심] 신규 지표를 포함하여 가로 5열(repeat(5, 1fr)) 반응형 그리드로 확장 조립
 							var cardHtml = '<div style="width:100%; display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; text-align:center; padding:10px 0;">'
 									+
-
-									// 카드 1: 종합 위험도 (기존 유지)
 									'  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid ' + statusColor + ';">'
 									+ '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">관제구역 종합 위험도</div>'
 									+ '    <div style="font-size:18px; font-weight:bold; color:' + statusColor + ';">'
@@ -452,8 +442,6 @@ rotate
 									+ ']</div>'
 									+ '  </div>'
 									+
-
-									// 카드 2: 당일 탐지 총 건수 (🔥 신규 지표 배치)
 									'  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #5ddcff;">'
 									+ '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">당일 탐지 총 건수</div>'
 									+ '    <div style="font-size:24px; font-weight:bold; color:#5ddcff;">'
@@ -461,8 +449,6 @@ rotate
 									+ ' 건</div>'
 									+ '  </div>'
 									+
-
-									// 카드 3: 당일 조치 완료율 (🔥 신규 지표 배치)
 									'  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #2ecc71;">'
 									+ '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">당일 현장조치 완료율</div>'
 									+ '    <div style="font-size:24px; font-weight:bold; color:#2ecc71;">'
@@ -470,8 +456,6 @@ rotate
 									+ ' %</div>'
 									+ '  </div>'
 									+
-
-									// 카드 4: 드론 종합 누적 비행시간 (기존 유지, 텍스트 가시성 보정)
 									'  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #3498db;">'
 									+ '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">당일 드론 총 비행시간</div>'
 									+ '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">'
@@ -479,8 +463,6 @@ rotate
 									+ ' 시간</div>'
 									+ '  </div>'
 									+
-
-									// 카드 5: 위험 이상객체 포착 풀 (기존 유지)
 									'  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #e74c3c;">'
 									+ '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">누적 위험객체 포착</div>'
 									+ '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">'
@@ -488,22 +470,14 @@ rotate
 									+ ' 회</div>'
 									+ '  </div>'
 									+
-
-									// 카드 6: 마리수 기준 미달 경보 풀 (기존 유지)
 									'  <div style="background:#222733; padding:20px; border-radius:8px; border:1px solid #2c313d; border-top:4px solid #f1c40f;">'
 									+ '    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">누적 미달경보 발생</div>'
 									+ '    <div style="font-size:24px; font-weight:bold; color:#ffffff;">'
 									+ detect + ' 건</div>' + '  </div>' +
 
 									'</div>';
-
-							// 상단 컨테이너 영역에 완성된 카드 주입
 							$("#aiBriefingContent").html(cardHtml);
-
-							// [이후 하단 차트 렌더링 코드는 기존 그대로 유지하면 됩니다]
 							$("#dashboardGraphZone").show();
-
-							// [행동 3-1] 차트 인스턴스 초기화 및 재생성 (꺾은선 그래프)
 							var ctxTrend = document
 									.getElementById('trendChart').getContext(
 											'2d');
@@ -573,13 +547,10 @@ rotate
 													},
 													beginAtZero : true
 												}
-											// 🎯 Y축 자동 스케일링 활성화
 											}
 										}
 
 									});
-
-							// [행동 3-2] 시간대별 막대 차트
 							var ctxTime = document.getElementById('timeChart')
 									.getContext('2d');
 							if (window.myTimeChart)
@@ -633,13 +604,10 @@ rotate
 											},
 											beginAtZero : true
 										}
-									// 🎯 Y축 자동 스케일링 활성화
 									}
 								}
 
 							});
-
-							// [행동 3-3] 축종별 도넛 차트
 							var ctxAnimal = document.getElementById(
 									'animalChart').getContext('2d');
 							if (window.myAnimalChart)
@@ -669,8 +637,6 @@ rotate
 									}
 								}
 							});
-
-							// [행동 3-4] 이상객체 유형별 가로 막대 차트
 							var ctxDangerType = document.getElementById(
 									'dangerTypeChart').getContext('2d');
 							if (window.myDangerTypeChart)

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -14,9 +14,9 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 	rel="stylesheet">
 <style>
-/* [1. 글로벌 바디 및 여백 레이아웃 보정] */
+
 body {
-    background-color: #0b0f19 !important; /* 메인 관제소와 완벽 동기화된 깊은 블랙네이비 톤 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
@@ -24,12 +24,12 @@ body {
     overflow-x: hidden;
 }
 
-/* [2. 초슬림 사이드바(150px) 너비 밀착 레이아웃 싱크] */
+
 .patrol-list-content {
     position: absolute !important;
-    top: 80px !important; /* 상단 헤더 높이만큼 다운 */
-    left: 150px !important; /* 줄어든 메뉴바 너비 150px 선에 칼같이 밀착 */
-    width: calc(100% - 150px) !important; /* 우측 남은 공간 100% 확보 */
+    top: 80px !important; 
+    left: 150px !important; 
+    width: calc(100% - 150px) !important; 
     padding: 30px 40px;
     box-sizing: border-box;
     z-index: 50 !important;
@@ -43,7 +43,7 @@ body {
     }
 }
 
-/* [3. 하이테크 스타일 메인 패널 프레임] */
+
 .main-panel {
     background: transparent !important;
     border: 0 !important;
@@ -54,7 +54,7 @@ body {
     box-sizing: border-box;
 }
 
-/* 타이틀 바 마스크 단독 배치 구조화 */
+
 .staff-top-bar { 
     display: flex; 
     justify-content: flex-start; 
@@ -72,7 +72,7 @@ body {
     letter-spacing: -.02em; 
 }
 
-/* 🛠 요구사항 피드백: 새 보고서 작성 버튼의 이식을 위해 양방향 정렬(space-between) 축 잠금 */
+
 .staff-summary-bar { 
     display: flex; 
     justify-content: space-between; 
@@ -103,7 +103,7 @@ body {
     box-shadow: 0 12px 40px rgba(0, 0, 0, .4); 
 }
 
-/* [4. 관제 대시보드 전용 와이드 핏 데이터 테이블 스킨] */
+
 .table-zone {
     min-width: 850px;
     width: 100%;
@@ -119,14 +119,14 @@ body {
 
 .table-zone th {
     white-space: nowrap;
-    background-color: #111827 !important; /* 사이드바와 핏을 맞춘 묵직한 다크 회색 */
-    color: #38bdf8 !important; /* 네온 블루 폰트 컬러 각인 */
+    background-color: #111827 !important; 
+    color: #38bdf8 !important; 
     padding: 14px 16px !important;
     border: 0 !important;
     border-bottom: 2px solid #1e293b !important;
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 전체 중앙 정렬 통합 */
+    text-align: center !important; 
 }
 
 .table-zone td {
@@ -140,7 +140,7 @@ body {
     font-size: 13.5px;
 }
 
-/* 행(Row) 호버 시 0초 만에 들어오는 투명 그라데이션 즉시 피드백 */
+
 .table-zone tbody tr {
     transition: background-color 0s ease;
     cursor: pointer;
@@ -151,9 +151,9 @@ body {
     color: #ffffff !important;
 }
 
-/* [5. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 .btn-create {
-    background-color: #10b981 !important; /* 네온 그린 엑센트 셋업 */
+    background-color: #10b981 !important; 
     color: white !important;
     border: none !important;
     padding: 10px 18px !important;
@@ -175,10 +175,10 @@ body {
     transform: translateY(0);
 }
 
-/* [6. 알약 모양 승인 상태 신호등 배지 콤포넌트] */
+
 .badge-status {
     padding: 4px 12px !important;
-    border-radius: 20px !important; /* 완벽한 타원형 알약 스타일 마감 */
+    border-radius: 20px !important; 
     font-size: 11.5px !important;
     font-weight: 700 !important;
     display: inline-block;
@@ -188,21 +188,21 @@ body {
     background-color: rgba(245, 158, 11, 0.15) !important;
     color: #f59e0b !important;
     border: 1px solid rgba(245, 158, 11, 0.3) !important;
-} /* 승인 대기 */
+} 
 
 .badge-1 {
     background-color: rgba(16, 185, 129, 0.15) !important;
     color: #10b981 !important;
     border: 1px solid rgba(16, 185, 129, 0.3) !important;
-} /* 승인 완료 */
+} 
 
 .badge-2 {
     background-color: rgba(239, 68, 68, 0.15) !important;
     color: #ef4444 !important;
     border: 1px solid rgba(239, 68, 68, 0.3) !important;
-} /* 반려 */
+} 
 
-/* [7. 하단 페이징(Pagination) 컨트롤 다크 스킨 적용] */
+
 .pagination {
     display: flex;
     justify-content: center;
@@ -236,7 +236,7 @@ body {
 }
 
 .pagination li.active strong, .pagination li strong {
-    color: #38bdf8 !important; /* 현재 선택된 페이지 네온 블루 처리 */
+    color: #38bdf8 !important; 
     background: rgba(14, 165, 233, 0.15) !important;
     border-color: #0ea5e9 !important;
 }
@@ -255,28 +255,28 @@ body {
 
 </head>
 <body>
-<!-- 공통 시스템 프레임 레이아웃 인클루드 리프레시 보존 -->
+
 <jsp:include page="/WEB-INF/views/menu.jsp" />
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="patrol-list-content">
     <div class="main-panel">
         
-        <!-- 본문 헤더 랙 (요구사항 피드백: 우측 버튼을 비우고 타이틀 단독 정렬 마감) -->
+        
         <div class="staff-top-bar">
             <h2>일일 관제 업무 보고서 목록</h2>
         </div>
         
-		<!-- 💡 grid-column: 1 / -1 !important; 를 인라인 스타일 맨 뒤에 추가하여 격자를 확장합니다 -->
+		
 		<div class="staff-summary-bar"
 		     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1 / -1 !important;">
 		     
-		    <!-- 왼쪽: 건수 레이어 -->
+		    
             <div class="staff-count">
                 총 보고서: <span class="count-num">${pageMaker.totalCount}</span>건
             </div>
 		    
-		    <!-- 오른쪽: 버튼 그룹 -->
+		    
 		    <div class="summary-action-group" style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important;">
 		        <button class="csv-download-btn neon-theme"
 		                onclick="downloadTableAsCsv('#patrolReportTable', 'patrol-report-list')"
@@ -288,7 +288,7 @@ body {
                 </button>
 		    </div>
 		</div>
-        <!-- 메인 관제 데이터 테이블 프레임 랙 -->
+        
         <div class="staff-table-wrapper">
         <table id="patrolReportTable" class="table-zone" data-csv-export data-csv-filename="patrol-report-list">
                 <thead>
@@ -311,7 +311,7 @@ body {
                         </c:when>
                         <c:otherwise>
                             <c:forEach var="report" items="${reportList}">
-                                <!-- 개별 행 클릭 시 연결되는 자바스크립트 팝업 제어 함수 컨텍스트 홀딩 유지 -->
+                                
                                 <tr onclick="return openDetailPopup('${pageContext.request.contextPath}/patrolreport/detail/${report.reportId}', 'patrolReportDetail');">
                                     <td><strong>${report.reportId}</strong></td>
                                     <td><fmt:formatDate value="${report.reportDate}" pattern="yyyy-MM-dd" /></td>
@@ -320,7 +320,7 @@ body {
                                     <td>${report.totalDetectCount}건</td>
                                     <td>${report.completionRate}%</td>
                                     <td>
-                                        <!-- 확정 코드를 타원형 확정 알약 배지로 정밀 분기 매핑 -->
+                                        
                                         <c:choose>
                                             <c:when test="${report.confirmStatus eq '0'}">
                                                 <span class="badge-status badge-0">승인 대기</span>
@@ -344,7 +344,7 @@ body {
             </table>
         </div>
         
-        <!-- 하단 검색 폼 및 페이징 레이어 결합 부 복구 (총 레코드가 0보다 클 때만 렌더링 스펙 유지) -->
+        
         <c:if test="${pageMaker.totalCount gt 0}">
             <div class="text-center">
                 <ul class="pagination">

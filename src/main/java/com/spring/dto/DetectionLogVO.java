@@ -1,4 +1,4 @@
-package com.spring.dto;
+﻿package com.spring.dto;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -15,8 +15,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DetectionLogVO {
-
-    // 💡 실물 오라클 DB 컬럼 명칭 및 데이터 타입 1:1 완벽 동기화
     private int dlogId;            // 탐지이력시퀀스
     private Timestamp detectTime;  // 탐지시각
     private String animalType;     // 축종구분

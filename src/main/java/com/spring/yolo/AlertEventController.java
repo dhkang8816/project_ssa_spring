@@ -1,4 +1,4 @@
-package com.spring.yolo;
+﻿package com.spring.yolo;
 
 import java.util.List;
 
@@ -18,10 +18,7 @@ public class AlertEventController {
     @Autowired
     private SqlSession sqlSession; // 🛠️ 안전하게 마이바티스 세션을 직접 활용
 
-    /**
-     * 👑 [화면 자동 팝업 전용 최신 알림 1건 리턴 API]
-     * 복잡한 페이징/검색어 필터를 완전히 우회하여 오라클 내부의 최신 알림 1건만 직통으로 가져옵니다.
-     */
+    
     @GetMapping("/latest")
     public AlertLogVO getLatestAlert() {
         try {

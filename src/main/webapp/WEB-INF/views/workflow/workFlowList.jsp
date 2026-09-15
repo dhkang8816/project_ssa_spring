@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -11,9 +11,9 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
-/* 1. 글로벌 바디 및 레이아웃 정의 */
+
 body {
-	background-color: #0b0f19 !important; /* 메인 관제소와 동기화된 깊은 블랙네이비 톤 */
+	background-color: #0b0f19 !important; 
 	color: #e2e8f0 !important;
 	font-family: 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
@@ -21,12 +21,12 @@ body {
 	overflow-x: hidden;
 }
 
-/* 2. 초슬림 사이드바(150px) 너비에 맞게 본문 위치 좌측 정밀 밀착 */
+
 .control-page-content {
 	position: absolute !important;
-	top: 80px !important; /* 상단 헤더 높이 반영 */
-	left: 150px !important; /* ⭕ 줄어든 메뉴바 너비 150px 선에 밀착 */
-	width: calc(100% - 150px) !important; /* 우측 잔여 공간 100% 바인딩 */
+	top: 80px !important; 
+	left: 150px !important; 
+	width: calc(100% - 150px) !important; 
 	padding: 30px 40px;
 	box-sizing: border-box;
 	z-index: 50 !important;
@@ -40,7 +40,7 @@ body {
 	}
 }
 
-/* 3. 하이테크 스타일 메인 패널 프레임 */
+
 .panel {
 	background: rgba(20, 26, 42, 0.85) !important;
 	border: 1px solid #1e293b !important;
@@ -66,7 +66,7 @@ body {
 	margin: 0 0 24px 0;
 }
 
-/* 4. 관제 대시보드 전용 와이드 핏 데이터 테이블 */
+
 table {
 	width: 100%;
 	border-collapse: separate !important;
@@ -80,14 +80,14 @@ table {
 }
 
 th {
-	background-color: #111827 !important; /* 사이드바 다크 톤과 일체화 */
-	color: #38bdf8 !important; /* 네온 블루 폰트 */
+	background-color: #111827 !important; 
+	color: #38bdf8 !important; 
 	padding: 14px 16px !important;
 	border: 0 !important;
 	border-bottom: 2px solid #1e293b !important;
 	font-size: 13px;
 	font-weight: 700;
-	text-align: center !important; /* 가독성을 위한 전체 중앙 정렬 */
+	text-align: center !important; 
 }
 
 td {
@@ -100,7 +100,7 @@ td {
 	font-size: 13.5px;
 }
 
-/* 행(Row) 호버 시 피드백 */
+
 tr {
 	transition: background-color 0.15s ease;
 }
@@ -110,7 +110,7 @@ tbody tr:hover td {
 	color: #ffffff !important;
 }
 
-/* 링크 인덱스 모던 블루 튜닝 */
+
 a {
 	color: #38bdf8 !important;
 	text-decoration: none !important;
@@ -122,7 +122,7 @@ a:hover {
 	text-decoration: underline !important;
 }
 
-/* 상세/처리 버튼 링크 스타일 */
+
 .btn-action-link {
 	display: inline-block;
 	padding: 5px 12px;
@@ -142,10 +142,10 @@ a:hover {
 	text-decoration: none !important;
 }
 
-/* 5. 모던 알약 배지 컴포넌트 */
+
 .badge-status {
 	padding: 4px 12px !important;
-	border-radius: 20px !important; /* 타원형 알약 마감 */
+	border-radius: 20px !important; 
 	font-size: 11.5px !important;
 	font-weight: 700 !important;
 	display: inline-block;
@@ -169,7 +169,7 @@ a:hover {
 	border: 1px solid rgba(239, 68, 68, 0.3) !important;
 }
 
-/* 6. 하단 페이징 내비게이션 다크 스킨 */
+
 .pagination {
 	display: flex;
 	justify-content: center;
@@ -199,12 +199,12 @@ a:hover {
 }
 
 .pagination strong {
-	color: #38bdf8 !important; /* 현재 페이지 */
+	color: #38bdf8 !important; 
 	background: rgba(14, 165, 233, 0.15) !important;
 	border-color: #0ea5e9;
 }
 
-/* 직원관리와 같은 제목·건수·테이블 흐름을 유지한다. */
+
 .panel {
 	display: grid !important;
 	grid-template-columns: 1fr;
@@ -266,7 +266,7 @@ a:hover {
 			<h2>결재 관리</h2>
 			<div class="staff-list-summary">
 			    <div>총 <strong>${pageMaker.totalCount}</strong>건</div>
-			    <!-- neon-theme 클래스 부여 및 호출 ID를 실제 테이블 스펙에 맞게 workflowTable로 매핑 -->
+			    
 			    <button class="csv-download-btn neon-theme" onclick="downloadTableAsCsv('#workflowTable', 'workflow-list')">
 			        <i class="fa-solid fa-file-csv" style="font-size: 14px;"></i>
 			        CSV
@@ -295,17 +295,17 @@ a:hover {
 						<c:otherwise>
 							<c:forEach var="workflow" items="${workflowList}">
 								<tr>
-									<!-- 1. 결재 번호 -->
+									
 									<td>${workflow.approvalId}</td>
 
-									<!-- 2. 기안자 -->
+									
 									<td>${workflow.drafterName}(${workflow.drafterId})</td>
 
-									<!-- 3. 요청일 -->
+									
 									<td><fmt:formatDate value="${workflow.requestDate}"
 											pattern="yyyy-MM-dd HH:mm" /></td>
 
-									<!-- 4. 보고서 버튼 (⭕ 마우스 오버 시 파란색 하이라이트 활성화 스타일 주입) -->
+									
 									<td><a class="btn-action-link"
 										style="background-color: #242b35 !important; border-color: #3e4b5b !important; color: #38bdf8 !important; transition: all 0.15s ease;"
 										onmouseover="this.style.backgroundColor='#0ea5e9'; this.style.borderColor='#38bdf8'; this.style.color='#ffffff';"
@@ -314,7 +314,7 @@ a:hover {
 										href="${pageContext.request.contextPath}/patrolreport/detail/${workflow.reportId}">
 											📄 #${workflow.reportId} 보고서 </a></td>
 
-									<!-- 5. 작업 버튼 (⭕ 마우스 오버 시 파란색 하이라이트 활성화 스타일 주입) -->
+									
 									<td><a class="btn-action-link"
 										style="background-color: #1e293b !important; border-color: #334155 !important; color: #cbd5e1 !important; transition: all 0.15s ease;"
 										onmouseover="this.style.backgroundColor='#0ea5e9'; this.style.borderColor='#38bdf8'; this.style.color='#ffffff';"
@@ -323,7 +323,7 @@ a:hover {
 										href="${pageContext.request.contextPath}/workflow/detail/${workflow.approvalId}">
 											상세/처리 </a></td>
 
-									<!-- 6. 상태 -->
+									
 									<td><c:choose>
 											<c:when test="${workflow.appStatus eq '0'}">
 												<span class="badge-status pending">승인 대기</span>
@@ -342,7 +342,7 @@ a:hover {
 				</tbody>
 			</table>
 
-			<!-- 하단 페이징 랙 -->
+			
 			<c:if test="${pageMaker.totalCount gt 0}">
 				<div class="pager">
 					<ul class="pagination">

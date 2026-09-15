@@ -1,6 +1,6 @@
-package com.spring.util;
+﻿package com.spring.util;
 
-/** Non-secret runtime settings; system properties take precedence over environment variables. */
+
 public final class RuntimeSettings {
 
     private RuntimeSettings() {

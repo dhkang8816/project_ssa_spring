@@ -1,4 +1,4 @@
-package com.spring.controller;
+﻿package com.spring.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,8 +46,6 @@ public class DetectionLogController {
 
     @Autowired
     private DetectionLogService detectionLogService; // 💡 깔끔하게 의존성 주입 구조 변경
-
-    // 독립된 영구 물리 디렉토리 경로 추출 및 자가 치유 메서드
     private String getUploadPath(HttpServletRequest request) {
         String path = new File(SNAPSHOT_UPLOAD_ROOT, "detection").getPath();
         File uploadDir = new File(path);
@@ -72,8 +70,6 @@ public class DetectionLogController {
         }
         return path;
     }
-
-    // 1. 관제 탐지 로그 페이징 목록 조회 (/detection/list)
     @GetMapping("/list")
     public String detectionList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
         List<DetectionLogVO> detectionList = detectionLogService.getDetectionLogList(pageMaker);
@@ -101,8 +97,6 @@ public class DetectionLogController {
         model.addAttribute("actionStatusNames", actionStatusNames);
         return "detection/detectionList"; 
     }
-
-    // 2. 관제 탐지 로그 상세 조회 및 조치 입력 폼 이동 (/detection/detail)
     @GetMapping("/detail")
     public String detectionDetail(@RequestParam("dlogId") int dlogId, @ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
         DetectionLogVO vo = detectionLogService.getDetectionLogById(dlogId);
@@ -111,8 +105,6 @@ public class DetectionLogController {
         model.addAttribute("actionStatusList", commonCodeService.getCodeListByGroup("ACTION_STATUS"));
         return "detection/detectionDetail"; 
     }
-
-    // 3. 관제원 현장 조치 상태 및 사유 업데이트 처리 (/detection/modify)
     @PostMapping("/modify")
     public String modifyActionStatus(DetectionLogVO dlv, PageMaker pageMaker, RedirectAttributes rttr,
             @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
@@ -126,25 +118,17 @@ public class DetectionLogController {
         return popup ? "redirect:/detection/list?popupSaved=true" : "redirect:/detection/list";
     }
 
-    /**
-     * 4. 💡 탐지 스냅샷 이미지 스트림 출력 (오라클 DB snapshotPath 완벽 연동)
-     */
+    
     @GetMapping("/getSnapshot")
     @ResponseBody
     public ResponseEntity<byte[]> getSnapshot(@RequestParam("dlogId") int dlogId, HttpServletRequest request) throws IOException {
         InputStream in = null;
         try {
             DetectionLogVO vo = detectionLogService.getDetectionLogById(dlogId);
-            
-            // DB의 snapshotPath 검증 및 대치
             String fileName = (vo == null || vo.getSnapshotPath() == null || vo.getSnapshotPath().isEmpty()) 
                               ? "noImage.jpg" : vo.getSnapshotPath();
-            
-            // 💡 [교정] getUploadPath 호출 시 request 아규먼트를 정상 전송
             String uploadPath = getUploadPath(request);
             File file = new File(uploadPath, fileName);
-            
-            // 실물 파일 없을 시 하드디스크 폭발 방지 대피선 구축
             if (!file.exists()) {
                 file = new File(uploadPath, "noImage.jpg");
             }

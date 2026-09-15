@@ -1,4 +1,4 @@
-package com.spring.yolo;
+﻿package com.spring.yolo;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -30,10 +30,6 @@ public class AIStreamBridgeService {
 	private AlertLogService alertLogService;
 	
 	private VideoDroneMapDAO videoDroneMapDAO;
-
-	// =================================================================
-	//  [아키텍처 스케줄링 변수 및 캐시 서랍장 이관 완료]
-	// =================================================================
 	private final Map<String, String> videoDroneCache = new ConcurrentHashMap<>();
 	private boolean isDroneCacheLoaded = false;
 	private int cachedDogCount = -1;
@@ -57,7 +53,6 @@ public class AIStreamBridgeService {
     private synchronized void initDroneCache() {
         if (!isDroneCacheLoaded) {
             try {
-                // 주입받은 DAO를 직접 찔러서 리스트 추출
                 List<VideoDroneMapVO> list = videoDroneMapDAO.selectAllMappings();
                 if (list != null) {
                     for (VideoDroneMapVO vo : list) {
@@ -90,14 +85,8 @@ public class AIStreamBridgeService {
 			initDroneCache();
 		return this.videoDroneCache;
 	}
-
-	// =================================================================
-	//  [핵심 리팩토링] 파이썬 JSON 노드를 정밀 해독하여 로그를 적재하는 분석 코어 마스터
-	// =================================================================
 	public void processYoloLabels(JsonNode root, String currentMode, String lastActiveSourceKey) throws Exception {
 		long currentTime = System.currentTimeMillis();
-
-		// 1. ANIMAL_COUNTER 마스터 현황판 캐싱 기동
 		if (!isMetadataLoaded) {
 			PageMaker dummyPageMaker = new PageMaker();
 			dummyPageMaker.setPage(1);
@@ -116,8 +105,6 @@ public class AIStreamBridgeService {
 				cachedCatCount = 1;
 			isMetadataLoaded = true;
 		}
-
-		// 2. 파이썬 감지 텍스트 파싱
 		JsonNode boxesNode = root.get("boxes");
 		List<String> detectedLabels = new ArrayList<>();
 		if (boxesNode != null && boxesNode.isArray()) {
@@ -127,11 +114,7 @@ public class AIStreamBridgeService {
 				}
 			}
 		}
-
-		// 동적으로 진짜 매핑된 드론 ID 조회
 		String currentActiveDroneId = resolveActiveDroneId(currentMode, lastActiveSourceKey);
-
-		// === [트랙 A: 정상 축종 개체수 미달 연산 구간] ===
 		int dogTargetLimit = 2;
 		int catTargetLimit = 1;
 
@@ -186,8 +169,6 @@ public class AIStreamBridgeService {
 				}
 			}
 		}
-
-		// === [트랙 B: 유해 야생동물 체크 연산 구간] ===
 		if (detectedLabels.contains("pink_dragon") || detectedLabels.contains("tiger")
 				|| detectedLabels.contains("blue_alien")) {
 			int currentDangerType = 0;

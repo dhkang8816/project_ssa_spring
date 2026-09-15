@@ -1,4 +1,4 @@
-package com.spring.controller;
+﻿package com.spring.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,23 +40,16 @@ public class MemberController {
     
     @Autowired
     private CommonCodeService commonCodeService;
-
-    // 💡 독립 물리 경로 추출, 폴더 자동 생성 및 noImage.jpg 원스톱 복사 매핑
     private String getUploadPath(HttpServletRequest request) {
         String path = "C:" + File.separator + "upload" + File.separator + "member";
         File uploadDir = new File(path);
-        
-        // 1. 하드디스크에 물리 디렉토리가 없다면 자동 생성 (상위 폴더 포함)
         if (!uploadDir.exists()) {
             if (uploadDir.mkdirs()) {
                 log.info("🚨 [시스템 알림] 회원 프로필 저장 물리 폴더가 자동으로 생성되었습니다: {}", path);
             }
         }
-        
-        // 2. 물리 경로에 noImage.jpg 기본 파일이 누락되었다면 자가 치유(자동 복사) 가동
         File noImageFile = new File(uploadDir, "noImage.jpg");
         if (!noImageFile.exists()) {
-            // 프로젝트 내부의 원본 기본 스킨 이미지 경로 동적 추적
             jakarta.servlet.ServletContext context = request.getServletContext();
             String resourcePath = context.getRealPath("/resources/images/member/noImage.jpg");
             File originFile = new File(resourcePath);
@@ -64,8 +57,6 @@ public class MemberController {
             if (originFile.exists()) {
                 try (InputStream in = new FileInputStream(originFile);
                      java.io.FileOutputStream out = new java.io.FileOutputStream(noImageFile)) {
-                    
-                    // IOUtils 활용으로 코드를 한 줄로 축소하여 원본 복제 완료
                     IOUtils.copy(in, out);
                     log.info("🎯 [자가치유 완료] C:\\upload\\member\\noImage.jpg 파일이 자동 복사 및 배포되었습니다.");
                     
@@ -79,16 +70,12 @@ public class MemberController {
         
         return path;
     }
-
-    // 회원가입 폼 이동
     @GetMapping("/registForm")
     public String registForm() {
         return "member/memberRegister"; 
     }
 
-    /**
-     * 1. 회원가입 처리
-     */
+    
     @PostMapping("/regist")
     public String regist(MemberVO member, 
                          @RequestParam(value = "pictureFile", required = false) MultipartFile pictureFile,
@@ -113,9 +100,7 @@ public class MemberController {
         return popup ? "redirect:/member/list?popupSaved=true" : "redirect:/login"; 
     }
 
-    /**
-     * 2. 이미지 스트림 출력 렌더링
-     */
+    
     @GetMapping("/getPicture")
     @ResponseBody
     public ResponseEntity<byte[]> getPicture(@RequestParam("id") String id, HttpServletRequest request) throws IOException {
@@ -141,8 +126,6 @@ public class MemberController {
             if (in != null) in.close();
         }
     }
-
-    // 직원 목록 조회
     @GetMapping("/list")
     public String getMemberList(PageMaker pageMaker, Model model) throws Exception {
         int totalCount = memberService.getMemberListCount(pageMaker);
@@ -154,16 +137,12 @@ public class MemberController {
         
         return "member/memberList";
     }
-
-    // 직원 상세 조회
     @GetMapping("/detail")
     public String getMemberDetail(@RequestParam("memberId") String memberId, Model model) throws Exception {
         MemberVO member = memberService.getMemberById(memberId);
         model.addAttribute("member", member);
         return "member/memberDetail"; 
     }
-    
-    // 사원 수정 폼 이동
     @GetMapping("/modifyForm")
     public String modifyForm(@RequestParam("memberId") String memberId, Model model) throws Exception {
         MemberVO member = memberService.getMemberById(memberId);
@@ -178,9 +157,7 @@ public class MemberController {
         return "member/memberModify";
     }
 
-    /**
-     * 3. 사원 정보 수정 처리
-     */
+    
     @PostMapping("/modify")
     public String modify(MemberVO member,
                          @RequestParam(value = "pictureFile", required = false) MultipartFile pictureFile,
@@ -193,8 +170,6 @@ public class MemberController {
         MemberVO oldMember = memberService.getMemberById(member.getMemberId());
         String oldPictureName = oldMember.getPicture();
         String uploadPath = getUploadPath(request);
-        
-        // [A] 사진 삭제 버튼을 누른 경우
         if ("true".equals(deleteOldPicture)) {
             File oldFile = new File(uploadPath, oldPictureName);
             if (oldFile.exists() && !oldPictureName.equals("noImage.jpg")) {
@@ -202,8 +177,6 @@ public class MemberController {
             }
             member.setPicture("noImage.jpg");
             log.info("프로필 사진 삭제 처리 성공");
-            
-        // [B] 새로운 사진 파일이 정상 업로드된 경우
         } else if (pictureFile != null && !pictureFile.isEmpty()) {
             try {
                 String savedName = MultipartFileUpload.saveFile(uploadPath, oldPictureName, pictureFile);
@@ -213,8 +186,6 @@ public class MemberController {
                 log.error("수정 중 파일 업로드 실패 예외 발생: ", e);
                 member.setPicture(oldPictureName); 
             }
-            
-        // [C] 사진 변경 처리를 하지 않은 경우 (기존 파일명 유지)
         } else {
             member.setPicture(oldPictureName); 
             log.info("기존 파일명 유지: {}", oldPictureName);

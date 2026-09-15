@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -10,9 +10,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>보호 동물 목록</title>
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-    background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
     margin: 0;
@@ -20,7 +20,7 @@ body {
     overflow-x: hidden;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .control-page-content {
     position: absolute !important;
     top: 80px !important;
@@ -39,11 +39,11 @@ body {
     }
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .panel { 
     display: grid !important;
     grid-template-columns: minmax(180px, 1fr) auto;
-    /* grid-template-areas에서 action을 search 옆이나 우측 상단으로 배치하도록 조정합니다. */
+    
     grid-template-areas: 
         "title action" 
         "summary search" 
@@ -66,7 +66,7 @@ body {
     text-align: left;
 }
 
-/* 검색 상자 프레임 고도화 */
+
 .search-box {
     margin: 20px 0;
     padding: 20px;
@@ -75,7 +75,7 @@ body {
     border-radius: 12px;
 }
 
-/* [3. 데이터 테이블(그리드) 마스크 정의] */
+
 table {
     width: 100%;
     border-collapse: separate !important;
@@ -89,12 +89,12 @@ table {
 }
 
 th {
-    background-color: #111827 !important; /* 다크 톤 일체화 */
-    color: #38bdf8 !important; /* 브랜드 네온 블루 컬러 각인 */
+    background-color: #111827 !important; 
+    color: #38bdf8 !important; 
     padding: 14px 16px !important;
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 전체 중앙 정렬 마스크 */
+    text-align: center !important; 
     border: 0 !important;
     border-bottom: 2px solid #1e293b !important;
 }
@@ -104,13 +104,13 @@ td {
     background-color: transparent !important;
     color: #cbd5e1 !important;
     font-size: 13.5px;
-    text-align: center !important; /* 전체 중앙 정렬 */
+    text-align: center !important; 
     border: 0 !important;
     border-bottom: 1px solid #1e293b !important;
     vertical-align: middle !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tr {
     transition: background-color 0s ease;
 }
@@ -126,7 +126,7 @@ tbody tr:hover td {
     font-size: 14px;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 form {
     display: flex;
     flex-wrap: wrap;
@@ -152,7 +152,7 @@ input[type="text"]:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 메인 링크 튜닝 */
+
 a.main-link {
     color: #38bdf8 !important;
     font-weight: 600;
@@ -167,7 +167,7 @@ a.main-link:hover {
     text-decoration: underline !important;
 }
 
-/* 액션 단추 규격 세팅 */
+
 button {
     padding: 9px 16px;
     border: 0;
@@ -178,7 +178,7 @@ button {
     transition: all 0.15s ease;
 }
 
-/* 신규 등록 액션: 청량한 네온 그린 스킨 */
+
 button.btn-register {
     background-color: #10b981 !important;
     color: #ffffff !important;
@@ -187,7 +187,7 @@ button.btn-register:hover {
     background-color: #059669 !important;
 }
 
-/* 승인 / 저장 / 현황 조회 액션: 선명한 네온 블루 스킨 */
+
 button.btn-info {
     background-color: #0ea5e9 !important;
     color: #ffffff !important;
@@ -196,7 +196,7 @@ button.btn-info:hover {
     background-color: #0284c7 !important;
 }
 
-/* [5. 공통 알약 배지(Badge) 정의] */
+
 .badge-status {
     padding: 4px 12px !important;
     border-radius: 20px !important;
@@ -205,28 +205,28 @@ button.btn-info:hover {
     display: inline-block;
 }
 
-/* 보호중 / 대기: 반투명 오렌지 패널 핏 */
+
 .badge-status.status-progress {
     background-color: rgba(245, 158, 11, 0.15) !important;
     color: #f59e0b !important;
     border: 1px solid rgba(245, 158, 11, 0.3) !important;
 }
 
-/* 입양 / 성공 / 정상 완료: 반투명 그린 패널 핏 */
+
 .badge-status.status-complete {
     background-color: rgba(16, 185, 129, 0.15) !important;
     color: #10b981 !important;
     border: 1px solid rgba(16, 185, 129, 0.3) !important;
 }
 
-/* 퇴소 / 실패 / 미정 상태: 반투명 그레이 패널 핏 */
+
 .badge-status.status-none {
     background-color: rgba(148, 163, 184, 0.15) !important;
     color: #94a3b8 !important;
     border: 1px solid rgba(148, 163, 184, 0.3) !important;
 }
 
-/* [6. 하단 페이징 내비게이션 표준 규격] */
+
 .pagination {
     display: flex;
     list-style: none;
@@ -259,7 +259,7 @@ button.btn-info:hover {
     border-color: #334155;
 }
 
-/* 현재 활성화된 페이지 번호 강조색 (기존의 red 스타일 파쇄) */
+
 .pagination li.active strong, .pagination strong {
     color: #38bdf8 !important;
     background: rgba(14, 165, 233, 0.15) !important;
@@ -273,24 +273,24 @@ button.btn-info:hover {
         white-space: nowrap;
     }
 }
-/* 직원관리 기준 목록 레이아웃 */
+
 .panel { display:grid !important; grid-template-columns:minmax(180px,1fr) auto; grid-template-areas:"title search" "summary action" "table table" "pager pager"; gap:20px; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important; overflow-x:auto; }.panel > h2 { grid-area:title; margin:0 !important; padding:0 0 16px; border-bottom:1px solid #1e293b; color:#fff !important; font-size:22px !important; }.panel > br { display:none; }.panel > .staff-list-summary { grid-area:summary; color:#94a3b8; font-size:14px; font-weight:500; }.panel > .staff-list-summary strong { color:#38bdf8; background:rgba(56,189,248,.1); border-radius:4px; padding:2px 6px; }.panel > .search-box { grid-area:search; justify-self:end; margin:0 !important; }.panel > .btn-register { grid-area:action; justify-self:end; margin:0 !important; }.panel > table { grid-area:table; min-width:850px; margin:0 !important; }.panel > table th,.panel > table td { white-space:nowrap; }.panel > div[style*="margin-top"] { grid-area:pager; justify-self:center; margin:0 !important; }@media(max-width:760px){.panel{grid-template-columns:1fr;grid-template-areas:"title" "search" "summary" "action" "table" "pager"}.panel > .search-box,.panel > .btn-register{justify-self:stretch}}
 </style>
 
 </head>
 <body>
-<!-- 기존 시스템 컴포넌트 레이아웃 인클루드 보존 -->
+
 <jsp:include page="/WEB-INF/views/menu.jsp" />
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
-<!-- 메인 관제 페이지 레이아웃 본문 래퍼 -->
+
 <div class="control-page-content">
     <div class="panel">
         
         <h2>보호 동물 목록</h2>
         <div class="staff-list-summary">총 <strong>${pageMaker.totalCount}</strong>건</div>
         
-        <!-- 조작 버튼 콤포넌트 라인 (정의된 그린/블루 사각 마감 세팅) -->
+        
 		<div class="action-buttons-group" style="grid-area: action; justify-self: end; display: flex; gap: 6px; margin: 0 !important;">
 		    <button type="button" class="btn-register" 
 		        onclick="return openFormPopup('${pageContext.request.contextPath}/animal/register', 'animalRegister')">
@@ -302,7 +302,7 @@ button.btn-info:hover {
 		    </button>
 		</div>
         
-        <!-- 하이테크 스타일 규격 데이터 테이블 그리드 -->
+        
         <table data-csv-export data-csv-filename="animal-list">
             <thead>
                 <tr>
@@ -323,7 +323,7 @@ button.btn-info:hover {
                     </c:when>
                     <c:otherwise>
                         <c:forEach var="animal" items="${animalList}">
-                            <!-- 상세조회용 동적 컨텍스트 파라미터 매핑 무결점 홀딩 보존 -->
+                            
                             <tr style="cursor: pointer;"
                                 onclick="return openDetailPopup('${pageContext.request.contextPath}/animal/detail?animalId=${animal.animalId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'animalDetail');">
                                 <td style="font-weight: bold;">${animal.animalId}</td>
@@ -340,7 +340,7 @@ button.btn-info:hover {
                                 <td style="color: #ffffff; font-weight: bold;">${animal.animalName}</td>
                                 <td><fmt:formatDate value="${animal.entranceDate}" pattern="yyyy-MM-dd" /></td>
                                 <td>
-                                    <!-- 상태 표시 분기를 모던 타원형 알약 배지로 전면 치환 마감 -->
+                                    
                                     <c:set var="animalStatusName" value="${animal.animalStatus}" />
                                     <c:forEach var="animalStatus" items="${animalStatusList}">
                                         <c:if test="${animalStatus.code == animal.animalStatus}">
@@ -355,7 +355,7 @@ button.btn-info:hover {
                 </c:choose>
             </tbody>
         </table>
-                <!-- 검색 폼 영역 (AnimalDetailMapper 명세 바인딩 조건식 유지) -->
+                
         <div class="search-box">
             <form:form action="list" method="get">
                 <select name="searchType">
@@ -380,7 +380,7 @@ button.btn-info:hover {
                 <button type="submit" class="btn-info">검색</button>
             </form:form>
         </div>
-        <!-- 하단 페이징 내비게이션 랙 영역 (강조색 수식 스킨 바인딩 보존) -->
+        
         <div style="margin-top: 25px;">
             <ul class="pagination">
                 <c:if test="${pageMaker.prev}">

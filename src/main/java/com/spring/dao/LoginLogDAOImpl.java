@@ -1,4 +1,4 @@
-package com.spring.dao;
+﻿package com.spring.dao;
 
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -13,19 +13,15 @@ import lombok.AllArgsConstructor;
 public class LoginLogDAOImpl implements LoginLogDAO {
 
     private SqlSession session; // 💡 MyBatis 핵심 실행 세션 주입
-
-    // 매퍼 파일에 선언된 네임스페이스 상수 지정
     private static final String NAMESPACE = "LoginLog-Mapper.";
 
     @Override
     public List<LoginLogVO> selectLoginLogList(PageMaker pageMaker) throws Exception {
-        // 💡 LoginLog-Mapper.selectLoginLogList 호출
         return session.selectList(NAMESPACE + "selectLoginLogList", pageMaker);
     }
 
     @Override
     public int selectLoginLogListCount(PageMaker pageMaker) throws Exception {
-        // 💡 LoginLog-Mapper.selectLoginLogListCount 호출
         return session.selectOne(NAMESPACE + "selectLoginLogListCount", pageMaker);
     }
 }

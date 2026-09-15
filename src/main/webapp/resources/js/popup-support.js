@@ -1,4 +1,4 @@
-function closePopupAndRefreshParent(fallbackUrl) {
+﻿function closePopupAndRefreshParent(fallbackUrl) {
     if (window.opener && !window.opener.closed) {
         try {
             var rootOpener = window.opener;
@@ -7,7 +7,6 @@ function closePopupAndRefreshParent(fallbackUrl) {
             }
             rootOpener.location.reload();
         } catch (error) {
-            // Closing the child window is still safe if the parent is unavailable.
         }
         window.close();
         return false;
@@ -19,11 +18,7 @@ function closePopupAndRefreshParent(fallbackUrl) {
     return false;
 }
 
-/*
- * A popup form can be submitted twice easily when the network is slow.
- * Keep the existing POST URLs and payloads intact, but ignore a second
- * submit from the same popup until the server responds or navigation starts.
- */
+
 document.addEventListener('submit', function (event) {
     var form = event.target;
     if (!(form instanceof HTMLFormElement)) {

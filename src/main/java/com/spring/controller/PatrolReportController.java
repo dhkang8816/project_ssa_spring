@@ -1,4 +1,4 @@
-package com.spring.controller;
+﻿package com.spring.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,8 +43,6 @@ public class PatrolReportController {
 	private final DetectionLogService detectionLogService;
 	private final FlightHistoryService flightHistoryService;
 	private final MemberService memberService;
-
-	// [1] 업무 보고서 리스트 조회
 	@GetMapping("/list")
 	public String list(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
 		List<PatrolReportVO> reportList = reportService.getReportListWithPaging(pageMaker);
@@ -58,8 +56,6 @@ public class PatrolReportController {
 		model.addAttribute("reportList", reportList);
 		return "patrolreport/patrolReportApprovalList";
 	}
-
-	// [2] 상세 페이지 내에서 결재 상태를 실시간 변경하여 DB에 적재하는 API
 	@PostMapping("/legacy/updateStatus")
 	@ResponseBody
 	public String updateStatus(@RequestParam("reportId") int reportId,
@@ -77,7 +73,6 @@ public class PatrolReportController {
 			return "ERROR";
 		}
 	}
-    // 💡 [버그 픽스] 끝에 붙어있던 원치 않는 마침표(.)를 완벽하게 제거하여 404 에러를 청소합니다.
     @GetMapping("/register")
     public String registerForm(Model model) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -89,8 +84,6 @@ public class PatrolReportController {
                 currentMemberId = customUser.getMember().getMemberId();
             }
         }
-        
-        // 매퍼 수정 없이 기존 memberService를 호출해 이름과 부서를 단건 획득
         MemberVO writerVO = memberService.getMemberById(currentMemberId);
         
         model.addAttribute("currentMemberId", currentMemberId);
@@ -101,31 +94,22 @@ public class PatrolReportController {
         
         return "patrolreport/patrolReportRegister";
     }
-
-
-	// [3] ⚡ [버그 픽스 완료] 데이터 타입 불일치를 해결하여 신규 탑재한 수동 강제 재실행 API 엔드포인트
 	@PostMapping("/recalculate")
 	@ResponseBody
 	public String recalculate(@RequestParam("reportId") Long reportId, @RequestParam("flightTime") Double flightTime,
 			@RequestParam("detectCount") Long detectCount, @RequestParam("completeRate") Double completeRate) {
 		try {
 			log.info("🔄 [수동 강제 재실행 격발] 타격 요청된 보고서 번호 (ID): {}", reportId);
-
-			// 하위 호환성 및 서비스 사양(int)에 맞춰 정밀 캐스팅 하향 수송
 			PatrolReportVO reportVO = reportService.getReportById(reportId.intValue());
 
 			if (reportVO != null) {
 				Date now = new java.util.Date(); // 오라클 DB에 적재할 실시간 현재 시간(SYSDATE)
-
-				// 라이브 대시보드 API 스냅샷에서 가공해온 실시간 당일 통계 수치 덮어쓰기
 				reportVO.setTotalFlightTime(flightTime);
 				reportVO.setTotalDetectCount(detectCount);
 				reportVO.setCompletionRate(completeRate);
 				reportVO.setModDate(now); // 수정일자 필드에 실시간 현재 시간 주입
 
 				reportService.updateReport(reportVO);
-
-				// 비동기 화면 우측 하단 갱신일자 구역에 새로고침 없이 즉시 렌더링해 줄 포맷 문자열 반환
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				return sdf.format(now);
 			}
@@ -135,7 +119,6 @@ public class PatrolReportController {
 			return "FAIL";
 		}
 	}
-    // 💡 [버그 픽스] 끝에 붙어있던 원치 않는 마침표(.)를 완벽하게 제거하여 405 에러를 박멸합니다.
 	@PostMapping("/register")
     public String register(@ModelAttribute("reportVO") PatrolReportVO reportVO,
             @RequestParam("approverId") String approverId,
@@ -150,8 +133,6 @@ public class PatrolReportController {
         if (currentMemberId == null || currentMemberId.trim().isEmpty()) {
             throw new org.springframework.security.access.AccessDeniedException("Authentication is required.");
         }
-
-        // FOOTER 실시간 대시보드 지표 추출 작동
         double todayTotalFlightHours = 0.0;
         int totalTodayDetectCount = 0;
         double actionCompleteRate = 0.0;
@@ -180,8 +161,6 @@ public class PatrolReportController {
         if (totalTodayDetectCount > 0) {
             actionCompleteRate = ((double) totalCompleteCount / totalTodayDetectCount) * 100;
         }
-
-        // 원본 VO 규격에 그대로 매칭 데이터 믹싱
         reportVO.setMemberId(currentMemberId);
         reportVO.setReportDate(new java.util.Date());
         reportVO.setPatrolDate(new java.util.Date());
@@ -194,24 +173,16 @@ public class PatrolReportController {
         reportService.insertReportWithWorkflow(reportVO, approverId);
         return popup ? "redirect:/patrolreport/list?popupSaved=true" : "redirect:/patrolreport/list";
     }
-
-
-	// [4] ⚡ [보안 고도화] 100% 로그인 검증 기반 실시간 업무 보고서 자동 생성 엔진
 	@PostMapping("/createInstantReport")
 	@ResponseBody
 	public String createInstantReport() {
 		try {
-			// 1. 스프림 시큐리티 전역 콘텍스트에서 실시간 인증 객체 획득
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-			// 2. 미인증 세션 차단 처리
 			if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())
 					|| "anonymousUser".equals(auth.getName())) {
 				log.warn("⚠ [관제 보안 경고] 미인증 세션이 일일 업무 보고서 생성 API 요청 차단 처리됨");
 				return "NOT_LOGGED_IN";
 			}
-
-			// 3. 유효 세션 검증 성공에 따른 정보 정밀 추출
 			String currentMemberId = null;
 			if (auth.getPrincipal() instanceof CustomUser) {
 				CustomUser customUser = (CustomUser) auth.getPrincipal();
@@ -222,8 +193,6 @@ public class PatrolReportController {
 			if (currentMemberId == null || currentMemberId.isEmpty()) {
 				currentMemberId = auth.getName();
 			}
-
-			// 4. 대시보드 당일 실시간 핵심 3대 데이터 집계 풀 추출
 			double todayTotalFlightHours = 0.0;
 			int totalTodayDetectCount = 0;
 			double actionCompleteRate = 0.0;
@@ -272,8 +241,6 @@ public class PatrolReportController {
 
 			String defaultActionTaken = "당일 관제 구역 정밀 순찰 완수. 탐지된 객체에 대한 현장 상황 전파 및 관제 조치 절차 정상 이행 완료.";
 			String defaultRemark = "종합 위험도 평가 지표 안정 상태 유지 중. 드론 기체 하드웨어 및 시스템 특이 결함 없음.";
-
-			// 5. VO 조립 및 최종 오라클 DB 저장
 			PatrolReportVO reportVO = PatrolReportVO.builder().reportDate(new java.util.Date())
 					.totalFlightTime(todayTotalFlightHours).totalDetectCount((long) totalTodayDetectCount)
 					.completionRate(Math.round(actionCompleteRate * 100) / 100.0).confirmStatus("0")
@@ -302,8 +269,6 @@ public class PatrolReportController {
 			return "redirect:/patrolreport/detail/" + reportId;
 		}
 	}
-
-	// [5] 상세조회 관문
 	@GetMapping("/detail/{reportId}")
 	public String detail(@PathVariable("reportId") Long reportId, Model model) {
 		try {

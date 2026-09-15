@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -6,6 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
 <title>일일 업무 보고서 작성</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -64,7 +65,7 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="popup-page">
 	<div class="reg-container">
 		<h3
 			style="color: #5ddcff; margin-bottom: 20px; font-weight: bold; border-bottom: 1px solid #3d4354; padding-bottom: 12px;">
@@ -75,9 +76,7 @@ body {
 			method="post" modelAttribute="reportVO">
 			<c:if test="${param.popup eq 'true'}"><input type="hidden" name="popup" value="true" /></c:if>
 
-			<!-- ==========================================
-                 [1. HEADER 자동 출력 프리뷰] 
-                 ========================================== -->
+			
 			<div class="badge-info-tag d-flex justify-content-between">
 				<div>
 					📅 업무일자: <strong class="text-info">당일 시스템 자동 입력 (오늘)</strong>
@@ -87,9 +86,7 @@ body {
 				</div>
 			</div>
 
-			<!-- ==========================================
-                 [2. CONTENT 실물 입력 구역] 
-                 ========================================== -->
+			
 			<div class="mb-4">
 				<label class="style-label"
 					style="color: #ffae19; font-weight: bold;">■ 당일 현장 조치 내용</label>

@@ -1,4 +1,4 @@
-package com.spring.controller;
+﻿package com.spring.controller;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -54,18 +54,12 @@ public class DashboardController {
 		Map<String, Object> resultMap = new HashMap<>();
 
 		double todayTotalFlightHours = 0.0;
-		
-	    // [보완] 조치율 산출을 위한 통합 변수 선언
 	    int totalTodayDetectCount = 0;
 	    double actionCompleteRate = 0.0;
-	    
-	    // 🔥 [버그 픽스] try/catch 외부에서도 접근 가능하도록 변수 선언부를 최상단으로 인출!
 	    long dangerTotal = 0;
 	    long dangerComplete = 0;
 	    long detectTotal = 0;
 	    long detectComplete = 0;
-
-		// [변수 선언부 변동 없음 - 스코프 정상 보장]
 		List<DangerLogVO> dangerList = null;
 		List<DetectionLogVO> detectList = null;
 		List<FlightHistoryVO> flightList = null;
@@ -76,26 +70,16 @@ public class DashboardController {
 			PageMaker dbPageMaker = new PageMaker();
 			dbPageMaker.setPage(1);
 			dbPageMaker.setPerPageNum(1000); // 페이징 제약 해제
-
-	        // 1. 공통코드 및 차트용 원본 데이터 로드
 	        dangerCodes = commonCodeService.getCodeListByGroup("DANGER_TYPE");
 	        animalCodes = commonCodeService.getCodeListByGroup("ANIMAL_TYPE");
 	        dangerList = dangerLogService.getDangerLogList(dbPageMaker);
 	        detectList = detectionLogService.getDetectionLogList(dbPageMaker);
 	        flightList = flightHistoryService.getFlightHistoryList(dbPageMaker);
-			
-	        // ====================================================
-	        // 🔥 [대체 구역] 매퍼 단 고속 집계 서비스 호출 및 지표 산출
-	        // ====================================================
-	        
-	        // A. 기존 비행시간 합산 로직 (중복 제거 후 정상 유지)
 	        if (flightList != null) {
 	            for (FlightHistoryVO fvo : flightList) {
 	                todayTotalFlightHours += fvo.getFlightDuration();
 	            }
 	        }
-
-	        // B. 당일 통계 매퍼 서비스 호출
 	        Map<String, Object> dangerStats = dangerLogService.getTodayDangerStats();
 	        Map<String, Object> detectStats = detectionLogService.getTodayDetectionStats();
 
@@ -108,8 +92,6 @@ public class DashboardController {
 	            detectTotal = detectStats.get("TOTAL_COUNT") != null ? ((Number) detectStats.get("TOTAL_COUNT")).longValue() : 0;
 	            detectComplete = detectStats.get("COMPLETE_COUNT") != null ? ((Number) detectStats.get("COMPLETE_COUNT")).longValue() : 0;
 	        }
-
-	        // C. [요청 지표] 당일 탐지 총 건수 및 조치 완료율 연산
 	        totalTodayDetectCount = (int) (dangerTotal + detectTotal); 
 	        long totalCompleteCount = dangerComplete + detectComplete;
 
@@ -127,29 +109,15 @@ public class DashboardController {
 	    resultMap.put("flightHours", Double.parseDouble(formattedFlightHours)); // 당일 총 비행시간
 	    resultMap.put("todayDetectCount", totalTodayDetectCount);                // 당일 탐지 총 건수
 	    resultMap.put("actionCompleteRate", Math.round(actionCompleteRate * 100) / 100.0); // 당일 조치 완료율(소수점 둘째자리 반올림)
-
-	    // 기존 누적 리스트 크기(0값) 대신, 매퍼에서 고속 추출한 '당일 건수'를 대입합니다.
 	    int realTimeDangerCount = (int) dangerTotal;   // 오늘 발생한 위험객체 건수
 	    int realTimeDetectionCount = (int) detectTotal; // 오늘 발생한 미달경보 건수
-
-	    // 당일 실시간 건수 기준 가중치 연산 (위험객체 15점, 일반축종 5점 차등 부여)
 	    int safetyScore = (realTimeDangerCount * 15) + (realTimeDetectionCount * 5);
-	    
-	    // 100점 만점 상한선 제어 방어선 작동
 	    if (safetyScore > 100) {
 	        safetyScore = 100;
 	    }
-	    
-	    // 프론트엔드로 안전하게 스코어 전달
 	    resultMap.put("safetyScore", safetyScore);
-	    
-	    // 차트 화면 렌더링 유지용 기존 리스트 사이즈 바인딩 방어선
 	    resultMap.put("dangerCount", dangerList != null ? dangerList.size() : 0);
 	    resultMap.put("detectionCount", detectList != null ? detectList.size() : 0);
-
-		// ====================================================================
-		// 📊 [완벽 복구] 1. 최근 7일간의 날짜 기준선 생성 및 일별 트렌드 집계
-		// ====================================================================
 		List<String> dateLabels = new ArrayList<>();
 		List<Integer> dangerWeeklyData = new ArrayList<>();
 		List<Integer> detectWeeklyData = new ArrayList<>();
@@ -199,10 +167,6 @@ public class DashboardController {
 		resultMap.put("dateLabels", dateLabels);
 		resultMap.put("dangerWeeklyData", dangerWeeklyData);
 		resultMap.put("detectWeeklyData", detectWeeklyData);
-
-		// ====================================================================
-		// ⏰ [완벽 복구] 2. 당일(오늘) 시간대별 통계 구역 (동적 최적화 결합)
-		// ====================================================================
 		List<String> timeLabels = new ArrayList<>();
 		List<Integer> dangerTimeData = new ArrayList<>();
 		List<Integer> detectTimeData = new ArrayList<>();
@@ -257,10 +221,6 @@ public class DashboardController {
 		resultMap.put("timeLabels", timeLabels);
 		resultMap.put("dangerTimeData", dangerTimeData);
 		resultMap.put("detectTimeData", detectTimeData);
-
-		// ====================================================================
-		// 🐕 [동적 최적화 가동] 3. 축종별 분포 (하드코딩 100% 제거)
-		// ====================================================================
 		List<String> animalLabels = new ArrayList<>();
 		List<Integer> animalData = new ArrayList<>();
 
@@ -289,10 +249,6 @@ public class DashboardController {
 
 		resultMap.put("animalLabels", animalLabels);
 		resultMap.put("animalData", animalData);
-
-		// ====================================================================
-		// 🦖 [동적 최적화 가동] 4. 이상객체 종류별 포착 현황 (하드코딩 100% 제거)
-		// ====================================================================
 		List<String> dangerTypeLabels = new ArrayList<>();
 		List<Integer> dangerTypeData = new ArrayList<>();
 

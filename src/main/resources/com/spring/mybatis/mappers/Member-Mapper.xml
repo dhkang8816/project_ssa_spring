@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Member-Mapper">
 
-	<!-- DB 영문 컬럼명과 Java MemberVO 필드 매핑 -->
+	
 	<resultMap id="memberMap" type="com.spring.dto.MemberVO">
 		<id property="memberId" column="MEMBER_ID" />
 		<result property="name" column="NAME" />
@@ -20,7 +20,7 @@
 	</resultMap>
 	
 
-	<!-- 1. 사번 기반 단건 회원 조회 -->
+	
 	<select id="selectMemberById" parameterType="string" resultMap="memberMap">
 		SELECT
 		MEMBER_ID,
@@ -39,21 +39,21 @@
 		WHERE MEMBER_ID = #{memberId}
 	</select>
 
-	<!-- 2. 로그인 실패 시 실패 카운트 증가 -->
+	
 	<update id="incrementFailCount" parameterType="string">
 		UPDATE MEMBER
 		SET FAIL_COUNT = FAIL_COUNT + 1
 		WHERE MEMBER_ID = #{memberId}
 	</update>
 
-	<!-- 3. 로그인 성공 시 실패 카운트 리셋(0) -->
+	
 	<update id="resetFailCount" parameterType="string">
 		UPDATE MEMBER
 		SET FAIL_COUNT = 0
 		WHERE MEMBER_ID = #{memberId}
 	</update>
 
-	<!-- 4. 로그인 성공 시 마지막 로그인 타임스탬프 업데이트 -->
+	
 	<update id="updateLastLogDate" parameterType="string">
 		UPDATE MEMBER
 		SET LAST_LONG_DATE = SYSDATE
@@ -66,7 +66,7 @@
 		WHERE MEMBER_ID = #{memberId}
 	</update>
 
-	<!-- 5. 회원 정보 신규 등록 -->
+	
 	<insert id="insertMember" parameterType="com.spring.dto.MemberVO">
 		INSERT INTO MEMBER (
 		MEMBER_ID,
@@ -97,7 +97,7 @@
 		)
 	</insert>
 
-	<!-- 사번 기반 권한 리스트 조회 -->
+	
 	<select id="selectMemberRoles" parameterType="string"
 		resultType="com.spring.dto.MemberRoleVO">
 		SELECT
@@ -123,7 +123,7 @@
 		  AND ROLE_CODE = 'ROLE_ADMIN'
 	</select>
 
-	<!-- 6. 회원 기본 권한 등록 -->
+	
 	<insert id="insertMemberRole" parameterType="com.spring.dto.MemberRoleVO">
 		INSERT INTO MEMBER_ROLE (
 			ROLE_ID,
@@ -137,7 +137,7 @@
 	</insert>
 
 
-	<!-- 7. 로그인 이력 적재 (MEMBER_LOG) -->
+	
 	<insert id="insertMemberLog" parameterType="map">
 		INSERT INTO MEMBER_LOG (
 			LOG_ID,
@@ -155,7 +155,7 @@
 	</insert>
 
 
-	<!-- 8. 페이징 및 검색 조건이 포함된 직원 목록 조회 -->
+	
 	<select id="selectMemberList" parameterType="com.spring.cmd.PageMaker" resultMap="memberMap">
 	    SELECT * FROM (
 	        SELECT ROWNUM AS RNUM, M.* FROM (
@@ -189,7 +189,7 @@
 	    WHERE RNUM BETWEEN #{startRow} AND #{startRow} + #{perPageNum} - 1
 	</select>
 	
-	<!-- 전체 직원 목록 개수 조회 (페이징 및 검색 조건 연동) -->
+	
 	<select id="selectMemberListCount" parameterType="com.spring.cmd.PageMaker" resultType="int">
 		SELECT COUNT(*)
 		FROM MEMBER
@@ -205,7 +205,7 @@
 		</where>
 	</select>
 
-	<!-- 9. 회원 정보 수정 (💡 PICTURE 컬럼 누락 교정 마감 완료) -->
+	
 	<update id="updateMember" parameterType="com.spring.dto.MemberVO">
 		UPDATE MEMBER
 		SET
@@ -214,7 +214,7 @@
 			PHONE = #{phone, jdbcType=VARCHAR},
 			EMAIL = #{email},
 			STATUS = #{status},
-			PICTURE = #{picture}   <!-- 💡 여기에 콤마와 함께 매핑 파라미터가 들어가야 DB가 정상 반영됩니다! -->
+			PICTURE = #{picture}   
 		WHERE MEMBER_ID = #{memberId}
 	</update>
 

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -10,9 +10,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>드론 비행 이력 목록</title>
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-	background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+	background-color: #0b0f19 !important; 
 	color: #e2e8f0 !important;
 	font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
 	margin: 0;
@@ -20,7 +20,7 @@ body {
 	overflow-x: hidden;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .control-page-content {
 	position: absolute !important;
 	top: 80px !important;
@@ -39,7 +39,7 @@ body {
 	}
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .panel {
 	background: rgba(20, 26, 42, 0.85) !important;
 	border: 1px solid #1e293b !important;
@@ -60,7 +60,7 @@ body {
 	text-align: left;
 }
 
-/* 검색 상자 프레임 고도화 */
+
 .search-box {
 	margin: 20px 0;
 	padding: 20px;
@@ -69,7 +69,7 @@ body {
 	border-radius: 12px;
 }
 
-/* [3. 데이터 테이블(그리드) 마스크 정의] */
+
 table {
 	width: 100%;
 	border-collapse: separate !important;
@@ -83,12 +83,12 @@ table {
 }
 
 th {
-	background-color: #111827 !important; /* 다크 톤 일체화 */
-	color: #38bdf8 !important; /* 네온 블루 컬러 각인 */
+	background-color: #111827 !important; 
+	color: #38bdf8 !important; 
 	padding: 14px 16px !important;
 	font-size: 13px;
 	font-weight: 700;
-	text-align: center !important; /* 전체 중앙 정렬 */
+	text-align: center !important; 
 	border: 0 !important;
 	border-bottom: 2px solid #1e293b !important;
 }
@@ -98,12 +98,12 @@ td {
 	background-color: transparent !important;
 	color: #cbd5e1 !important;
 	font-size: 13.5px;
-	text-align: center !important; /* 가독성을 위한 전체 중앙 정렬 */
+	text-align: center !important; 
 	border: 0 !important;
 	border-bottom: 1px solid #1e293b !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tr {
 	transition: background-color 0s ease;
 }
@@ -119,7 +119,7 @@ tbody tr:hover td {
 	font-size: 14px;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 form {
 	display: flex;
 	flex-wrap: wrap;
@@ -145,7 +145,7 @@ input[type="text"]:focus, select:focus {
 	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 텍스트 및 일반 링크 */
+
 a.main-link {
 	color: #38bdf8 !important;
 	font-weight: 600;
@@ -160,7 +160,7 @@ a.main-link:hover {
 	text-decoration: underline !important;
 }
 
-/* 액션 단추 (검색 버튼): 선명한 네온 블루 스킨 */
+
 button {
 	padding: 9px 16px;
 	background-color: #0ea5e9 !important;
@@ -177,7 +177,7 @@ button:hover {
 	background-color: #0284c7 !important;
 }
 
-/* [5. 공통 알약 배지(Badge) 정의] */
+
 .badge-status {
 	padding: 4px 12px !important;
 	border-radius: 20px !important;
@@ -186,14 +186,14 @@ button:hover {
 	display: inline-block;
 }
 
-/* 데이터 공백 및 알수없음: 반투명 오렌지 패널 핏 */
+
 .badge-status.pending {
 	background-color: rgba(245, 158, 11, 0.15) !important;
 	color: #f59e0b !important;
 	border: 1px solid rgba(245, 158, 11, 0.3) !important;
 }
 
-/* [6. 하단 페이징 내비게이션 표준 규격] */
+
 .pagination {
 	display: flex;
 	list-style: none;
@@ -226,7 +226,7 @@ button:hover {
 	border-color: #334155;
 }
 
-/* 현재 활성화된 페이지 번호 */
+
 .pagination li.active strong, .pagination strong {
 	color: #38bdf8 !important;
 	background: rgba(14, 165, 233, 0.15) !important;
@@ -240,16 +240,16 @@ button:hover {
 		white-space: nowrap;
 	}
 }
-/* 직원관리 기준 목록 레이아웃 */
+
 .panel { display:grid !important; grid-template-columns:minmax(180px,1fr) auto; grid-template-areas:"title search" "summary action" "table table" "pager pager"; gap:20px; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important; overflow-x:auto; }.panel > h2 { grid-area:title; margin:0 !important; padding:0 0 16px; border-bottom:1px solid #1e293b; color:#fff !important; font-size:22px !important; }.panel > br { display:none; }.panel > .staff-list-summary { grid-area:summary; color:#94a3b8; font-size:14px; font-weight:500; }.panel > .staff-list-summary strong { color:#38bdf8; background:rgba(56,189,248,.1); border-radius:4px; padding:2px 6px; }.panel > form { grid-area:search; justify-self:end; margin:0 !important; }.panel > table { grid-area:table; min-width:850px; margin:0 !important; }.panel > table th,.panel > table td { white-space:nowrap; }.panel > div[style*="margin-top"] { grid-area:pager; justify-self:center; margin:0 !important; }@media(max-width:760px){.panel{grid-template-columns:1fr;grid-template-areas:"title" "search" "summary" "table" "pager"}.panel > form{justify-self:stretch}}
 </style>
 </head>
 <body>
-	<!-- 기존 시스템 레이아웃 인클루드 스킨 보존 -->
+	
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<!-- 메인 관제 레이아웃 컨테이너 영역 -->
+	
 	<div class="control-page-content">
 		<div class="panel">
 			<h2>드론 비행 이력 목록</h2>
@@ -258,12 +258,12 @@ button:hover {
 			<div class="staff-summary-bar"
 			     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1 / -1 !important;">
 			     
-			    <!-- 왼쪽: 건수 레이어 -->
+			    
 	            <div class="staff-count">
 	              <div class="staff-list-summary">총 <strong>${pageMaker.totalCount}</strong>건</div>
 	            </div>
 			    
-			    <!-- 오른쪽: 버튼 그룹 -->
+			    
 			    <div class="summary-action-group" style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important;">
 			        <button class="csv-download-btn neon-theme"
 		                onclick="downloadTableAsCsv('#flightHistoryTable', 'flight-history-list')"
@@ -274,7 +274,7 @@ button:hover {
 			</div>
 			
 
-			<!-- 데이터 관측 대시보드 테이블 그리드 -->
+			
 			<table id="flightHistoryTable" data-csv-export data-csv-filename="flight-history-list">
 				<thead>
 					<tr>
@@ -295,13 +295,13 @@ button:hover {
 						</c:when>
 						<c:otherwise>
 							<c:forEach var="history" items="${flightHistoryList}">
-								<!-- 기존 상세 조회 팝업 자바스크립트 함수 호출 기능 무결점 유지 -->
+								
 								<tr style="cursor: pointer;"
 									onclick="return openDetailPopup('${pageContext.request.contextPath}/flighthistory/detail?flightId=${history.flightId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'flightHistoryDetail');">
 									<td>${history.flightId}</td>
 									<td style="font-weight: bold;"><c:choose>
 											<c:when test="${empty history.droneId}">
-												<!-- 기존 텍스트를 관제 알약 배지 분기로 변환 -->
+												
 												<span class="badge-status pending">알수없음</span>
 											</c:when>
 											<c:otherwise>${history.droneId}</c:otherwise>
@@ -310,7 +310,7 @@ button:hover {
 											pattern="yyyy-MM-dd HH:mm:ss" /></td>
 									<td><fmt:formatDate value="${history.endTime}"
 											pattern="yyyy-MM-dd HH:mm:ss" /></td>
-									<!-- 우측 정렬 속성이 유지되면서도 패널 스타일과 조화되도록 세팅 -->
+									
 									<td style="text-align: right; padding-right: 20px !important;">${history.flightDuration}
 										시간&nbsp;</td>
 									<td><fmt:formatDate value="${history.flightDate}"
@@ -321,7 +321,7 @@ button:hover {
 					</c:choose>
 				</tbody>
 			</table>
-			<!-- 다조건 동적 검색 폼 영역 (d: 드론ID 필터링) -->
+			
 			<form:form action="list" method="get">
 				<select name="searchType">
 					<option value="d" ${pageMaker.searchType == 'd' ? 'selected' : ''}>드론
@@ -335,7 +335,7 @@ button:hover {
 				</select>
 				<button type="submit">검색</button>
 			</form:form>
-			<!-- 하단 페이징 랙 영역 -->
+			
 			<div style="margin-top: 25px;">
 				<ul class="pagination">
 					<c:if test="${pageMaker.prev}">

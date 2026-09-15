@@ -1,4 +1,4 @@
-package com.spring.yolo;
+﻿package com.spring.yolo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,22 +25,16 @@ public class YoloApiReceiverController {
     @Autowired
     private HttpSession session; 
 
-    /**
-     *  트랙 A: 정상 축종(개/고양이) 보유 마리수 미달 경보 수신 창구
-     */
+    
     @PostMapping(value = "/report-log", produces = "application/json; charset=UTF-8")
     public ResponseEntity<String> receiveNormalDetectionReport(@RequestBody DetectionLogVO vo) {
-        // 🌟 [최종 방어선] 멀티 스레드가 동시에 인서트를 찔러 오라클 MAX+1이 충돌하는 현상을 완벽히 차단합니다.
         synchronized(YoloApiReceiverController.class) {
             try {
                 log.info("⏰ [AI 수신 게이트웨이] 개체수 미달 신호 유입 확인");
                 if (vo.getDroneId() == null || vo.getDroneId().isEmpty()) {
                     vo.setDroneId("DRONE01");
                 }
-                
-                // 1. 부모 로그와 ALERT_LOG를 하나의 트랜잭션으로 적재
                 try {
-                    // 🌟 [데이터 왜곡 완치] 수신된 vo의 animalType을 보고 알림 메시지를 동적으로 바인딩합니다.
                     String animalName = "0".equals(vo.getAnimalType()) ? "반려견(dog)" : "고양이(cat)";
                     
                     AlertLogVO avo = AlertLogVO.builder()
@@ -53,8 +47,6 @@ public class YoloApiReceiverController {
                          
                     alertLinkingService.recordDetectionAlert(vo, avo);
                     log.info(" [다이렉트 적재 성공] '동물미달(0)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
-                    
-                    // 실시간 팝업 브릿지 세션 주머니 연동
                     session.setAttribute("REALTIME_ALERT_FLAG", "TRIGGER");
                     session.setAttribute("REALTIME_ALERT_MSG", avo.getAlertMsg());
              
@@ -70,20 +62,15 @@ public class YoloApiReceiverController {
         }
     }
 
-    /**
-     *  트랙 B: 유해 야생동물(이상객체) 포착 로그 실시간 즉시 경보 수신 창구
-     */
+    
     @PostMapping(value = "/report", produces = "application/json; charset=UTF-8")
     public ResponseEntity<String> receiveDangerDetectionReport(@RequestBody DangerLogVO vo) {
-        // 🌟 [최종 방어선] 상어, 호랑이 등이 동시다발적으로 포착되어 들어올 때 오라클 PK 충돌을 완전히 차단합니다.
         synchronized(YoloApiReceiverController.class) {
             try {
                 log.info(" [AI 수신 게이트웨이] 위험 객체 신호 유입 성공 ➔ 수신된 코드 번호: {}", vo.getDangerType());
                 if (vo.getDroneId() == null || vo.getDroneId().isEmpty()) {
-                    // 혹은 현재 활성화된 드론을 찾아오는 로직 연동
                     vo.setDroneId("DRONE01"); 
                 }
-                // 1. 부모 로그와 ALERT_LOG를 하나의 트랜잭션으로 적재
                 try {
                     String dangerName = "확인불명 이상객체";
                     if (vo.getDangerType() == 2) dangerName = "외계 생물(블루)";
@@ -101,8 +88,6 @@ public class YoloApiReceiverController {
                          
                     alertLinkingService.recordDangerAlert(vo, avo);
                     log.info(" [다이렉트 적재 성공] '이상개체(1)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
-                    
-                    // 실시간 팝업 브릿지 세션 주머니 연동
                     session.setAttribute("REALTIME_ALERT_FLAG", "TRIGGER");
                     session.setAttribute("REALTIME_ALERT_MSG", avo.getAlertMsg());
              

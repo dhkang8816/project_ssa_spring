@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -10,9 +10,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>이상 객체 마스터 목록</title>
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-    background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
     margin: 0;
@@ -20,7 +20,7 @@ body {
     overflow-x: hidden;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .control-page-content {
     position: absolute !important;
     top: 80px !important;
@@ -39,7 +39,7 @@ body {
     }
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .panel {
     background: rgba(20, 26, 42, 0.85) !important;
     border: 1px solid #1e293b !important;
@@ -60,7 +60,7 @@ body {
     text-align: left;
 }
 
-/* 검색 상자 프레임 고도화 */
+
 .search-box {
     margin: 20px 0;
     padding: 20px;
@@ -69,7 +69,7 @@ body {
     border-radius: 12px;
 }
 
-/* [3. 데이터 테이블(그리드) 마스크 정의] */
+
 table {
     width: 100%;
     border-collapse: separate !important;
@@ -83,12 +83,12 @@ table {
 }
 
 th {
-    background-color: #111827 !important; /* 다크 톤 일체화 */
-    color: #38bdf8 !important; /* 브랜드 네온 블루 컬러 각인 */
+    background-color: #111827 !important; 
+    color: #38bdf8 !important; 
     padding: 14px 16px !important;
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 전체 중앙 정렬 마스크 */
+    text-align: center !important; 
     border: 0 !important;
     border-bottom: 2px solid #1e293b !important;
 }
@@ -98,12 +98,12 @@ td {
     background-color: transparent !important;
     color: #cbd5e1 !important;
     font-size: 13.5px;
-    text-align: center !important; /* 가독성을 위한 전체 중앙 정렬 */
+    text-align: center !important; 
     border: 0 !important;
     border-bottom: 1px solid #1e293b !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tr {
     transition: background-color 0s ease;
 }
@@ -119,7 +119,7 @@ tbody tr:hover td {
     font-size: 14px;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 form {
     display: flex;
     flex-wrap: wrap;
@@ -145,7 +145,7 @@ input[type="text"]:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 텍스트 링크 전용 튜닝 */
+
 a.main-link {
     color: #38bdf8 !important;
     font-weight: 600;
@@ -160,7 +160,7 @@ a.main-link:hover {
     text-decoration: underline !important;
 }
 
-/* 액션 단추 규격 세팅 */
+
 button {
     padding: 9px 16px;
     border: 0;
@@ -171,7 +171,7 @@ button {
     transition: all 0.15s ease;
 }
 
-/* 신규 등록 액션: 청량한 네온 그린 스킨 */
+
 button.btn-register {
     background-color: #10b981 !important;
     color: #ffffff !important;
@@ -180,7 +180,7 @@ button.btn-register:hover {
     background-color: #059669 !important;
 }
 
-/* 검색 단추: 선명한 네온 블루 스킨 */
+
 button.btn-search {
     background-color: #0ea5e9 !important;
     color: #ffffff !important;
@@ -189,7 +189,7 @@ button.btn-search:hover {
     background-color: #0284c7 !important;
 }
 
-/* [5. 하단 페이징 내비게이션 표준 규격] */
+
 .pagination {
     display: flex;
     list-style: none;
@@ -222,7 +222,7 @@ button.btn-search:hover {
     border-color: #334155;
 }
 
-/* 현재 활성화된 페이지 번호 강조색 변경 (기존의 red 스타일 영구 파쇄) */
+
 .pagination li.active strong, .pagination strong {
     color: #38bdf8 !important;
     background: rgba(14, 165, 233, 0.15) !important;
@@ -236,24 +236,24 @@ button.btn-search:hover {
         white-space: nowrap;
     }
 }
-/* 직원관리 기준 목록 레이아웃 */
+
 .panel { display:grid !important; grid-template-columns:minmax(180px,1fr) auto; grid-template-areas:"title search" "summary action" "table table" "pager pager"; gap:20px; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important; overflow-x:auto; }.panel > h2 { grid-area:title; margin:0 !important; padding:0 0 16px; border-bottom:1px solid #1e293b; color:#fff !important; font-size:22px !important; }.panel > br { display:none; }.panel > .staff-list-summary { grid-area:summary; color:#94a3b8; font-size:14px; font-weight:500; }.panel > .staff-list-summary strong { color:#38bdf8; background:rgba(56,189,248,.1); border-radius:4px; padding:2px 6px; }.panel > .search-box { grid-area:search; justify-self:end; margin:0 !important; }.panel > div[style*="margin-bottom"] { grid-area:action; justify-self:end; margin:0 !important; }.panel > table { grid-area:table; min-width:850px; margin:0 !important; }.panel > table th,.panel > table td { white-space:nowrap; }.panel > div[style*="margin-top"] { grid-area:pager; justify-self:center; margin:0 !important; }@media(max-width:760px){.panel{grid-template-columns:1fr;grid-template-areas:"title" "search" "summary" "action" "table" "pager"}.panel > .search-box,.panel > div[style*="margin-bottom"]{justify-self:stretch}}
 </style>
 
 </head>
 <body>
-<!-- 기존 상단/메뉴 인클루드 보존 -->
+
 <jsp:include page="/WEB-INF/views/menu.jsp" />
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
-<!-- 메인 관제 페이지 레이아웃 본문 래퍼 -->
+
 <div class="control-page-content">
     <div class="panel">
         
         <h2>이상 객체 목록</h2>
         <div class="staff-list-summary">총 <strong>${pageMaker.totalCount}</strong>건</div>
         
-        <!-- 신규 이상 객체 등록 페이지 이동 버튼 (네온 그린 스킨 클래스 배정) -->
+        
         <div style="margin-bottom: 15px; text-align: left;">
             <button type="button" class="btn-register"
                     onclick="return openFormPopup('${pageContext.request.contextPath}/danger/register', 'dangerRegister');">
@@ -261,7 +261,7 @@ button.btn-search:hover {
             </button>
         </div>
         
-        <!-- 하이테크 스타일 규격 연동 마스터 그리드 -->
+        
         <table data-csv-export data-csv-filename="danger-list">
             <thead>
                 <tr>
@@ -279,11 +279,11 @@ button.btn-search:hover {
                     </c:when>
                     <c:otherwise>
                         <c:forEach var="danger" items="${dangerList}">
-                            <!-- 기존 팝업 함수 연동 및 페이징/검색 파라미터 컨텍스트 홀딩 무결점 보존 -->
+                            
                             <tr style="cursor: pointer;"
                                 onclick="return openDetailPopup('${pageContext.request.contextPath}/danger/detail?dangerId=${danger.dangerId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}', 'dangerDetail');">
                                 <td style="font-weight: bold;">${danger.dangerId}</td>
-                                <!-- 가독성을 고려하여 명칭 셀은 좌측 정렬 마감 처리 -->
+                                
                                 <td style="text-align: left; padding-left: 20px !important;"><c:out value="${danger.dangerName}" /></td>
                                 <td><fmt:formatDate value="${danger.dangerDate}" pattern="yyyy-MM-dd" /></td>
                             </tr>
@@ -292,7 +292,7 @@ button.btn-search:hover {
                 </c:choose>
             </tbody>
         </table>
-                <!-- 검색 폼 영역 (n: 이상객체이름 커스텀 매퍼 구조 보존) -->
+                
         <div class="search-box">
             <form:form action="list" method="get">
                 <select name="searchType">
@@ -302,7 +302,7 @@ button.btn-search:hover {
                 <button type="submit" class="btn-search">검색</button>
             </form:form>
         </div>
-        <!-- 하단 페이징 버튼 영역 (기존 수식 및 동적 바인딩 완전 보존) -->
+        
         <div style="margin-top: 25px;">
             <ul class="pagination">
                 <c:if test="${pageMaker.prev}">
@@ -334,7 +334,6 @@ button.btn-search:hover {
 </body>
 
 <script>
-// 시스템 조치 알럿 조건 분기 로직 완전 보존
 var msg = "${msg}";
 if (msg === "REGISTER_SUCCESS") {
     alert("신규 이상 객체가 마스터에 등록되었습니다.");

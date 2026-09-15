@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -6,13 +6,14 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>전자결재</title>
 <style>
-/* [1. 글로벌 바디 스타일 (팝업 창 내 여백 및 스크롤 최적화)] */
+
 body {
-    background-color: #0b0f19 !important; /* 메인 시스템과 일치하는 다크 테마 */
+    background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
     font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
@@ -20,7 +21,7 @@ body {
     box-sizing: border-box;
 }
 
-/* [2. 글래스모피즘 기반 관제소 메인 판넬] */
+
 .panel {
     width: 100%;
     max-width: 850px;
@@ -45,7 +46,7 @@ body {
     padding-bottom: 16px;
 }
 
-/* [3. 성공 및 오류 알림 메시지 상자] */
+
 .message {
     background-color: rgba(16, 185, 129, 0.15);
     border: 1px solid rgba(16, 185, 129, 0.3);
@@ -68,7 +69,7 @@ body {
     font-weight: 500;
 }
 
-/* [4. 정보 출력 로우(Row) 및 라벨 그리드 튜닝] */
+
 .row {
     display: flex;
     align-items: flex-start;
@@ -81,12 +82,12 @@ body {
 .label {
     display: inline-block;
     width: 140px;
-    color: #94a3b8 !important; /* 슬레이트 그레이 서브 라벨 지정 */
+    color: #94a3b8 !important; 
     font-weight: 600;
     flex-shrink: 0;
 }
 
-/* 상태 표시 전용 알약 컴포넌트 */
+
 .badge-status {
     padding: 3px 12px;
     border-radius: 20px;
@@ -99,25 +100,25 @@ body {
     background: rgba(245, 158, 11, 0.15); 
     color: #f59e0b; 
     border: 1px solid rgba(245, 158, 11, 0.3); 
-} /* 대기 */
+} 
 
 .status-1 { 
     background: rgba(16, 185, 129, 0.15); 
     color: #10b981; 
     border: 1px solid rgba(16, 185, 129, 0.3); 
-} /* 완료 */
+} 
 
 .status-2 { 
     background: rgba(239, 68, 68, 0.15); 
     color: #ef4444; 
     border: 1px solid rgba(239, 68, 68, 0.3); 
-} /* 반려 */
+} 
 
-/* [5. 현장 조치 및 특이사항 내용 텍스트 박스] */
+
 .content {
     flex: 1;
     white-space: pre-wrap;
-    background: #111827 !important; /* 리스트 검색창과 동일한 반전 인풋 암청색 */
+    background: #111827 !important; 
     border: 1px solid #1e293b !important;
     border-radius: 8px;
     padding: 14px 16px;
@@ -125,7 +126,7 @@ body {
     font-size: 13.5px;
 }
 
-/* [6. 하단 승인/반려 조작 액션 영역] */
+
 .actions {
     margin-top: 28px;
     border-top: 1px solid #1e293b;
@@ -135,7 +136,7 @@ body {
     gap: 16px;
 }
 
-/* 결재 승인 및 반려 실행 버튼 모던 마감 */
+
 button {
     padding: 10px 18px;
     font-size: 13.5px;
@@ -146,7 +147,7 @@ button {
     border: none;
 }
 
-/* [결재 승인] 네온 블루 버튼 사양 */
+
 .btn-approve {
     background-color: #0ea5e9 !important;
     color: #ffffff !important;
@@ -159,7 +160,7 @@ button {
     transform: translateY(-1px);
 }
 
-/* [반려] 네온 레드 버튼 사양 */
+
 .btn-reject {
     background-color: #ef4444 !important;
     color: #ffffff !important;
@@ -172,7 +173,7 @@ button {
     transform: translateY(-1px);
 }
 
-/* 🛠 요구사항 피드백: 목록으로 제어 단추 표준 마스크 (차분한 무채색 다크 그레이 스킨) */
+
 button.btn-list {
     background-color: #1e293b !important;
     color: #cbd5e1 !important;
@@ -189,7 +190,7 @@ button:active {
     transform: translateY(0); 
 }
 
-/* 반려 사유 입력 폼 컨테이너 구조화 */
+
 .reject-form-box {
     background: rgba(30, 41, 59, 0.2);
     border: 1px solid #1e293b;
@@ -201,7 +202,7 @@ button:active {
     gap: 10px;
 }
 
-/* 반려 텍스트 입력창 스타일링 */
+
 textarea {
     width: 100%;
     min-height: 90px;
@@ -222,22 +223,22 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }
 
-/* 🛠 요구사항 피드백 반영으로 낡은 텍스트 정렬 링크 레이아웃 하단 청소 박스 파쇄 */
+
 .btn-back-container {
     margin-top: 24px;
     border-top: 1px solid #1e293b;
     padding-top: 20px;
     display: flex;
-    justify-content: flex-end; /* 우측 밀착 정렬 싱크 결합 */
+    justify-content: flex-end; 
 }
 </style>
 
 </head>
-<body>
+<body class="popup-page">
 <div class="panel">
     <h2> 일일 관제 업무 전자결재 상세</h2>
     
-    <!-- 비즈니스 알림 레이어 바인딩 무결점 보존 -->
+    
     <c:if test="${not empty message}">
         <p class="message">${message}</p>
     </c:if>
@@ -245,7 +246,7 @@ textarea:focus {
         <p class="error">${error}</p>
     </c:if>
     
-    <!-- 상세 정보 출력 데이터 그리드 -->
+    
     <div class="row">
         <span class="label">결재 번호</span>
         <strong style="color: #ffffff;">${workflow.approvalId}</strong>
@@ -275,7 +276,7 @@ textarea:focus {
         </c:choose>
     </div>
     
-    <!-- 관제 보고서 본문 로그 데이터 박스 -->
+    
     <div class="row">
         <div class="label">현장 조치 내역</div>
         <div class="content">${workflow.actionTaken}</div>
@@ -285,7 +286,7 @@ textarea:focus {
         <div class="content">${workflow.remark}</div>
     </div>
     
-    <%-- 반려된 문서일 경우 저장된 반려 사유 박스 상시 표출 --%>
+    
     <c:if test="${not empty workflow.rejectReason}">
         <div class="row">
             <div class="label" style="color: #f87171 !important;">반려 사유</div>
@@ -293,17 +294,17 @@ textarea:focus {
         </div>
     </c:if>
     
-    <%-- 결재 전 상태(0)일 경우에만 승인/반려 조작 액션 패널 작동 --%>
+    
     <c:if test="${workflow.appStatus eq '0'}">
         <div class="actions">
-            <!-- 1. 승인 처리 폼 (인라인 배치) -->
+            
             <form:form action="${pageContext.request.contextPath}/workflow/approve" method="post" style="display: inline; margin:0; padding:0;">
                 <input type="hidden" name="approvalId" value="${workflow.approvalId}">
                 <input type="hidden" name="popup" value="true">
                 <button type="submit" class="btn-approve">✔ 결재 승인</button>
             </form:form>
             
-            <!-- 2. 반려 처리 폼 (하단 영역 캡슐화 박스) -->
+            
             <form:form action="${pageContext.request.contextPath}/workflow/reject" method="post" style="margin:0; padding:0;">
                 <input type="hidden" name="approvalId" value="${workflow.approvalId}">
                 <input type="hidden" name="popup" value="true">
@@ -318,7 +319,7 @@ textarea:focus {
         </div>
     </c:if>
     
-    <!-- 🛠 요구사항 피드백: 기존 <a> 태그 텍스트 링크를 완전 파쇄하고 규격 '목록으로' 버튼 컴포넌트로 전면 교체 변경 -->
+    
     <div class="btn-back-container">
         <button type="button" class="btn-list" onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/workflow/list');">목록으로</button>
     </div>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="VideoDrone-Mapper">
@@ -8,17 +8,17 @@
         <result property="droneId" column="DRONE_ID" />
     </resultMap>
 
-    <!-- 전체 매핑 목록 조회 (서버 구동 시 인메모리 로딩 및 설정화면용) -->
+    
     <select id="selectAllMappings" resultMap="videoDroneMap">
         SELECT SOURCE_KEY, DRONE_ID FROM VIDEO_DRONE_MAP
     </select>
 
-    <!-- 특정 영상 소스의 드론 ID 조회 -->
+    
     <select id="getDroneIdBySource" parameterType="string" resultType="string">
         SELECT DRONE_ID FROM VIDEO_DRONE_MAP WHERE SOURCE_KEY = #{sourceKey}
     </select>
 
-    <!-- 영상별 드론 매핑 업데이트 (서버 꺼져도 저장되는 핵심) -->
+    
     <update id="updateDroneMapping" parameterType="com.spring.dto.VideoDroneMapVO">
         UPDATE VIDEO_DRONE_MAP
         SET DRONE_ID = #{droneId}

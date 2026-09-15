@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -11,9 +11,9 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-	background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+	background-color: #0b0f19 !important; 
 	color: #e2e8f0 !important;
 	font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
 	margin: 0;
@@ -21,7 +21,7 @@ body {
 	overflow-x: hidden;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .control-page-content {
 	position: absolute !important;
 	top: 80px !important;
@@ -40,7 +40,7 @@ body {
 	}
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .panel {
 	background: rgba(20, 26, 42, 0.85) !important;
 	border: 1px solid #1e293b !important;
@@ -67,7 +67,7 @@ body {
 	margin: 0 0 24px 0;
 }
 
-/* 검색 상자 프레임 고도화 */
+
 .search-box {
 	margin: 20px 0;
 	padding: 20px;
@@ -76,7 +76,7 @@ body {
 	border-radius: 12px;
 }
 
-/* [3. 데이터 테이블(그리드) 마스크 정의] */
+
 table {
 	width: 100%;
 	border-collapse: separate !important;
@@ -90,12 +90,12 @@ table {
 }
 
 th {
-	background-color: #111827 !important; /* 다크 톤 일체화 */
-	color: #38bdf8 !important; /* 네온 블루 컬러 */
+	background-color: #111827 !important; 
+	color: #38bdf8 !important; 
 	padding: 14px 16px !important;
 	font-size: 13px;
 	font-weight: 700;
-	text-align: center !important; /* 전체 중앙 정렬 */
+	text-align: center !important; 
 	border: 0 !important;
 	border-bottom: 2px solid #1e293b !important;
 }
@@ -105,12 +105,12 @@ td {
 	background-color: transparent !important;
 	color: #cbd5e1 !important;
 	font-size: 13.5px;
-	text-align: center !important; /* 전체 중앙 정렬 */
+	text-align: center !important; 
 	border: 0 !important;
 	border-bottom: 1px solid #1e293b !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tr {
 	transition: background-color 0s ease;
 }
@@ -126,7 +126,7 @@ tbody tr:hover td {
 	font-size: 14px;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 form {
 	display: flex;
 	flex-wrap: wrap;
@@ -152,7 +152,7 @@ input[type="text"]:focus, select:focus {
 	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 텍스트 및 일반 링크 */
+
 a.main-link {
 	color: #38bdf8 !important;
 	font-weight: 600;
@@ -167,7 +167,7 @@ a.main-link:hover {
 	text-decoration: underline !important;
 }
 
-/* 액션 단추 (조작 버튼) */
+
 button {
 	padding: 9px 16px;
 	border: 0;
@@ -178,7 +178,7 @@ button {
 	transition: all 0.15s ease;
 }
 
-/* 신규 코드 등록: 네온 그린 스킨 */
+
 button.btn-register {
 	background-color: #10b981 !important;
 	color: #ffffff !important;
@@ -188,7 +188,7 @@ button.btn-register:hover {
 	background-color: #059669 !important;
 }
 
-/* 검색 버튼: 선명한 네온 블루 스킨 */
+
 button.btn-search {
 	background-color: #0ea5e9 !important;
 	color: #ffffff !important;
@@ -198,7 +198,7 @@ button.btn-search:hover {
 	background-color: #0284c7 !important;
 }
 
-/* [5. 공통 알약 배지(Badge) 정의] */
+
 .badge-status {
 	padding: 4px 12px !important;
 	border-radius: 20px !important;
@@ -207,21 +207,21 @@ button.btn-search:hover {
 	display: inline-block;
 }
 
-/* 사용여부 Y: 반투명 그린 패널 핏 */
+
 .badge-status.active-y {
 	background-color: rgba(16, 185, 129, 0.15) !important;
 	color: #10b981 !important;
 	border: 1px solid rgba(16, 185, 129, 0.3) !important;
 }
 
-/* 사용여부 N: 반투명 레드 패널 핏 */
+
 .badge-status.active-n {
 	background-color: rgba(239, 68, 68, 0.15) !important;
 	color: #ef4444 !important;
 	border: 1px solid rgba(239, 68, 68, 0.3) !important;
 }
 
-/* [6. 하단 페이징 내비게이션 표준 규격] */
+
 .pagination {
 	display: flex;
 	list-style: none;
@@ -254,7 +254,7 @@ button.btn-search:hover {
 	border-color: #334155;
 }
 
-/* 현재 활성화된 페이지 번호 */
+
 .pagination li.active strong, .pagination strong {
 	color: #38bdf8 !important;
 	background: rgba(14, 165, 233, 0.15) !important;
@@ -268,7 +268,7 @@ button.btn-search:hover {
 		white-space: nowrap;
 	}
 }
-/* 직원관리 기준 목록 레이아웃 */
+
 .panel {
 	display: grid !important;
 	grid-template-columns: minmax(180px, 1fr) auto;
@@ -349,25 +349,25 @@ button.btn-search:hover {
 </style>
 </head>
 <body>
-	<!-- 기존 상단/메뉴 인클루드 보존 -->
+	
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<!-- 메인 관제 레이아웃 컨테이너 영역 -->
+	
 	<div class="control-page-content">
 		<div class="panel">
 			<h2>시스템 코드</h2>
 
-			<!-- 💡 grid-column: 1 / -1 !important; 를 인라인 스타일 맨 뒤에 추가하여 격자를 확장합니다 -->
+			
 			<div class="staff-summary-bar"
 			     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1 / -1 !important;">
 			     
-			    <!-- 왼쪽: 건수 레이어 -->
+			    
 			    <div class="staff-count" style="display: inline-block !important; color: #94a3b8 !important;">
 			        총 <strong>${pageMaker.totalCount}</strong>건
 			    </div>
 			    
-			    <!-- 오른쪽: 버튼 그룹 -->
+			    
 			    <div class="summary-action-group" style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important;">
 			        <button class="csv-download-btn neon-theme"
 		                onclick="downloadTableAsCsv('#codeTable', 'code-list')"
@@ -383,12 +383,12 @@ button.btn-search:hover {
 			</div>
 
 
-			<!-- 기존 pageMaker 기능 선언부 무결점 보존 -->
+			
 			<p>
 				현재 페이지: <strong>${pageMaker.page}</strong> | 검색된 총 데이터 개수: <strong>${pageMaker.totalCount}개</strong>
 			</p>
 
-			<!-- 데이터 테이블 그리드 -->
+			
 			<table id="codeTable" data-csv-export data-csv-filename="code-list">
 				<thead>
 					<tr>
@@ -405,16 +405,16 @@ button.btn-search:hover {
 					<c:choose>
 						<c:when test="${not empty codeList}">
 							<c:forEach var="cc" items="${codeList}" varStatus="status">
-								<!-- 기존 상세 팝업 오픈 스크립트 함수 보존 -->
+								
 								<tr style="cursor: pointer;"
 									onclick="return openDetailPopup('${pageContext.request.contextPath}/commoncode/detail?grpCode=${cc.grpCode}&code=${cc.code}', 'codeDetail');">
 									<td>${status.count}</td>
 									<td>${cc.grpCode}</td>
 									<td>${cc.code}</td>
-									<!-- 텍스트 정렬 요구사항 맞춤 유지 -->
+									
 									<td style="text-align: left; padding-left: 15px;">${cc.codeName}</td>
 									<td>${cc.sortSeq}</td>
-									<!-- 사용여부 텍스트를 타원형 알약 모던 배지로 전면 치환 -->
+									
 									<td><c:choose>
 											<c:when test="${cc.useYn eq 'Y'}">
 												<span class="badge-status active-y">Y</span>
@@ -437,7 +437,7 @@ button.btn-search:hover {
 					</c:choose>
 				</tbody>
 			</table>
-			<!-- 검색 폼 영역 추가 (기본 서브밋 파라미터 백엔드 로직 100% 보존) -->
+			
 			<div class="search-box">
 				<form action="${pageContext.request.contextPath}/commoncode/list"
 					method="get">
@@ -459,7 +459,7 @@ button.btn-search:hover {
 					<button type="submit" class="btn-search">검색</button>
 				</form>
 			</div>
-			<!-- 하단 페이징 버튼 영역 (검색 조건 파라미터 및 무결점 strong 활성화 보존) -->
+			
 			<ul class="pagination">
 				<c:if test="${pageMaker.prev}">
 					<li><a

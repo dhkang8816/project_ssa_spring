@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -13,9 +13,9 @@
 	rel="stylesheet">
 <title>경보 이력 목록</title>
 <style>
-/* [1. 레이아웃 및 여백 규격] */
+
 body {
-	background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+	background-color: #0b0f19 !important; 
 	color: #e2e8f0 !important;
 	font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
 	margin: 0;
@@ -23,7 +23,7 @@ body {
 	overflow-x: hidden;
 }
 
-/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
+
 .control-page-content {
 	position: absolute !important;
 	top: 80px !important;
@@ -42,7 +42,7 @@ body {
 	}
 }
 
-/* [2. 타이틀 및 카드 프레임 스킨] */
+
 .panel {
 	background: rgba(20, 26, 42, 0.85) !important;
 	border: 1px solid #1e293b !important;
@@ -63,7 +63,7 @@ body {
 	text-align: left;
 }
 
-/* 검색 상자 프레임 고도화 */
+
 .search-box {
 	margin: 20px 0;
 	padding: 20px;
@@ -72,7 +72,7 @@ body {
 	border-radius: 12px;
 }
 
-/* [3. 데이터 테이블(그리드) 마스크 정의] */
+
 table {
 	width: 100%;
 	border-collapse: separate !important;
@@ -86,12 +86,12 @@ table {
 }
 
 th {
-	background-color: #111827 !important; /* 다크 톤 일체화 */
-	color: #38bdf8 !important; /* 네온 블루 컬러 각인 */
+	background-color: #111827 !important; 
+	color: #38bdf8 !important; 
 	padding: 14px 16px !important;
 	font-size: 13px;
 	font-weight: 700;
-	text-align: center !important; /* 전체 중앙 정렬 */
+	text-align: center !important; 
 	border: 0 !important;
 	border-bottom: 2px solid #1e293b !important;
 }
@@ -101,12 +101,12 @@ td {
 	background-color: transparent !important;
 	color: #cbd5e1 !important;
 	font-size: 13.5px;
-	text-align: center !important; /* 전체 중앙 정렬 */
+	text-align: center !important; 
 	border: 0 !important;
 	border-bottom: 1px solid #1e293b !important;
 }
 
-/* 행 호버 인터랙션 (0초 피드백) */
+
 tr {
 	transition: background-color 0s ease;
 }
@@ -122,7 +122,7 @@ tbody tr:hover td {
 	font-size: 14px;
 }
 
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
+
 form {
 	display: flex;
 	flex-wrap: wrap;
@@ -148,7 +148,7 @@ input[type="text"]:focus, select:focus {
 	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 관제 스킨용 네온 블루 링크 스타일 마스크 */
+
 a {
 	color: #38bdf8 !important;
 	font-weight: 600;
@@ -161,7 +161,7 @@ a:hover {
 	text-decoration: underline !important;
 }
 
-/* 검색 버튼: 선명한 네온 블루 스킨 */
+
 button {
 	padding: 9px 16px;
 	background-color: #0ea5e9 !important;
@@ -178,13 +178,13 @@ button:hover {
 	background-color: #0284c7 !important;
 }
 
-/* 연결 로그 없음: 차분한 비활성화 그레이 스킨 배지 */
+
 .badge-none {
 	color: #64748b !important;
 	font-size: 13px;
 }
 
-/* [5. 하단 페이징 내비게이션 표준 규격] */
+
 .pagination {
 	display: flex;
 	list-style: none;
@@ -217,7 +217,7 @@ button:hover {
 	border-color: #334155;
 }
 
-/* 현재 활성화된 페이지 번호 강조색 (기존의 빨간색 스타일 파쇄 후 네온블루 결합) */
+
 .pagination li.active strong, .pagination strong {
 	color: #38bdf8 !important;
 	background: rgba(14, 165, 233, 0.15) !important;
@@ -231,7 +231,7 @@ button:hover {
 		white-space: nowrap;
 	}
 }
-/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화 - 상세/처리 버튼 추가] */
+
 a.btn-action-link {
 	display: inline-block !important;
 	padding: 6px 12px !important;
@@ -249,7 +249,7 @@ a.btn-action-link {
 	transition: all 0.15s ease !important;
 }
 
-/* 마우스 오버 시 파란색 하이라이트 강제 활성화 마스크 */
+
 a.btn-action-link:hover {
 	background-color: #0ea5e9 !important;
 	border-color: #38bdf8 !important;
@@ -257,7 +257,7 @@ a.btn-action-link:hover {
 	text-decoration: none !important;
 }
 
-/* 직원관리 기준 목록 레이아웃 */
+
 .panel {
 	display: grid !important;
 	grid-template-columns: minmax(180px, 1fr) auto;
@@ -332,31 +332,31 @@ a.btn-action-link:hover {
 </style>
 </head>
 <body>
-	<!-- 기존 레이아웃 시스템 인클루드 완벽 유지 -->
+	
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<!-- 메인 관제 페이지 레이아웃 컨테이너 -->
+	
 	<div class="control-page-content">
 		<div class="panel">
 
 			<h2>시스템 경보 이력 목록</h2>
 
 
-				<!-- 💡 기존 staff-summary-bar 부분을 이 코드로 통째로 교체 -->
+				
 				<div class="staff-summary-bar"
 				     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1 / -1 !important; line-height: 1.2 !important; height: auto !important; margin-bottom: 5px !important;">
 				     
-				    <!-- 왼쪽: 건수 레이어 (부트스트랩 강제 폰트 크기 초기화) -->
+				    
 				    <div class="staff-count" style="display: inline-block !important; color: #94a3b8 !important; font-size: 14px !important; font-weight: 500 !important; margin: 0 !important; padding: 0 !important;">
 				        총 <strong style="color: #38bdf8 !important;">${pageMaker.totalCount}</strong>건
 				    </div>
 				    
-				    <!-- 오른쪽: 버튼 묶음 상자 (부트스트랩의 마진/패딩 침범 원천 차단) -->
+				    
 				    <div class="summary-action-group"
 				         style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important; padding: 0 !important; height: auto !important;">
 				         
-				        <!-- 🌟 CSV 버튼: 부트스트랩의 버튼 스타일 강제 초기화 및 네온 블루 강제 정착 -->
+				        
 				        <button class="csv-download-btn neon-theme"
 		                onclick="downloadTableAsCsv('#alertTable', 'alert-list')"
 				                style="float: none !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; box-sizing: border-box !important; height: 36px !important; padding: 0 16px !important; line-height: 1 !important; border-radius: 6px !important;">
@@ -366,7 +366,7 @@ a.btn-action-link:hover {
 				</div>
 
 
-			<!-- 하이테크 스킨 데이터 테이블 그리드 -->
+			
 			<table id="alertTable" data-csv-export data-csv-filename="alert-list">
 				<thead>
 					<tr>
@@ -389,16 +389,16 @@ a.btn-action-link:hover {
 						<c:otherwise>
 							<c:forEach var="alert" items="${alertList}">
 								<tr>
-									<!-- 1. 경보번호 (상세보기 이동 링크 + 페이징/검색 상태 유지 보존) -->
+									
 									<td style="font-weight: bold;"><a data-detail-popup
 										data-popup-name="alertDetail"
 										href="${pageContext.request.contextPath}/alert/alertDetail?alertId=${alert.alertId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
 											${alert.alertId} </a></td>
 
-									<!-- 2. 경보대상구분 -->
+									
 									<td>${alert.alertType}</td>
 
-									<!-- 3. 연결 로그 분석 구조 바인딩 (클래스 기반 대시보드 스킨 전환) -->
+									
 									<td><c:choose>
 											<c:when test="${not empty alert.dlogId}">
 												<a class="btn-action-link" data-detail-popup
@@ -420,18 +420,18 @@ a.btn-action-link:hover {
 										</c:choose></td>
 
 
-									<!-- 4. 알림 메시지 내용 -->
+									
 									<td style="text-align: left;"><c:out
 											value="${alert.alertMsg}" /></td>
 
-									<!-- 5. 전송성공여부 -->
+									
 									<td>${alert.sendStatus}</td>
 
-									<!-- 6. 최초경보시각 (TIMESTAMP 포맷팅) -->
+									
 									<td><fmt:formatDate value="${alert.firstSendTime}"
 											pattern="yyyy-MM-dd HH:mm:ss" /></td>
 
-									<!-- 7. 경보전송일시 (DATE 포맷팅) -->
+									
 									<td><fmt:formatDate value="${alert.sendDate}"
 											pattern="yyyy-MM-dd HH:mm:ss" /></td>
 								</tr>
@@ -440,7 +440,7 @@ a.btn-action-link:hover {
 					</c:choose>
 				</tbody>
 			</table>
-			<!-- 검색 폼 영역 (스프링 폼 태그 및 AlertLogMapper 검색 조건 연동 완벽 보존) -->
+			
 			<div class="search-box">
 				<form:form action="list" method="get">
 					<select name="searchType" id="alertSearchType"
@@ -473,22 +473,22 @@ a.btn-action-link:hover {
 					document.getElementById('alertMessageKeyword').disabled = !isMessageSearch;
 				}
 			</script>
-			<!-- 하단 페이징 버튼 영역 (보내주신 수식 로직 및 strong 분기 완벽 매핑) -->
+			
 			<div style="margin-top: 25px;">
 				<ul class="pagination">
-					<!-- 이전 버튼 -->
+					
 					<c:if test="${pageMaker.prev}">
 						<li><a
 							href="list?page=${pageMaker.startPage - 1}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">&laquo;
 								이전</a></li>
 					</c:if>
 
-					<!-- 페이지 번호 루프 -->
+					
 					<c:forEach var="pageNum" begin="${pageMaker.startPage}"
 						end="${pageMaker.endPage}">
 						<li class="${pageMaker.page == pageNum ? 'active' : ''}"><c:choose>
 								<c:when test="${pageMaker.page == pageNum}">
-									<!-- 기존 빨간색 스타일을 파쇄하고 대시보드 정체성 네온블루 결합 -->
+									
 									<strong>${pageNum}</strong>
 								</c:when>
 								<c:otherwise>
@@ -498,7 +498,7 @@ a.btn-action-link:hover {
 							</c:choose></li>
 					</c:forEach>
 
-					<!-- 다음 버튼 -->
+					
 					<c:if test="${pageMaker.next}">
 						<li><a
 							href="list?page=${pageMaker.endPage + 1}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">다음

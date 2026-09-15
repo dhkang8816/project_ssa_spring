@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="CommonCode-Mapper">
 
-    <!-- DB 영문 컬럼명과 Java VO 변수 매핑 -->
+    
     <resultMap id="commonCodeMap" type="com.spring.dto.CommonCodeVO">
         <id property="grpCode" column="GRP_CODE" />
         <id property="code" column="CODE" />
@@ -12,7 +12,7 @@
         <result property="codeDate" column="CODE_DATE" />
     </resultMap>
 
-    <!-- 관리자 검색 조건 (동적 쿼리) -->
+    
     <sql id="searchCondition">
         <where>
             <if test="searchGrpCode != null and searchGrpCode != ''">
@@ -27,7 +27,7 @@
         </where>
     </sql>
 
-    <!-- 관리자 코드 리스트 조회 (페이징 반영) -->
+    
     <select id="selectCommonCodeList" parameterType="com.spring.cmd.PageMaker" resultMap="commonCodeMap">
         SELECT * FROM (
             SELECT 
@@ -54,14 +54,14 @@
         WHERE RNUM BETWEEN #{startRow} AND #{endRow}
     </select>
 
-    <!-- 전체 개수 조회 -->
+    
     <select id="selectCommonCodeCount" parameterType="com.spring.cmd.PageMaker" resultType="int">
         SELECT COUNT(*) 
         FROM COMMON_CODE
         <include refid="searchCondition" />
     </select>
 
-    <!-- 상세 조회 -->
+    
     <select id="selectCommonCodeDetail" parameterType="map" resultMap="commonCodeMap">
         SELECT 
             GRP_CODE,
@@ -74,7 +74,7 @@
         WHERE GRP_CODE = #{grpCode} AND CODE = #{code}
     </select>
     
-    <!-- 그룹 코드로 상세 코드 목록 조회 (정렬 순서 반영) -->
+    
     <select id="selectCommonCodeListByGroup" parameterType="string" resultMap="commonCodeMap">
         SELECT 
             GRP_CODE,
@@ -89,7 +89,7 @@
         ORDER BY SORT_SEQ ASC
     </select>
 
-    <!-- 코드 등록 -->
+    
     <insert id="insertCommonCode" parameterType="com.spring.dto.CommonCodeVO">
         INSERT INTO COMMON_CODE (
             GRP_CODE,
@@ -108,7 +108,7 @@
         )
     </insert>
 
-    <!-- 코드 수정 -->
+    
     <update id="updateCommonCode" parameterType="com.spring.dto.CommonCodeVO">
         UPDATE COMMON_CODE
         <set>
@@ -119,7 +119,7 @@
         WHERE GRP_CODE = #{grpCode} AND CODE = #{code}
     </update>
 
-    <!-- 코드 삭제 -->
+    
     <delete id="deleteCommonCode" parameterType="map">
         DELETE FROM COMMON_CODE
         WHERE GRP_CODE = #{grpCode} AND CODE = #{code}
