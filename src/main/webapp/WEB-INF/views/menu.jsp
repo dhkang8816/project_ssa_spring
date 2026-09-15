@@ -133,7 +133,7 @@ nav {
                     <li><a href="<c:url value='/workflow/list'/>">결재 관리</a></li>
                     <li><a href="<c:url value='/member/list'/>">직원 관리</a></li>
                     <li><a href="<c:url value='/loginlog/list'/>">로그인 이력</a></li>
-                    <li><a href="<c:url value='/commoncode/list'/>">시스템 코드 등록</a></li>
+                    <li><a href="<c:url value='/commoncode/list'/>">시스템 코드</a></li>
                 </ul>
             </li>
             

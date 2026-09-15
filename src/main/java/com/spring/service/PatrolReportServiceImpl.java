@@ -58,9 +58,14 @@ public class PatrolReportServiceImpl implements PatrolReportService {
         patrolReportDAO.updateReport(reportVO);
     }
 
+    @Transactional
     @Override
     public void deleteReport(int reportId) throws Exception {
-        patrolReportDAO.deleteReport(reportId);
+        patrolReportDAO.deletePdfCachesByReportId(reportId);
+        workFlowDAO.deleteWorkFlowsByReportId(reportId);
+        if (patrolReportDAO.deleteReport(reportId) != 1) {
+            throw new IllegalArgumentException("The patrol report does not exist or was already deleted.");
+        }
     }
     
     @Override

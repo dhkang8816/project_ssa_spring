@@ -185,3 +185,114 @@ nav {
         border: none !important;
     }
 }
+
+/* ==========================================
+   공통 CSV 다운로드 버튼 기본 스킨 (기존 화면 유지용) 
+   ========================================== */
+.csv-download-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 9px 16px !important;
+    margin: 0 0 16px 0 !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: #0f766e !important;
+    color: #ffffff !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2) !important;
+    transition: all 0.15s ease !important;
+    float: right !important;
+}
+
+.csv-download-btn:hover {
+    background: #0d9488 !important;
+}
+
+.btn-register + .csv-download-btn, 
+button[class*="register"] + .csv-download-btn {
+    margin-left: 8px !important;
+    margin-bottom: 0 !important;
+    float: none !important;
+}
+
+
+/* ==========================================
+   💡 [격리 및 안전 정렬] 결재 관리 전용 네온 블루 레이아웃 
+   ========================================== */
+/* 네온 테마 버튼(.neon-theme)이 있을 때만 이 요약 박스를 flex로 가로 정렬합니다. 
+   검색창이 있는 다른 직원 관리 페이지 등의 Grid 구조를 절대로 방해하지 않습니다. */
+.panel > .staff-list-summary:has(.neon-theme) {
+    grid-area: summary !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    color: #94a3b8 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 🎨 네온 블루 버튼 스킨 재정의 및 불필요한 주황색 여백(Margin) 제거 */
+button.csv-download-btn.neon-theme {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    
+    /* 하이테크 네온 블루 테마 셋업 */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 8px 16px !important; 
+    background: rgba(56, 189, 248, 0.08) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.4) !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1 !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.05) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    
+    /* ⭕ 기존 에메랄드 버튼의 float 및 하단 주황색 여백(16px 마진)을 원천 차단 */
+    float: none !important; 
+    margin: 0 !important;   
+}
+
+/* 마우스 올렸을 때 (Hover 효과 고도화) */
+button.csv-download-btn.neon-theme:hover {
+    background: #38bdf8 !important;
+    color: #0b0f19 !important; /* 깊은 다크 관제소 배경색 */
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.5) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 클릭했을 때 (Active 클릭 반응 고정) */
+button.csv-download-btn.neon-theme:active {
+    transform: translateY(1px) !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.2) !important;
+}
+
+
+/* ==========================================
+   기존 그리드 유연성 패널 레이아웃 홀딩 
+   ========================================== */
+.panel:has(> .csv-download-btn:not(.neon-theme)) {
+    grid-template-areas: "title search" "summary action" "export export" "table table" "pager pager" !important;
+}
+.panel > .csv-download-btn:not(.neon-theme) {
+    grid-area: export;
+    justify-self: end;
+}
+
+@media (max-width: 760px) {
+    .panel:has(> .csv-download-btn:not(.neon-theme)) {
+        grid-template-areas: "title" "search" "summary" "action" "export" "table" "pager" !important;
+    }
+}

@@ -67,7 +67,7 @@ body {
 <body>
 	<div class="reg-container">
 		<h3
-			style="color: #5ddcff; margin-bottom: 20px; font-weight: bold; border-bottom: 1px solid #3d4354; padding-bottom: 12px;">📋
+			style="color: #5ddcff; margin-bottom: 20px; font-weight: bold; border-bottom: 1px solid #3d4354; padding-bottom: 12px;">
 			일일 관제 업무 보고서 작성</h3>
 
 		<form:form
@@ -131,10 +131,11 @@ body {
 				<button type="submit" class="btn btn-success px-4 fw-bold shadow-sm">보고서
 					최종 제출</button>
 				<button type="button" class="btn btn-secondary px-4 ms-2 shadow-sm"
-					onclick="location.href='${pageContext.request.contextPath}/patrolreport/list'">작성
+					onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/patrolreport/list');">작성
 					취소</button>
 			</div>
 		</form:form>
 	</div>
+<script src="${pageContext.request.contextPath}/resources/js/popup-support.js"></script>
 </body>
 </html>

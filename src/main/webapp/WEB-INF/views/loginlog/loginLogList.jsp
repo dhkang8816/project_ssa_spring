@@ -7,192 +7,284 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>시스템 로그인 이력</title>
 <!-- 다크 네이비 테마 style.css 연동 -->
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
-.status-success {
-	color: #2b8a3e;
-	font-weight: bold;
-}
-
-.status-fail {
-	color: #e03131;
-	font-weight: bold;
-}
-/* 페이징 간이 서식 */
-.pagination {
-	display: flex;
-	list-style: none;
-	padding-left: 0;
-	margin-top: 20px;
-	gap: 5px;
-}
-
-.pagination li.active strong {
-	display: block;
-	padding: 6px 10px;
-	border-radius: 5px;
-	background: #00a8a8;
-	color: #ffffff;
-	font-weight: bold;
-}
-
-.loginlog-pagination {
-	display: flex;
-	justify-content: center;
-	margin-top: 24px;
-}
-
-.loginlog-pagination .pagination {
-	margin: 0;
-	flex-wrap: wrap;
-	justify-content: center;
-}
-
-.loginlog-pagination .pagination a {
-	display: block;
-	padding: 6px 10px;
-	border-radius: 5px;
-	background: #242434;
-	color: #ffffff;
-	text-decoration: none;
-}
-
-.loginlog-pagination .pagination a:hover {
-	background: #35354b;
-	color: #5ddcff;
-}
-
-/* ★ 상단 여백 제거 및 밀어올리기 서식 추가 ★ */
-main.content-area {
-	margin-top: 0px !important; /* 공통 CSS에 잡힌 80px 마진 강제 파괴 */
-	padding-top: 20px !important; /* 본문 안쪽 상단 여백을 최소한으로 조절 */
-}
-
-.staff-top-bar {
-	margin-top: 0px !important;
-	margin-bottom: 15px !important; /* 아래 요소와의 간격만 유지 */
-}
-</style>
-<style>
+/* 1. 글로벌 바디 레이아웃 셋업 */
 body {
-	background: #28283a;
+	background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 고정 */
+	color: #e2e8f0 !important;
+	font-family: 'Segoe UI', Roboto, sans-serif;
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
 }
 
+/* 2. [구조 대개편] 150px 초슬림 사이드바와 완벽한 밀착 정렬 싱크 보정 */
 .main-container {
-	display: flex;
-	min-height: calc(100vh - 80px);
-	margin-top: 80px;
+	display: block !important; /* 기존 flex 레이아웃으로 인한 엇박자 꼬임 파쇄 */
+	margin-top: 0 !important;
 }
 
 #menu-placeholder {
-	width: 250px;
-	flex-shrink: 0;
+	display: none !important;
+	width: 0 !important;
 }
 
+/* 실제 우측 본문 영역을 150px 내비게이션 바로 우측에 완전 자석 정렬 */
 .content-area {
-	flex: 1;
-	padding: 40px;
-	background: #28283a;
-	color: #fff;
+	position: absolute !important;
+	top: 80px !important; /* 상단 고정 헤더 높이만큼 정확히 확보 */
+	left: 150px !important; /* ⭕ 얇아진 150px 메뉴바 경계선에 완벽 밀착 */
+	width: calc(100% - 150px) !important; /* 우측 남은 잔여 공간 100% 흡수 */
+	padding: 30px 40px !important;
+	background: transparent !important;
+	box-sizing: border-box;
+	z-index: 50 !important;
 }
 
+@media ( max-width : 760px) {
+	.content-area {
+		left: 0 !important;
+		width: 100% !important;
+		padding: 20px 16px !important;
+	}
+}
+
+/* 3. 상단 대타이틀 영역 스타일링 */
 .staff-top-bar, .staff-summary-bar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 25px;
+	margin-bottom: 20px;
 	gap: 16px;
+	width: 100%;
 }
 
 .staff-top-bar .page-title {
 	margin: 0;
-	color: #fff;
-	font-size: 26px;
+	color: #ffffff !important;
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
 }
 
+/* 4. 요약 정보 가독성 증폭 */
 .staff-count {
-	color: #b0b5c0
+	color: #94a3b8 !important;
+	font-size: 14px;
+	font-weight: 500;
 }
 
 .staff-count .count-num {
-	color: #68b8bd;
-	font-weight: 700
+	color: #38bdf8 !important; /* 스카이블루 관제 브랜드 스킨 컬러 각인 */
+	font-weight: 700;
+	background: rgba(56, 189, 248, 0.1);
+	padding: 2px 6px;
+	border-radius: 4px;
 }
 
+/* 5. 와이드 관제 데이터 그리드 프레임 테마 */
 .staff-table-wrapper {
-	overflow: auto;
-	border-radius: 12px;
-	background: #3e3e55;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+	overflow-x: auto;
+	overflow-y: hidden;
+	border-radius: 12px !important;
+	background: rgba(20, 26, 42, 0.85) !important; /* 반투명 글래스 패널 */
+	border: 1px solid #1e293b !important;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+	width: 100%;
 }
 
 .staff-table {
 	width: 100%;
 	min-width: 760px;
-	border-collapse: collapse;
+	border-collapse: separate !important;
+	border-spacing: 0 !important;
 }
 
 .staff-table th {
-	padding: 18px 20px;
-	background: #242434;
-	border-bottom: 2px solid #48485e;
-	color: #b0b5c0;
-	text-align: left;
+	white-space: nowrap;
+	padding: 14px 16px !important;
+	background: #111827 !important; /* 사이드바 뼈대 다크 톤과 완전 동기화 */
+	border-bottom: 2px solid #1e293b !important;
+	color: #38bdf8 !important; /* 열 레이블 상단 스카이블루 일체화 */
+	font-size: 13px;
+	font-weight: 700;
+	text-align: center !important; /* 가시성을 극대화하기 위한 전체 중앙 가이드 고정 */
 }
 
 .staff-table td {
-	padding: 16px 20px;
-	background: #323244;
-	border-bottom: 1px solid #48485e;
-	color: #fff;
+	white-space: nowrap;
+	padding: 14px 16px !important;
+	background: transparent !important;
+	border-bottom: 1px solid #1e293b !important;
+	color: #cbd5e1 !important;
+	font-size: 13.5px;
+	text-align: center !important; /* 균형 정렬 고정 */
 }
 
-@media ( max-width :760px) {
-	.main-container {
-		margin-top: 64px
-	}
-	.content-area {
-		padding: 20px
-	}
-	#menu-placeholder {
-		width: 210px;
-	}
+/* 리스트 행 순회 스캔 모션 즉시 피드백 */
+.staff-table tbody tr {
+	transition: background-color 0.15s ease;
+}
+
+.staff-table tbody tr:hover td {
+	background-color: rgba(30, 41, 59, 0.6) !important;
+	color: #ffffff !important;
+}
+
+/* 6. [디자인 개량] 기존의 텍스트 색상을 모던 신호등 알약 배지 콤포넌트로 업그레이드 */
+.badge-status {
+	padding: 4px 12px !important;
+	border-radius: 20px !important; /* 완벽한 타원 알약 핏 마감 */
+	font-size: 11.5px !important;
+	font-weight: 700 !important;
+	display: inline-block;
+}
+
+.status-success {
+	background-color: rgba(16, 185, 129, 0.15) !important;
+	color: #10b981 !important;
+	border: 1px solid rgba(16, 185, 129, 0.3) !important;
+} /* 로그인 성공 */
+.status-fail {
+	background-color: rgba(239, 68, 68, 0.15) !important;
+	color: #ef4444 !important;
+	border: 1px solid rgba(239, 68, 68, 0.3) !important;
+} /* 로그인 실패 */
+
+/* 7. 중앙 하단 페이징 내비게이션 랙 */
+.loginlog-pagination {
+	display: flex;
+	justify-content: center;
+	margin-top: 25px;
+	width: 100%;
+}
+
+.pagination {
+	display: flex;
+	list-style: none;
+	padding-left: 0;
+	gap: 6px;
+	margin: 0;
+}
+
+.pagination li a, .pagination li strong {
+	display: block;
+	padding: 6px 12px;
+	background: #111827 !important;
+	color: #94a3b8 !important;
+	border: 1px solid #1e293b;
+	border-radius: 6px;
+	text-decoration: none;
+	font-size: 13px;
+	font-weight: 600;
+	transition: all 0.15s;
+}
+
+.pagination li a:hover {
+	color: #ffffff !important;
+	background: #1f2937 !important;
+	border-color: #334155;
+}
+/* 페이징 활성화 번호 강조 */
+.pagination li.active strong {
+	color: #38bdf8 !important;
+	background: rgba(14, 165, 233, 0.15) !important;
+	border-color: #0ea5e9 !important;
+}
+
+/* 8. 다조건 하단 검색 폼 랙 모던화 */
+.search-form-bar form {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	justify-content: center;
+}
+
+.search-form-bar select {
+	padding: 9px 12px !important;
+	background-color: #111827 !important;
+	color: #ffffff !important;
+	border: 1px solid #334155 !important;
+	border-radius: 8px !important;
+	font-size: 13.5px;
+	outline: none;
+}
+
+.search-form-bar .search-input {
+	width: 200px !important;
+	padding: 9px 16px !important;
+	background: #111827 !important;
+	border: 1px solid #334155 !important;
+	border-radius: 8px !important;
+	color: #ffffff !important;
+	font-size: 13.5px;
+	outline: none;
+}
+
+.search-form-bar .search-input:focus {
+	border-color: #0ea5e9 !important;
+	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+}
+
+/* 검색 제출용 블루 단추 */
+.btn-search-submit {
+	padding: 9px 18px !important;
+	border: 0 !important;
+	border-radius: 8px !important;
+	background: #0ea5e9 !important;
+	color: #ffffff !important;
+	font-weight: 700;
+	font-size: 13.5px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.btn-search-submit:hover {
+	background: #0284c7 !important;
+	transform: translateY(-1px);
 }
 </style>
 </head>
-<body>
+<body class="login-page">
 
-	<!-- 💡 [교정] 태그 끝에 명확하게 슬래시(/)를 닫아 표준 액션 규격 준수 및 파싱 크래시 해결 -->
+	<!-- 1. 가장 상단 공통 네온 헤더 바 조립 -->
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
 	<div class="main-container">
-		<!-- 💡 [교정] 메뉴 인클루드 태그 역시 단독 태그 종결자(/) 명시 완료 -->
+		<!-- 2. 좌측 슬림 메뉴바 조립 -->
 		<jsp:include page="/WEB-INF/views/menu.jsp" />
-		<div id="menu-placeholder"></div>
-		<!-- 본문 레이아웃 구역 -->
+
+		<!-- 3. 우측 본문 콘텐츠 영역 연동 -->
 		<main class="content-area">
 
 			<!-- 상단 바 구역 -->
 			<div class="staff-top-bar">
-				<h2 class="page-title">🔐 시스템 로그인 인증 이력</h2>
+				<h2 class="page-title">로그인 인증 이력</h2>
 			</div>
 
-			<!-- 테이블 요약 정보 및 조작 바 구역 -->
+			<!-- 테이블 요약 정보 구역 -->
 			<div class="staff-summary-bar">
 				<div class="staff-count">
 					전체 이력 수: <span class="count-num">${pageMaker.totalCount}</span> 건
 				</div>
+				<button class="csv-download-btn neon-theme"
+					onclick="downloadTableAsCsv('#loginLogTable', 'login-log-list')">
+					<i class="fa-solid fa-file-csv" style="font-size: 14px;"></i> CSV
+				</button>
 			</div>
 
-			<!-- 테이블 둥근 모서리 래퍼와 실물 스타일 서식 매핑 -->
+			<!-- 메인 데이터 테이블 프레임 랙 -->
 			<div class="staff-table-wrapper">
-				<table class="staff-table">
+				<table id="loginLogTable" class="staff-table" data-csv-export
+					data-csv-filename="login-log-list">
 					<thead>
 						<tr>
-							<th style="width: 100px;">로그 번호</th>
+							<th style="width: 120px;">로그 번호</th>
 							<th style="width: 180px;">사번(아이디)</th>
 							<th>요청 IP 주소</th>
 							<th>로그인 시도 일시</th>
@@ -204,27 +296,29 @@ body {
 							<c:when test="${empty loginLogList}">
 								<tr>
 									<td colspan="5"
-										style="text-align: center; color: #b0b5c0; padding: 30px;">
-										기록된 로그인 인증 이력이 존재하지 않습니다.</td>
+										style="color: #64748b; padding: 60px; font-size: 14px;">기록된
+										로그인 인증 이력이 존재하지 않습니다.</td>
 								</tr>
 							</c:when>
 							<c:otherwise>
 								<c:forEach var="log" items="${loginLogList}">
 									<tr>
-										<td>${log.logId}</td>
-										<td style="font-weight: bold;"><c:out
+										<td><strong>${log.logId}</strong></td>
+										<td style="color: #38bdf8; font-weight: 600;"><c:out
 												value="${log.memberId}" /></td>
-										<td>${log.loginIp}</td>
+										<td><code>${log.loginIp}</code></td>
 										<td><fmt:formatDate value="${log.loginDate}"
 												pattern="yyyy-MM-dd HH:mm:ss" /></td>
-										<td><c:choose>
+										<td>
+											<!-- ⭕ 기존 컬러 텍스트 구문을 세련된 알약 배지 콤포넌트 형태로 전면 보정 --> <c:choose>
 												<c:when test="${log.loginStatus eq 'SUCCESS'}">
-													<span class="status-success">성공</span>
+													<span class="badge-status status-success">성공</span>
 												</c:when>
 												<c:otherwise>
-													<span class="status-fail">실패</span>
+													<span class="badge-status status-fail">실패</span>
 												</c:otherwise>
-											</c:choose></td>
+											</c:choose>
+										</td>
 									</tr>
 								</c:forEach>
 							</c:otherwise>
@@ -232,8 +326,9 @@ body {
 					</tbody>
 				</table>
 			</div>
+			<!-- .staff-table-wrapper END -->
 
-			<!-- 페이징 내비게이션 영역 -->
+			<!-- 페이징 내비게이션 영역 (⭕ 정위치 마크업 결합 완수) -->
 			<div class="loginlog-pagination">
 				<ul class="pagination">
 					<c:if test="${pageMaker.prev}">
@@ -261,27 +356,24 @@ body {
 				</ul>
 			</div>
 
-			<!-- 다조건 하단 검색 폼 구역 -->
-			<div style="margin-top: 25px;">
+			<!-- 다조건 하단 검색 폼 구역 (⭕ 모던 하이테크 스킨 피팅) -->
+			<div class="search-form-bar" style="margin-top: 25px;">
 				<form:form action="list" method="get">
-					<select name="searchType"
-						style="padding: 8px; background: #242434; color: #fff; border: 1px solid #48485e; border-radius: 4px;">
+					<select name="searchType">
 						<option value="m" ${pageMaker.searchType == 'm' ? 'selected' : ''}>사번</option>
 						<option value="s" ${pageMaker.searchType == 's' ? 'selected' : ''}>결과
 							상태</option>
 					</select>
 					<input type="text" name="keyword" value="${pageMaker.keyword}"
-						class="search-input" placeholder="검색어 입력"
-						style="width: 200px; border-radius: 4px; border: 1px solid #48485e; padding: 7px;">
-					<button type="submit" class="staff-register-btn"
-						style="padding: 8px 16px; border-radius: 4px;">검색</button>
+						class="search-input" placeholder="검색어 입력">
+					<button type="submit" class="btn-search-submit">검색</button>
 				</form:form>
 			</div>
 
 		</main>
 	</div>
 
-	<!-- 정적 자원 로딩 마감 -->
+	<!-- 정적 자원 로딩 마감 (오리지널 링크 무결성 유지) -->
 	<script
 		src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/script.js"></script>

@@ -11,7 +11,7 @@
 
 </head>
 <body>
-	<h2>신규 경보 이력 등록 화면</h2>
+	<h2>신규 경보 이력</h2>
 
 	<form:form action="${pageContext.request.contextPath}/alert/register"
 		method="post" onsubmit="return validateForm();">

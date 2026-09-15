@@ -94,7 +94,8 @@ public class DroneController {
 
     // 5. 드론 배정 정보 수정 처리 (/drone/modify)
     @PostMapping("/modify")
-    public String modify(DroneVO dvo, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String modify(DroneVO dvo, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         droneService.modifyDrone(dvo);
         
         // 수정 후 기존 페이징 및 검색 조건 유지 리다이렉트
@@ -103,12 +104,13 @@ public class DroneController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "MODIFY_SUCCESS");
         
-        return "redirect:/drone/list";
+        return popup ? "redirect:/drone/list?popupSaved=true" : "redirect:/drone/list";
     }
 
     // 6. 드론 정보 삭제 처리 (/drone/remove)
     @PostMapping("/remove")
-    public String remove(@RequestParam("droneId") String droneId, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String remove(@RequestParam("droneId") String droneId, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         droneService.removeDrone(droneId);
         
         // 삭제 후 기존 페이징 및 검색 조건 유지 리다이렉트
@@ -117,6 +119,6 @@ public class DroneController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "REMOVE_SUCCESS");
         
-        return "redirect:/drone/list";
+        return popup ? "redirect:/drone/list?popupSaved=true" : "redirect:/drone/list";
     }
 }

@@ -11,4 +11,5 @@ public interface WorkFlowDAO {
     WorkFlowVO selectWorkFlowById(Long approvalId);
     int approveWorkFlow(Long approvalId, String approverId);
     int rejectWorkFlow(Long approvalId, String approverId, String rejectReason);
+    int deleteWorkFlowsByReportId(int reportId);
 }

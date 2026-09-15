@@ -137,8 +137,8 @@ body {
 		<div
 			class="d-flex justify-content-between align-items-center mb-3 pb-2"
 			style="border-bottom: 1px solid #3d4354;">
-			<h2 style="color: #ffffff; margin: 0; font-weight: bold;">📋 일일
-				관제 업무 보고서 명세서</h2>
+			<h2 style="color: #ffffff; margin: 0; font-weight: bold;">일일
+				관제 업무 보고서</h2>
 
 			<!-- 🔴 🟡 🟢 [요구사항 2] 공통코드를 참조하여 동적으로 상태를 수정 및 적재하는 셀렉트 박스 박벽 가동 -->
 			<div class="d-flex gap-2 align-items-center no-print">
@@ -286,11 +286,12 @@ body {
 					method="post"
 					onsubmit="return confirm('이 업무 보고서를 완전히 영구 삭제하시겠습니까?');">
 					<input type="hidden" name="reportId" value="${report.reportId}">
+					<input type="hidden" name="popup" value="true">
 					<button type="submit" class="btn btn-danger fw-bold">보고서
 						삭제</button>
 				</form:form>
 				<button type="button" class="btn btn-secondary"
-					onclick="location.href='${pageContext.request.contextPath}/patrolreport/list'">목록으로</button>
+					onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/patrolreport/list');">목록으로</button>
 			</div>
 		</div>
 	</div>
@@ -416,6 +417,7 @@ function fn_triggerForceUpdate() {
 }
 </script>
 
+<script src="${pageContext.request.contextPath}/resources/js/popup-support.js"></script>
 </body>
 </html>
 

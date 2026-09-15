@@ -1,6 +1,8 @@
 package com.spring.controller;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,8 +35,17 @@ public class CommonCodeController {
 
 		// 2. 페이징 및 검색 조건이 적용된 목록 조회
 		List<CommonCodeVO> codeList = commonCodeService.getCommonCodeList(pageMaker);
+		PageMaker groupCodePageMaker = new PageMaker();
+		groupCodePageMaker.setPerPageNum(1000);
+		Set<String> groupCodes = new TreeSet<>();
+		for (CommonCodeVO code : commonCodeService.getCommonCodeList(groupCodePageMaker)) {
+			if (code.getGrpCode() != null && !code.getGrpCode().isEmpty()) {
+				groupCodes.add(code.getGrpCode());
+			}
+		}
 
 		model.addAttribute("codeList", codeList);
+		model.addAttribute("groupCodes", groupCodes);
 		model.addAttribute("pageMaker", pageMaker); // JSP에서 버튼과 검색 조건을 유지하기 위해 전달
 
 		// 💡 이미지의 /WEB-INF/views/commoncode/ 하위 jsp 파일을 바라보도록 리턴 경로 유지
@@ -72,23 +83,26 @@ public class CommonCodeController {
 	 * 4. 공통코드 수정 처리
 	 */
 	@RequestMapping(value = "/modify", method = RequestMethod.POST)
-	public String modifyCommonCode(@ModelAttribute("ccVO") CommonCodeVO ccVO) throws Exception {
+	public String modifyCommonCode(@ModelAttribute("ccVO") CommonCodeVO ccVO,
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup) throws Exception {
 
 		commonCodeService.modifyCommonCode(ccVO);
 
-		return "redirect:/commoncode/detail?grpCode=" + ccVO.getGrpCode() + "&code=" + ccVO.getCode();
+		return popup ? "redirect:/commoncode/list?popupSaved=true"
+				: "redirect:/commoncode/detail?grpCode=" + ccVO.getGrpCode() + "&code=" + ccVO.getCode();
 	}
 
 	/**
 	 * 5. 공통코드 삭제 처리
 	 */
 	@RequestMapping(value = "/remove", method = RequestMethod.POST)
-	public String removeCommonCode(@RequestParam("grpCode") String grpCode, @RequestParam("code") String code)
+	public String removeCommonCode(@RequestParam("grpCode") String grpCode, @RequestParam("code") String code,
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup)
 			throws Exception {
 
 		commonCodeService.removeCommonCode(grpCode, code);
 
-		return "redirect:/commoncode/list";
+		return popup ? "redirect:/commoncode/list?popupSaved=true" : "redirect:/commoncode/list";
 	}
 
 	// CommonCodeController.java 내부에 추가

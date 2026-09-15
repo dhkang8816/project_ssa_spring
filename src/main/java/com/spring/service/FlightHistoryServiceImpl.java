@@ -19,9 +19,9 @@ public class FlightHistoryServiceImpl implements FlightHistoryService {
 
     @Override
     @Transactional
-    public void registerFlightHistory(FlightHistoryVO fhv) {
+    public int registerFlightHistory(FlightHistoryVO fhv) {
         // [CREATE] 비행 이력 등록
-        flightHistoryDAO.insertFlightHistory(fhv);
+        return flightHistoryDAO.insertFlightHistory(fhv);
     }
 
     @Override

@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.cmd.PageMaker;
+import com.spring.dto.CommonCodeVO;
 import com.spring.dto.DangerDetailVO;
 import com.spring.dto.DangerLogVO;
+import com.spring.service.CommonCodeService;
 import com.spring.service.DangerDetailService;
 import com.spring.service.DangerLogService;
 import com.spring.util.RuntimeSettings;
@@ -48,6 +50,9 @@ public class DangerLogController {
     
     @Autowired
     private DangerDetailService dangerDetailService;
+
+    @Autowired
+    private CommonCodeService commonCodeService;
 
     // 💡 이상개체 스냅샷 보관용 독립 영구 물리 디렉토리 경로 추출 및 noImage.jpg 자동 복사 메서드
     private String getUploadPath(HttpServletRequest request) {
@@ -90,7 +95,7 @@ public class DangerLogController {
 
     // 1. 관제 탐지 로그 페이징 목록 조회 (/dangerlog/list)
     @GetMapping("/list")
-    public String dangerLogList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) {
+    public String dangerLogList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
         
         // A. 먼저 실시간 탐지 로그 원본 리스트를 가져옵니다 (조인 없는 순수 고속 쿼리)
         List<DangerLogVO> dangerLogList = dangerLogService.getDangerLogList(pageMaker);
@@ -116,14 +121,24 @@ public class DangerLogController {
                 log.setDangerName(matchedName);
             }
         }
+
+        PageMaker actionStatusPageMaker = new PageMaker();
+        actionStatusPageMaker.setSearchGrpCode("ACTION_STATUS");
+        actionStatusPageMaker.setSearchUseYn("Y");
+        actionStatusPageMaker.setPerPageNum(1000);
+        Map<String, String> actionStatusNames = new HashMap<>();
+        for (CommonCodeVO code : commonCodeService.getCommonCodeList(actionStatusPageMaker)) {
+            actionStatusNames.put(code.getCode(), code.getCodeName());
+        }
         
         model.addAttribute("dangerLogList", dangerLogList);
+        model.addAttribute("actionStatusNames", actionStatusNames);
         return "dangerlog/dangerLogList"; 
     }
 
     // 2. 관제 탐지 로그 상세 조회 및 조치 입력 폼 이동 (/dangerlog/detail)
     @GetMapping("/detail")
-    public String dangerLogDetail(@RequestParam("danlogId") int danlogId, @ModelAttribute("pageMaker") PageMaker pageMaker, Model model) {
+    public String dangerLogDetail(@RequestParam("danlogId") int danlogId, @ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
         
         // 1. 단건 상세 로그 원본 데이터 조회
         DangerLogVO log = dangerLogService.getDangerLogById(danlogId);
@@ -147,12 +162,14 @@ public class DangerLogController {
         }
         
         model.addAttribute("dangerLog", log);
+        model.addAttribute("actionStatusList", commonCodeService.getCodeListByGroup("ACTION_STATUS"));
         return "dangerlog/dangerLogDetail";
     }
 
     // 3. 관제원 현장 조치 상태 및 사유 업데이트 처리 (/dangerlog/modify)
     @PostMapping("/modify")
-    public String modifyDactionStatus(DangerLogVO dlv, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String modifyDactionStatus(DangerLogVO dlv, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         dangerLogService.modifyDactionStatus(dlv);
         
         rttr.addAttribute("page", pageMaker.getPage());
@@ -160,7 +177,7 @@ public class DangerLogController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "MODIFY_SUCCESS");
         
-        return "redirect:/dangerlog/list";
+        return popup ? "redirect:/dangerlog/list?popupSaved=true" : "redirect:/dangerlog/list";
     }
 
     /**

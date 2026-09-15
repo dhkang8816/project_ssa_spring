@@ -57,3 +57,41 @@ document.addEventListener("DOMContentLoaded", function () {
 	    });
 	});
 });
+
+// resources/js/table-utility.js (예시)
+
+// resources/js/table-utility.js
+function downloadTableAsCsv(tableSelector, filename) {
+    var table = document.querySelector(tableSelector);
+    if (!table) {
+        console.error("CSV로 변환할 테이블을 찾을 수 없습니다: " + tableSelector);
+        return;
+    }
+
+    var rows = Array.prototype.slice.call(table.querySelectorAll('tr'));
+    var csvRows = rows.map(function(row) {
+        return Array.prototype.slice.call(row.querySelectorAll('th, td')).map(function(cell) {
+            var value = (cell.innerText || cell.textContent || '')
+                .replace(/\r?\n|\r/g, ' ')
+                .replace(/\s{2,}/g, ' ')
+                .trim()
+                .replace(/"/g, '""');
+            return '"' + value + '"';
+        }).join(',');
+    }).filter(function(row) { return row.length > 0; });
+
+    if (csvRows.length < 2) {
+        window.alert('다운로드할 목록 데이터가 없습니다.');
+        return;
+    }
+    
+    var finalFilename = filename || 'ssa-list';
+    var blob = new Blob(['\ufeff' + csvRows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = finalFilename + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+}

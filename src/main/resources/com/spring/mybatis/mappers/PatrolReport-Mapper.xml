@@ -134,6 +134,10 @@
         UPDATE PATROL_REPORT SET CONFIRM_STATUS = #{confirmStatus} WHERE REPORT_ID = #{reportId}
     </update>
 
+    <delete id="deletePdfCachesByReportId" parameterType="int">
+        DELETE FROM PDF_CACHE WHERE REPORT_ID = #{reportId}
+    </delete>
+
     <!-- 5. 삭제 -->
     <delete id="deleteReport" parameterType="int">
         DELETE FROM PATROL_REPORT WHERE REPORT_ID = #{reportId}

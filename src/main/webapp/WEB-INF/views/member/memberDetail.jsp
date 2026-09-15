@@ -225,26 +225,17 @@ button:active { transform: translateY(0); }
     <!-- 하단 제어 조작 버튼 바 (수직 구조에 맞춘 중앙 정렬 보정) -->
     <div class="action-bar">
         <button type="button" class="btn-modify" onclick="return openMemberModifyPopup();">⚡ 정보 수정</button>
-        <button type="button" class="btn-back" onclick="location.href='${pageContext.request.contextPath}/member/list'">목록으로</button>
+        <button type="button" class="btn-back" onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/member/list');">목록으로</button>
     </div>
     
 </div> <!-- .detail-panel END -->
 <!-- ⚠️ 원본 자바스크립트 팝업 엔진 (100% 무결점 보존선) -->
 <script>
 function openMemberModifyPopup() {
-    var url = '${pageContext.request.contextPath}/member/modifyForm?memberId=${member.memberId}&popup=true';
-    var popupWidth = 980;
-    var popupHeight = 760;
-    var left = Math.max(0, Math.round((screen.availWidth - popupWidth) / 2));
-    var top = Math.max(0, Math.round((screen.availHeight - popupHeight) / 2));
-    var popup = window.open(url, 'memberModify', 'width=' + popupWidth + ',height=' + popupHeight + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes');
-    if (popup) {
-        popup.focus();
-        return false;
-    }
-    location.href = url;
+    location.href = '${pageContext.request.contextPath}/member/modifyForm?memberId=${member.memberId}';
     return false;
 }
 </script>
+<script src="${pageContext.request.contextPath}/resources/js/popup-support.js"></script>
 </body>
 </html>

@@ -40,26 +40,33 @@ public class WorkFlowController {
 	}
 
 	@PostMapping("/approve")
-	public String approve(@RequestParam("approvalId") Long approvalId, RedirectAttributes rttr) {
+	public String approve(@RequestParam("approvalId") Long approvalId,
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup, RedirectAttributes rttr) {
+		boolean completed = false;
 		try {
 			workFlowService.approve(approvalId, getCurrentMemberId());
+			completed = true;
 			rttr.addFlashAttribute("message", "결재를 완료했습니다.");
 		} catch (Exception e) {
 			rttr.addFlashAttribute("error", "결재 처리에 실패했습니다.");
 		}
-		return "redirect:/workflow/detail/" + approvalId;
+		return completed && popup ? "redirect:/workflow/list?popupSaved=true"
+				: "redirect:/workflow/detail/" + approvalId + (popup ? "?popup=true" : "");
 	}
 
 	@PostMapping("/reject")
 	public String reject(@RequestParam("approvalId") Long approvalId, @RequestParam("rejectReason") String rejectReason,
-			RedirectAttributes rttr) {
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup, RedirectAttributes rttr) {
+		boolean completed = false;
 		try {
 			workFlowService.reject(approvalId, getCurrentMemberId(), rejectReason);
+			completed = true;
 			rttr.addFlashAttribute("message", "반려 처리했습니다.");
 		} catch (Exception e) {
 			rttr.addFlashAttribute("error", "반려 사유를 확인하거나 결재 상태를 다시 확인해 주세요.");
 		}
-		return "redirect:/workflow/detail/" + approvalId;
+		return completed && popup ? "redirect:/workflow/list?popupSaved=true"
+				: "redirect:/workflow/detail/" + approvalId + (popup ? "?popup=true" : "");
 	}
 
 	private WorkFlowVO getAssignedWorkflow(Long approvalId) throws Exception {

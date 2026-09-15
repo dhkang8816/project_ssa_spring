@@ -34,6 +34,9 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
+		if (ip != null && ip.contains(",")) {
+			ip = ip.substring(0, ip.indexOf(',')).trim();
+		}
 
 		// 💡 [2] 아이디 입력값이 존재하는 경우 실패 카운트 증가 및 FAIL 로그 적재
 		if (memberId != null && !memberId.trim().isEmpty()) {

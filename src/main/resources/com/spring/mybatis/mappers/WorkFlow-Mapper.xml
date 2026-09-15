@@ -46,4 +46,7 @@
         UPDATE WORKFLOW SET APP_STATUS = '2', ADMIN_SIGN = 'Y', COMPLETE_DATE = SYSDATE, REJECT_REASON = #{rejectReason}
         WHERE APPROVAL_ID = #{approvalId} AND APPROVER_ID = #{approverId} AND APP_STATUS = '0'
     </update>
+    <delete id="deleteWorkFlowsByReportId" parameterType="int">
+        DELETE FROM WORKFLOW WHERE REPORT_ID = #{reportId}
+    </delete>
 </mapper>

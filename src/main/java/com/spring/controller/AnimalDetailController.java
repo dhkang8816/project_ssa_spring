@@ -34,11 +34,18 @@ public class AnimalDetailController {
 
     // 1. 동물 페이징 목록 조회 (/animal/list)
     @GetMapping("/list")
-    public String animalList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) {
+    public String animalList(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
         // 서비스 내부에서 전체 카운터 조회 및 페이징 계산이 동시에 처리됩니다.
         List<AnimalDetailVO> animalList = animalDetailService.getAnimalList(pageMaker);
+        PageMaker animalTypePageMaker = new PageMaker();
+        animalTypePageMaker.setSearchGrpCode("ANIMAL_TYPE");
+        animalTypePageMaker.setSearchUseYn("Y");
+        animalTypePageMaker.setPerPageNum(1000);
+        List<CommonCodeVO> animalTypeList = commonCodeService.getCommonCodeList(animalTypePageMaker);
         
         model.addAttribute("animalList", animalList);
+        model.addAttribute("animalTypeList", animalTypeList);
+        model.addAttribute("animalStatusList", getActiveCodes("ANIMAL_STATUS"));
         return "animal/animalList"; // WEB-INF/views/animal/list.jsp 매핑
     }
 
@@ -54,6 +61,7 @@ public class AnimalDetailController {
         List<CommonCodeVO> animalTypeList = commonCodeService.getCommonCodeList(pm);
         
         model.addAttribute("animalTypeList", animalTypeList);
+        model.addAttribute("animalStatusList", getActiveCodes("ANIMAL_STATUS"));
         return "animal/animalRegister";
     }
 
@@ -79,12 +87,14 @@ public class AnimalDetailController {
         
         model.addAttribute("animal", vo);
         model.addAttribute("animalTypeList", animalTypeList);
+        model.addAttribute("animalStatusList", getActiveCodes("ANIMAL_STATUS"));
         return "animal/animalDetail";
     }
 
     // 5. 동물 정보 수정 처리 (/animal/modify)
     @PostMapping("/modify")
-    public String modify(AnimalDetailVO vo, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String modify(AnimalDetailVO vo, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         animalDetailService.modifyAnimal(vo);
         
         // 수정 후 기존 페이징 정보 유지하며 리다이렉트
@@ -93,12 +103,13 @@ public class AnimalDetailController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "MODIFY_SUCCESS");
         
-        return "redirect:/animal/list";
+        return popup ? "redirect:/animal/list?popupSaved=true" : "redirect:/animal/list";
     }
 
     // 6. 동물 정보 삭제 처리 (/animal/remove)
     @PostMapping("/remove")
-    public String remove(@RequestParam("animalId") int animalId, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String remove(@RequestParam("animalId") int animalId, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         animalDetailService.removeAnimal(animalId);
         
         // 삭제 후 기존 페이징 정보 유지하며 리다이렉트
@@ -107,7 +118,7 @@ public class AnimalDetailController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "REMOVE_SUCCESS");
         
-        return "redirect:/animal/list";
+        return popup ? "redirect:/animal/list?popupSaved=true" : "redirect:/animal/list";
     }
 
     // 💡 [추가] 실시간 개체수 현황판 화면 이동 및 페이징 처리 (/animal/counterList)
@@ -118,6 +129,10 @@ public class AnimalDetailController {
         
         model.addAttribute("counterList", counterList);
         return "animal/animalCounterList"; // WEB-INF/views/animal/animalCounterList.jsp 매핑
+    }
+
+    private List<CommonCodeVO> getActiveCodes(String groupCode) throws Exception {
+        return commonCodeService.getCodeListByGroup(groupCode);
     }
 
 }

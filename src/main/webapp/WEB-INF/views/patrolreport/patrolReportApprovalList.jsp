@@ -6,6 +6,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 관리</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <link
@@ -13,45 +14,75 @@
 	rel="stylesheet">
 <style>
 body {
-	background-color: #161920;
-	color: #ffffff;
-	font-family: 'Pretendard', sans-serif;
+	background-color: #0b0f19;
+	color: #e2e8f0;
+	font-family: 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
-	padding: 20px;
+	padding: 0;
+	overflow-x: hidden;
+}
+
+.control-page-content {
+	position: absolute;
+	top: 80px;
+	left: 150px;
+	width: calc(100% - 150px);
+	padding: 30px 40px;
+	box-sizing: border-box;
+	z-index: 50;
+}
+
+@media (max-width: 760px) {
+	.control-page-content {
+		left: 0;
+		width: 100%;
+		padding: 20px 16px;
+	}
 }
 
 .main-panel {
-	background: linear-gradient(135deg, #222733 0%, #1a1e29 100%);
-	border: 1px solid #2c313d;
-	border-radius: 12px;
-	padding: 25px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+	overflow-x: auto;
+	background: rgba(20, 26, 42, 0.85);
+	border: 1px solid #1e293b;
+	border-radius: 16px;
+	padding: 28px;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+	box-sizing: border-box;
 }
 
 .table-zone {
+	min-width: 850px;
 	width: 100%;
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 0;
 	margin-top: 20px;
+	border: 1px solid #1e293b;
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .table-zone th {
-	background-color: #242434;
-	color: #5ddcff;
-	padding: 12px;
-	border: 1px solid #2c313d;
-	font-size: 14px;
+	white-space: nowrap;
+	background-color: #111827;
+	color: #38bdf8;
+	padding: 14px 16px;
+	border: 0;
+	border-bottom: 2px solid #1e293b;
+	font-size: 13px;
 }
 
 .table-zone td {
-	padding: 12px;
-	border: 1px solid #2c313d;
+	white-space: nowrap;
+	padding: 14px 16px;
+	border: 0;
+	border-bottom: 1px solid #1e293b;
 	text-align: center;
-	color: #e1e4ea;
-	font-size: 14px;
+	color: #cbd5e1;
+	font-size: 13.5px;
 }
 
-.table-zone tr:hover {
-	background-color: #2c313d;
+.table-zone tbody tr:hover {
+	background-color: rgba(56, 189, 248, 0.08);
 }
 
 .approval-select {
@@ -71,14 +102,14 @@ body {
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<div style="margin-left: 260px; padding: 10px 20px;">
+	<div class="control-page-content">
 		<div class="main-panel">
 			<div style="border-bottom: 1px solid #2c313d; padding-bottom: 15px;">
 				<h2 style="color: #f1c40f; margin: 0; font-weight: bold;">결재 관리</h2>
 				<p style="color: #aaa; margin: 8px 0 0;">승인 대기 업무일지만 표시합니다.</p>
 			</div>
 
-			<table class="table-zone">
+			<table class="table-zone" data-csv-export data-csv-filename="patrol-report-approval-list">
 				<thead>
 					<tr>
 						<th>보고서 번호</th>

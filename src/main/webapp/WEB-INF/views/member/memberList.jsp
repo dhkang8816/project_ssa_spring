@@ -13,7 +13,7 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
-/* 1. 글로벌 바디 최적화 */
+/* [1. 글로벌 바디 최적화] */
 body.login-page {
     background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤으로 강제 통일 */
     color: #e2e8f0 !important;
@@ -23,13 +23,13 @@ body.login-page {
     overflow-x: hidden;
 }
 
-/* 2. [구조 개량] 150px 초슬림 사이드바 레이아웃과 완벽한 밀착 정렬 싱크 */
+/* [2. 구조 개량 - 150px 초슬림 사이드바 정밀 정렬 싱크] */
 .main-container {
     display: block !important; /* flex 레이아웃으로 인한 꼬임 전면 파쇄 */
     margin-top: 0 !important;
 }
 
-/* ⭕ 옛날 250px 폭의 유령 블록 #menu-placeholder 엘리먼트는 비활성화 청소 */
+/* 옛날 250px 폭의 유령 블록 엘리먼트 비활성화 청소 */
 #menu-placeholder {
     display: none !important;
     width: 0 !important;
@@ -39,10 +39,10 @@ body.login-page {
 .content-area {
     position: absolute !important;
     top: 80px !important; /* 상단 고정 헤더 영역 확보 */
-    left: 150px !important; /* ⭕ 얇아진 150px 메뉴바 경계선에 완벽 밀착 */
+    left: 150px !important; /* 얇아진 150px 메뉴바 경계선에 완벽 밀착 */
     width: calc(100% - 150px) !important; /* 우측 남은 공간 100% 락 */
     padding: 30px 40px !important;
-    background: transparent !important; /* 공통 style.css 배경 투사 */
+    background: transparent !important;
     box-sizing: border-box;
     z-index: 50 !important;
 }
@@ -55,14 +55,16 @@ body.login-page {
     }
 }
 
-/* 3. 상단 제어 바 및 검색 랙 튜닝 */
-.staff-top-bar, .staff-summary-bar {
+/* [3. 상단 제어 바 및 검색 랙 정밀 위치 수정 마스크] */
+.staff-top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     gap: 16px;
     width: 100%;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 16px;
 }
 
 .staff-top-bar .page-title {
@@ -73,12 +75,21 @@ body.login-page {
     letter-spacing: -0.02em;
 }
 
+.staff-summary-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
 /* 검색 셀렉트 박스 및 입력창 모던화 */
 .search-group form {
     display: flex;
     gap: 6px;
     align-items: center;
 }
+
 .search-group select {
     padding: 9px 12px !important;
     background-color: #111827 !important;
@@ -87,30 +98,33 @@ body.login-page {
     border-radius: 8px !important;
     font-size: 13.5px;
     outline: none;
+    transition: border-color 0.15s ease;
 }
+
 .search-group .search-input {
-    width: 24px;
     width: 240px !important; /* 콤팩트한 실무 폭으로 정돈 */
     padding: 9px 16px !important;
     background: #111827 !important;
     border: 1px solid #334155 !important;
-    border-radius: 8px !important; /* 둥근 타원형에서 세련된 사각 주축으로 리펙토링 */
+    border-radius: 8px !important; /* 세련된 사각 주축 래핑 */
     color: #ffffff !important;
     font-size: 13.5px;
-    text-align: left !important;
     outline: none;
+    transition: all 0.15s ease;
 }
-.search-group .search-input:focus {
+
+.search-group .search-input:focus, .search-group select:focus {
     border-color: #0ea5e9 !important;
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-/* 4. 서머리 정보 랙 텍스트 가독성 고도화 */
+/* [4. 서머리 정보 랙 텍스트 가독성 고도화] */
 .staff-count {
     color: #94a3b8 !important;
     font-size: 14px;
     font-weight: 500;
 }
+
 .staff-count .count-num {
     color: #38bdf8 !important; /* 관제 브랜드 아이덴티티 네온 블루 */
     font-weight: 700;
@@ -119,12 +133,12 @@ body.login-page {
     border-radius: 4px;
 }
 
-/* [계정 등록] 번쩍이는 그린 액센트 단추 장착 */
+/* [계정 등록] 청량한 네온 그린 액센트 단추 장착 */
 .staff-register-btn {
     padding: 9px 18px !important;
     border: 0 !important;
-    border-radius: 8px !important; /* 모던 캡슐화 */
-    background: #10b981 !important; /* 관제소 전용 네온 그린 스킨 적용 */
+    border-radius: 8px !important;
+    background: #10b981 !important; /* 관제소 전용 네온 그린 스킨 */
     color: #ffffff !important;
     font-weight: 700;
     font-size: 13.5px;
@@ -132,15 +146,17 @@ body.login-page {
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
     transition: all 0.15s ease;
 }
+
 .staff-register-btn:hover {
     background: #059669 !important;
     box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
     transform: translateY(-1px);
 }
 
-/* 5. 와이드 관제 데이터 그리드 프레임 테마 */
+/* [5. 와이드 관제 데이터 그리드 프레임 테마] */
 .staff-table-wrapper {
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 12px !important;
     background: rgba(20, 26, 42, 0.85) !important; /* 반투명 글래스 패널 */
     border: 1px solid #1e293b !important;
@@ -156,13 +172,14 @@ body.login-page {
 }
 
 .staff-table th {
+    white-space: nowrap;
     padding: 14px 16px !important;
     background: #111827 !important; /* 묵직한 다크 인프라 행 적용 */
     border-bottom: 2px solid #1e293b !important;
-    color: #38bdf8 !important; /* 상단 열 레이블 스카이블루 일체화 */
+    color: #38bdf8 !important; /* 네온 블루 레이블 각인 */
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 실무 가시성을 위한 전체 중앙 가이드 고정 */
+    text-align: center !important; /* 전체 중앙 고정 마스크 */
 }
 
 .staff-table td {
@@ -171,19 +188,23 @@ body.login-page {
     border-bottom: 1px solid #1e293b !important;
     color: #cbd5e1 !important;
     font-size: 13.5px;
-    text-align: center !important; /* 균형 분기 고정 */
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: nowrap;
 }
 
-/* 리스트 행 스캔 모션 즉시 반응 피드백 */
+/* 리스트 행 스캔 모션 피드백 */
 .staff-table tbody tr {
-    transition: background-color 0.15s ease;
+    cursor: pointer;
+    transition: background-color 0s ease;
 }
+
 .staff-table tbody tr:hover td {
     background-color: rgba(30, 41, 59, 0.6) !important;
     color: #ffffff !important;
 }
 
-/* 6. 상태 배지 신호등 알약 마감 처리 */
+/* [6. 상태 배지 신호등 알약 마감 처리] */
 .badge-status {
     padding: 4px 12px !important;
     border-radius: 20px !important; /* 완벽한 타원 알약 핏 */
@@ -191,23 +212,26 @@ body.login-page {
     font-weight: 700 !important;
     display: inline-block;
 }
+
 .status-online {
     background-color: rgba(16, 185, 129, 0.15) !important;
     color: #10b981 !important;
     border: 1px solid rgba(16, 185, 129, 0.3) !important;
 } /* 정상 */
+
 .status-stop {
     background-color: rgba(239, 68, 68, 0.15) !important;
     color: #ef4444 !important;
     border: 1px solid rgba(239, 68, 68, 0.3) !important;
 } /* 정지 */
+
 .status-dormant {
     background-color: rgba(148, 163, 184, 0.15) !important;
     color: #94a3b8 !important;
     border: 1px solid rgba(148, 163, 184, 0.3) !important;
 } /* 휴면 */
 
-/* 7. 하단 페이징 내비게이션 랙 */
+/* [7. 하단 페이징 내비게이션 랙] */
 .pagination {
     display: flex;
     list-style: none;
@@ -215,6 +239,7 @@ body.login-page {
     gap: 6px;
     margin: 0;
 }
+
 .pagination li a, .pagination li strong {
     display: block;
     padding: 6px 12px;
@@ -227,19 +252,21 @@ body.login-page {
     font-weight: 600;
     transition: all 0.15s;
 }
+
 .pagination li a:hover {
     color: #ffffff !important;
     background: #1f2937 !important;
     border-color: #334155;
 }
+
 /* 페이징 활성화 버튼 네온 하이라이팅 각인 */
 .pagination li.active strong {
     color: #38bdf8 !important;
     background: rgba(14, 165, 233, 0.15) !important;
     border-color: #0ea5e9 !important;
-    border-bottom: 1px solid #0ea5e9 !important;
 }
 </style>
+
 </head>
 <body class="login-page">
 
@@ -269,16 +296,23 @@ body.login-page {
         </div>
         
         <!-- 서머리 정보 바 (총원 출력 및 등록 버튼) -->
-        <div class="staff-summary-bar">
-            <div class="staff-count">
-                총 직원수: <span class="count-num">${empty memberList ? 0 : memberList.size()}</span>명
-            </div>
-            <button type="button" class="staff-register-btn" onclick="return openFormPopup('${pageContext.request.contextPath}/member/registForm', 'memberRegister');">계정 등록</button>
-        </div>
-        
+		<!-- [수정 후] -->
+		<div class="staff-summary-bar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+		    <div class="staff-count">
+		        총 직원수: <span class="count-num">${empty memberList ? 0 : memberList.size()}</span>명
+		    </div>
+		    <!-- ⭕ [계정 등록]과 [CSV 다운로드] 버튼을 감싸서 우측에 나란히 배치하는 그룹 -->
+		    <div class="summary-action-group" style="display: flex; gap: 8px; align-items: center;">
+   	 		<button class="csv-download-btn neon-theme" onclick="downloadTableAsCsv('#memberTable', 'member-list')">
+			        <i class="fa-solid fa-file-csv" style="font-size: 14px;"></i>
+			        CSV
+			    </button>
+		        <button type="button" class="staff-register-btn" onclick="return openFormPopup('${pageContext.request.contextPath}/member/registForm', 'memberRegister');">계정 등록</button>
+		    </div>
+		</div>
         <!-- 메인 데이터 테이블 프레임 랙 -->
         <div class="staff-table-wrapper">
-            <table class="staff-table">
+            <table id="memberTable" class="staff-table" data-csv-export data-csv-filename="member-list">
                 <thead>
                     <tr>
                         <th style="width: 80px;">사진</th>

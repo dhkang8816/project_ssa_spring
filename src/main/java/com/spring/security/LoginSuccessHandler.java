@@ -34,6 +34,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
+        if (ip != null && ip.contains(",")) {
+            ip = ip.substring(0, ip.indexOf(',')).trim();
+        }
 
         // 💡 [2] 서비스 호출 시 IP 함께 전달
         try {

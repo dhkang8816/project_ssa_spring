@@ -118,7 +118,9 @@ public class AIStreamBridgeController {
 
 				FlightHistoryVO historyVO = FlightHistoryVO.builder().startTime(new Timestamp(startTimeMs))
 						.endTime(new Timestamp(endTimeMs)).flightDuration(durationHours).droneId(prevDroneId).build();
-				flightHistoryService.registerFlightHistory(historyVO);
+				if (flightHistoryService.registerFlightHistory(historyVO) != 1) {
+					System.err.println("[비행 이력 미적재] DRONE 기체 ID 또는 source 매핑을 확인하세요: " + prevDroneId);
+				} else
 				System.out.println(" [자동 착륙 적재 완수] 드론 [" + prevDroneId + "] 비행 이력 DB 저장 완료.");
 			}
 

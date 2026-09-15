@@ -48,6 +48,11 @@ public class PatrolReportDAOImpl implements PatrolReportDAO {
     }
 
     @Override
+    public int deletePdfCachesByReportId(int reportId) {
+        return sqlSession.delete(NAMESPACE + ".deletePdfCachesByReportId", reportId);
+    }
+
+    @Override
     public int deleteReport(int reportId) {
         return sqlSession.delete(NAMESPACE + ".deleteReport", reportId);
     }

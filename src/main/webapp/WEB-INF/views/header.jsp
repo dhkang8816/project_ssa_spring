@@ -420,15 +420,42 @@ $(document).ready(function() {
 </script>
 <script>
     function openDetailPopup(url, windowName) {
-        var popupWidth = 980;
-        var popupHeight = 760;
+        // Form/detail popups should follow their content width, while report
+        // and workflow screens need room for wider document/table layouts.
+        var popupName = (windowName || '').toLowerCase();
+        var compactProfiles = {
+            dangerregister: { width: 640, height: 520 },
+            dangerdetail: { width: 700, height: 600 },
+            droneregister: { width: 720, height: 620 },
+            dronedetail: { width: 720, height: 680 },
+            coderegister: { width: 720, height: 760 },
+            codedetail: { width: 720, height: 720 },
+            animalregister: { width: 760, height: 820 },
+            animaldetail: { width: 760, height: 880 },
+            alertdetail: { width: 780, height: 700 }
+        };
+        var isWidePopup = /patrolreport|workflow|flighthistory|animalcounter/.test(popupName);
+        var isMediumPopup = /detection|dangerlog/.test(popupName);
+        var compactProfile = compactProfiles[popupName];
+        var preferredWidth = compactProfile ? compactProfile.width
+            : (isWidePopup ? 1100 : (isMediumPopup ? 920 : 780));
+        var preferredHeight = compactProfile ? compactProfile.height
+            : (isWidePopup ? 960 : 940);
+        var maxWidth = screen.availWidth - 40;
+        var maxHeight = screen.availHeight - 36;
+        var popupWidth = Math.max(320, Math.min(preferredWidth, maxWidth));
+        var popupHeight = Math.max(420, Math.min(preferredHeight, maxHeight));
         var left = Math.max(0, Math.round((screen.availWidth - popupWidth) / 2));
-        var top = Math.max(0, Math.round((screen.availHeight - popupHeight) / 2));
+        var top = Math.max(12, Math.min(24, screen.availHeight - popupHeight - 12));
         var popup = window.open(url, windowName || 'ssaDetailPopup',
             'width=' + popupWidth + ',height=' + popupHeight + ',left=' + left + ',top=' + top
             + ',resizable=yes,scrollbars=yes');
 
         if (popup) {
+            // A reused named popup may retain its previous geometry in Chrome.
+            // Reapply the computed size and top position for every open.
+            popup.moveTo(left, top);
+            popup.resizeTo(popupWidth, popupHeight);
             popup.focus();
             return false;
         }
@@ -440,6 +467,64 @@ $(document).ready(function() {
     function openFormPopup(url, windowName) {
         var separator = url.indexOf('?') === -1 ? '?' : '&';
         return openDetailPopup(url + separator + 'popup=true', windowName || 'ssaFormPopup');
+    }
+
+    function closePopupAndRefreshParent(fallbackUrl) {
+        if (window.opener && !window.opener.closed) {
+            try {
+                var rootOpener = window.opener;
+                while (rootOpener.opener && !rootOpener.opener.closed) {
+                    rootOpener = rootOpener.opener;
+                }
+                rootOpener.location.reload();
+            } catch (error) {
+                // The popup may still be closed when its opener is unavailable.
+            }
+            window.close();
+            return false;
+        }
+
+        if (fallbackUrl) {
+            window.location.href = fallbackUrl;
+        }
+        return false;
+    }
+
+    // All list JSPs include this header, so CSV buttons always have one
+    // available global implementation regardless of individual script imports.
+    function downloadTableAsCsv(tableSelector, filename) {
+        var table = document.querySelector(tableSelector);
+        if (!table) {
+            window.alert('CSV 다운로드 대상을 찾을 수 없습니다.');
+            return;
+        }
+
+        var csvRows = Array.prototype.slice.call(table.querySelectorAll('tr'))
+            .map(function(row) {
+                return Array.prototype.slice.call(row.querySelectorAll('th, td'))
+                    .map(function(cell) {
+                        var value = (cell.innerText || cell.textContent || '')
+                            .replace(/\r?\n|\r/g, ' ')
+                            .replace(/\s{2,}/g, ' ')
+                            .trim()
+                            .replace(/"/g, '""');
+                        return '"' + value + '"';
+                    }).join(',');
+            }).filter(function(row) { return row.length > 0; });
+
+        if (csvRows.length < 2) {
+            window.alert('다운로드할 목록 데이터가 없습니다.');
+            return;
+        }
+
+        var blob = new Blob(['\ufeff' + csvRows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = (filename || 'ssa-list') + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
     }
 
     document.addEventListener('click', function(event) {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.cmd.PageMaker;
 import com.spring.dto.FlightHistoryVO;
@@ -135,7 +136,7 @@ public class PatrolReportController {
 		}
 	}
     // 💡 [버그 픽스] 끝에 붙어있던 원치 않는 마침표(.)를 완벽하게 제거하여 405 에러를 박멸합니다.
-    @PostMapping("/register")
+	@PostMapping("/register")
     public String register(@ModelAttribute("reportVO") PatrolReportVO reportVO,
             @RequestParam("approverId") String approverId,
             @RequestParam(value = "popup", defaultValue = "false") boolean popup) throws Exception {
@@ -284,6 +285,21 @@ public class PatrolReportController {
 		} catch (Exception e) {
 			log.error("❌ [시스템 중단 예외] 1-클릭 자동 보고서 적재 실패: ", e);
 			return "FAIL";
+		}
+	}
+
+	@PostMapping("/delete")
+	public String delete(@RequestParam("reportId") int reportId,
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup,
+			RedirectAttributes rttr) {
+		try {
+			reportService.deleteReport(reportId);
+			rttr.addFlashAttribute("msg", "DELETE_SUCCESS");
+			return popup ? "redirect:/patrolreport/list?popupSaved=true" : "redirect:/patrolreport/list";
+		} catch (Exception e) {
+			log.error("업무 보고서 삭제 실패. reportId={}", reportId, e);
+			rttr.addFlashAttribute("msg", "DELETE_FAIL");
+			return "redirect:/patrolreport/detail/" + reportId;
 		}
 	}
 

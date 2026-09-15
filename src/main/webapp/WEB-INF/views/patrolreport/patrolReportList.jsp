@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>일일 업무 보고서 관제 인프라</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,7 +14,7 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 	rel="stylesheet">
 <style>
-/* 1. 글로벌 바디 및 여백 레이아웃 보정 */
+/* [1. 글로벌 바디 및 여백 레이아웃 보정] */
 body {
     background-color: #0b0f19 !important; /* 메인 관제소와 완벽 동기화된 깊은 블랙네이비 톤 */
     color: #e2e8f0 !important;
@@ -23,11 +24,11 @@ body {
     overflow-x: hidden;
 }
 
-/* 2. [오류 완치] 초슬림 사이드바(150px) 너비에 맞게 본문 위치 정밀 좌측 밀착 */
+/* [2. 초슬림 사이드바(150px) 너비 밀착 레이아웃 싱크] */
 .patrol-list-content {
     position: absolute !important;
     top: 80px !important; /* 상단 헤더 높이만큼 다운 */
-    left: 150px !important; /* ⭕ 줄어든 메뉴바 너비 150px 선에 칼같이 밀착 */
+    left: 150px !important; /* 줄어든 메뉴바 너비 150px 선에 칼같이 밀착 */
     width: calc(100% - 150px) !important; /* 우측 남은 공간 100% 확보 */
     padding: 30px 40px;
     box-sizing: border-box;
@@ -42,24 +43,73 @@ body {
     }
 }
 
-/* 3. 하이테크 스타일 메인 패널 프레임 */
+/* [3. 하이테크 스타일 메인 패널 프레임] */
 .main-panel {
-    background: rgba(20, 26, 42, 0.85) !important;
-    border: 1px solid #1e293b !important;
-    border-radius: 16px !important;
-    padding: 28px !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(4px);
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* 4. 관제 대시보드 전용 와이드 핏 테이블 테이블 스킨 */
+/* 타이틀 바 마스크 단독 배치 구조화 */
+.staff-top-bar { 
+    display: flex; 
+    justify-content: flex-start; 
+    align-items: center; 
+    margin-bottom: 20px; 
+    padding-bottom: 16px; 
+    border-bottom: 1px solid #1e293b; 
+}
+
+.staff-top-bar h2 { 
+    margin: 0 !important; 
+    color: #fff !important; 
+    font-size: 22px !important; 
+    font-weight: 700 !important; 
+    letter-spacing: -.02em; 
+}
+
+/* 🛠 요구사항 피드백: 새 보고서 작성 버튼의 이식을 위해 양방향 정렬(space-between) 축 잠금 */
+.staff-summary-bar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.staff-count { 
+    color: #94a3b8; 
+    font-size: 14px; 
+    font-weight: 500; 
+}
+
+.count-num { 
+    color: #38bdf8; 
+    background: rgba(56, 189, 248, .1); 
+    border-radius: 4px; 
+    padding: 2px 6px; 
+    font-weight: 700; 
+}
+
+.staff-table-wrapper { 
+    overflow-x: auto; 
+    overflow-y: hidden; 
+    border-radius: 12px; 
+    border: 1px solid #1e293b; 
+    background: rgba(20, 26, 42, .85); 
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .4); 
+}
+
+/* [4. 관제 대시보드 전용 와이드 핏 데이터 테이블 스킨] */
 .table-zone {
+    min-width: 850px;
     width: 100%;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    margin-top: 24px;
+    margin: 0;
     background-color: transparent !important;
     box-shadow: none !important;
     border: 1px solid #1e293b !important;
@@ -68,17 +118,19 @@ body {
 }
 
 .table-zone th {
+    white-space: nowrap;
     background-color: #111827 !important; /* 사이드바와 핏을 맞춘 묵직한 다크 회색 */
-    color: #38bdf8 !important; /* 네온 블루 폰트 컬러 바인딩 */
+    color: #38bdf8 !important; /* 네온 블루 폰트 컬러 각인 */
     padding: 14px 16px !important;
     border: 0 !important;
     border-bottom: 2px solid #1e293b !important;
     font-size: 13px;
     font-weight: 700;
-    text-align: center !important; /* 목록 구분을 위해 중앙 정렬 통합 */
+    text-align: center !important; /* 전체 중앙 정렬 통합 */
 }
 
 .table-zone td {
+    white-space: nowrap;
     padding: 14px 16px !important;
     background-color: transparent !important;
     color: #cbd5e1 !important;
@@ -90,15 +142,16 @@ body {
 
 /* 행(Row) 호버 시 0초 만에 들어오는 투명 그라데이션 즉시 피드백 */
 .table-zone tbody tr {
-    transition: background-color 0.15s ease;
+    transition: background-color 0s ease;
     cursor: pointer;
 }
+
 .table-zone tbody tr:hover td {
     background-color: rgba(30, 41, 59, 0.6) !important;
     color: #ffffff !important;
 }
 
-/* 5. [디자인 개량] 번쩍이는 네온 그린 버튼 모던 튜닝 */
+/* [5. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
 .btn-create {
     background-color: #10b981 !important; /* 네온 그린 엑센트 셋업 */
     color: white !important;
@@ -111,40 +164,45 @@ body {
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
     transition: all 0.15s ease;
 }
+
 .btn-create:hover {
     background-color: #059669 !important;
     box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
     transform: translateY(-1px);
 }
+
 .btn-create:active {
     transform: translateY(0);
 }
 
-/* 6. 알약 모양 승인 상태 신호등 배지 콤포넌트 */
+/* [6. 알약 모양 승인 상태 신호등 배지 콤포넌트] */
 .badge-status {
     padding: 4px 12px !important;
-    border-radius: 20px !important; /* 완벽한 타원형 알약 스타일로 마감 */
+    border-radius: 20px !important; /* 완벽한 타원형 알약 스타일 마감 */
     font-size: 11.5px !important;
     font-weight: 700 !important;
     display: inline-block;
 }
+
 .badge-0 {
     background-color: rgba(245, 158, 11, 0.15) !important;
     color: #f59e0b !important;
     border: 1px solid rgba(245, 158, 11, 0.3) !important;
 } /* 승인 대기 */
+
 .badge-1 {
     background-color: rgba(16, 185, 129, 0.15) !important;
     color: #10b981 !important;
     border: 1px solid rgba(16, 185, 129, 0.3) !important;
 } /* 승인 완료 */
+
 .badge-2 {
     background-color: rgba(239, 68, 68, 0.15) !important;
     color: #ef4444 !important;
     border: 1px solid rgba(239, 68, 68, 0.3) !important;
 } /* 반려 */
 
-/* 7. 하단 페이징(Pagination) 컨트롤 다크 스킨 적용 */
+/* [7. 하단 페이징(Pagination) 컨트롤 다크 스킨 적용] */
 .pagination {
     display: flex;
     justify-content: center;
@@ -153,6 +211,11 @@ body {
     padding: 0;
     margin: 25px 0 0 0 !important;
 }
+
+.pagination li {
+    margin: 0 !important;
+}
+
 .pagination li a, .pagination li strong {
     display: block;
     padding: 6px 12px;
@@ -165,93 +228,134 @@ body {
     font-weight: 600;
     transition: all 0.15s;
 }
+
 .pagination li a:hover {
     color: #ffffff !important;
     background: #1f2937 !important;
     border-color: #334155;
 }
-.pagination li strong {
+
+.pagination li.active strong, .pagination li strong {
     color: #38bdf8 !important; /* 현재 선택된 페이지 네온 블루 처리 */
     background: rgba(14, 165, 233, 0.15) !important;
-    border-color: #0ea5e9;
+    border-color: #0ea5e9 !important;
+}
+
+@media (max-width:760px) { 
+    .staff-summary-bar { 
+        align-items: stretch; 
+        flex-direction: column; 
+        gap: 10px;
+    } 
+    .btn-create { 
+        align-self: flex-end; 
+    } 
 }
 </style>
+
 </head>
 <body>
-
+<!-- 공통 시스템 프레임 레이아웃 인클루드 리프레시 보존 -->
 <jsp:include page="/WEB-INF/views/menu.jsp" />
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="patrol-list-content">
     <div class="main-panel">
         
-        <!-- 본문 헤더 랙 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 18px;">
-            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">📋 일일 관제 업무 보고서 목록</h2>
-            <button type="button" class="btn-create" onclick="return openFormPopup('${pageContext.request.contextPath}/patrolreport/register', 'patrolReportRegister');">⚡ 새 보고서 작성</button>
+        <!-- 본문 헤더 랙 (요구사항 피드백: 우측 버튼을 비우고 타이틀 단독 정렬 마감) -->
+        <div class="staff-top-bar">
+            <h2>일일 관제 업무 보고서 목록</h2>
         </div>
         
-        <!-- 데이터 그리드 랙 -->
-        <table class="table-zone">
-            <thead>
-                <tr>
-                    <th>보고서 번호</th>
-                    <th>업무 일자</th>
-                    <th>작성 사번</th>
-                    <th>비행시간</th>
-                    <th>탐지건수</th>
-                    <th>조치완료율</th>
-                    <th>확정 여부</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:choose>
-                    <c:when test="${empty reportList}">
-                        <tr>
-                            <td colspan="7" style="color: #64748b; padding: 60px; font-size: 14px;">생성된 일일 업무 보고서 레코드가 존재하지 않습니다.</td>
-                        </tr>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach var="report" items="${reportList}">
-                            <tr onclick="return openDetailPopup('${pageContext.request.contextPath}/patrolreport/detail/${report.reportId}', 'patrolReportDetail');">
-                                <td><strong>${report.reportId}</strong></td>
-                                <td><fmt:formatDate value="${report.reportDate}" pattern="yyyy-MM-dd" /></td>
-                                <td><span style="color: #38bdf8; font-weight: 600;">${report.memberId}</span></td>
-                                <td>${report.totalFlightTime}시간</td>
-                                <td>${report.totalDetectCount}건</td>
-                                <td>${report.completionRate}%</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${report.confirmStatus eq '0'}">
-                                            <span class="badge-status badge-0">승인 대기</span>
-                                        </c:when>
-                                        <c:when test="${report.confirmStatus eq '1'}">
-                                            <span class="badge-status badge-1">승인 완료</span>
-                                        </c:when>
-                                        <c:when test="${report.confirmStatus eq '2'}">
-                                            <span class="badge-status badge-2">반려</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge-status" style="background: #334155; color: #94a3b8;">미정</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
+		<!-- 💡 grid-column: 1 / -1 !important; 를 인라인 스타일 맨 뒤에 추가하여 격자를 확장합니다 -->
+		<div class="staff-summary-bar"
+		     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1 / -1 !important;">
+		     
+		    <!-- 왼쪽: 건수 레이어 -->
+            <div class="staff-count">
+                총 보고서: <span class="count-num">${pageMaker.totalCount}</span>건
+            </div>
+		    
+		    <!-- 오른쪽: 버튼 그룹 -->
+		    <div class="summary-action-group" style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important;">
+		        <button class="csv-download-btn neon-theme"
+		                onclick="downloadTableAsCsv('#patrolReportTable', 'patrol-report-list')"
+		                style="float: none !important; margin: 0 !important; display: inline-flex !important; white-space: nowrap !important;">
+		            <i class="fa-solid fa-file-csv" style="font-size: 14px;"></i> CSV
+		        </button>
+                <button type="button" class="btn-create" onclick="return openFormPopup('${pageContext.request.contextPath}/patrolreport/register', 'patrolReportRegister');">
+                    새 보고서 작성
+                </button>
+		    </div>
+		</div>
+        <!-- 메인 관제 데이터 테이블 프레임 랙 -->
+        <div class="staff-table-wrapper">
+        <table id="patrolReportTable" class="table-zone" data-csv-export data-csv-filename="patrol-report-list">
+                <thead>
+                    <tr>
+                        <th>보고서 번호</th>
+                        <th>업무 일자</th>
+                        <th>작성 사번</th>
+                        <th>비행시간</th>
+                        <th>탐지건수</th>
+                        <th>조치완료율</th>
+                        <th>확정 여부</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${empty reportList}">
+                            <tr>
+                                <td colspan="7" style="color: #64748b; padding: 60px; font-size: 14px;">생성된 일일 업무 보고서 레코드가 존재하지 않습니다.</td>
                             </tr>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
-            </tbody>
-        </table>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="report" items="${reportList}">
+                                <!-- 개별 행 클릭 시 연결되는 자바스크립트 팝업 제어 함수 컨텍스트 홀딩 유지 -->
+                                <tr onclick="return openDetailPopup('${pageContext.request.contextPath}/patrolreport/detail/${report.reportId}', 'patrolReportDetail');">
+                                    <td><strong>${report.reportId}</strong></td>
+                                    <td><fmt:formatDate value="${report.reportDate}" pattern="yyyy-MM-dd" /></td>
+                                    <td><span style="color: #38bdf8; font-weight: 600;">${report.memberId}</span></td>
+                                    <td>${report.totalFlightTime}시간</td>
+                                    <td>${report.totalDetectCount}건</td>
+                                    <td>${report.completionRate}%</td>
+                                    <td>
+                                        <!-- 확정 코드를 타원형 확정 알약 배지로 정밀 분기 매핑 -->
+                                        <c:choose>
+                                            <c:when test="${report.confirmStatus eq '0'}">
+                                                <span class="badge-status badge-0">승인 대기</span>
+                                            </c:when>
+                                            <c:when test="${report.confirmStatus eq '1'}">
+                                                <span class="badge-status badge-1">승인 완료</span>
+                                            </c:when>
+                                            <c:when test="${report.confirmStatus eq '2'}">
+                                                <span class="badge-status badge-2">반려</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge-status" style="background: #334155; color: #94a3b8;">미정</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+        </div>
         
-        <!-- 하단 검색 폼 및 페이징 레이어 결합 부 복구 -->
+        <!-- 하단 검색 폼 및 페이징 레이어 결합 부 복구 (총 레코드가 0보다 클 때만 렌더링 스펙 유지) -->
         <c:if test="${pageMaker.totalCount gt 0}">
             <div class="text-center">
                 <ul class="pagination">
                     <c:if test="${pageMaker.prev}">
-                        <li><a href="${pageContext.request.contextPath}/patrolreport/list?page=${pageMaker.startPage - 1}">&laquo; 이전</a></li>
-                    </c:if>
-                    <c:forEach var="pageNum" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
                         <li>
+                            <a href="${pageContext.request.contextPath}/patrolreport/list?page=${pageMaker.startPage - 1}">&laquo; 이전</a>
+                        </li>
+                    </c:if>
+                    
+                    <c:forEach var="pageNum" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+                        <li class="${pageMaker.page eq pageNum ? 'active' : ''}">
                             <c:choose>
                                 <c:when test="${pageMaker.page eq pageNum}">
                                     <strong>${pageNum}</strong>
@@ -262,8 +366,11 @@ body {
                             </c:choose>
                         </li>
                     </c:forEach>
+                    
                     <c:if test="${pageMaker.next}">
-                        <li><a href="${pageContext.request.contextPath}/patrolreport/list?page=${pageMaker.endPage + 1}">다음 &raquo;</a></li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/patrolreport/list?page=${pageMaker.endPage + 1}">다음 &raquo;</a>
+                        </li>
                     </c:if>
                 </ul>
             </div>

@@ -42,4 +42,7 @@ public class WorkFlowDAOImpl implements WorkFlowDAO {
         params.put("approvalId", approvalId); params.put("approverId", approverId); params.put("rejectReason", rejectReason);
         return sqlSession.update(NAMESPACE + "rejectWorkFlow", params);
     }
+    @Override public int deleteWorkFlowsByReportId(int reportId) {
+        return sqlSession.delete(NAMESPACE + "deleteWorkFlowsByReportId", reportId);
+    }
 }

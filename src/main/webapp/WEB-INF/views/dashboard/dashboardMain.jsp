@@ -12,150 +12,164 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- 관제 아이콘 팩 연동 -->
 <link rel="stylesheet" href="https://cloudflare.com">
-
 <style>
+/* [1. 레이아웃 및 여백 규격] */
 body {
-	background-color: #161920;
-	color: #ffffff;
-	font-family: 'Pretendard', -apple-system, sans-serif;
+	background-color: #0b0f19 !important; /* 깊은 사이버 다크 톤 강제 적용 */
+	color: #e2e8f0 !important;
+	font-family: 'Pretendard', -apple-system, 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
 	padding: 0;
+	overflow-x: hidden;
 }
 
+/* 초슬림 사이드바 폭(150px)과 헤더 높이(80px)에 맞춰 정밀 좌측 밀착 정렬 */
 .dashboard-container {
-	width: auto !important;
-	margin: 100px 20px 32px 282px !important;
+	position: absolute !important;
+	top: 80px !important;
+	left: 150px !important;
+	width: calc(100% - 150px) !important;
+	padding: 30px 40px !important;
 	box-sizing: border-box !important;
-	padding: 0 !important;
+	margin: 0 !important;
+	z-index: 50 !important;
 }
 
 @media ( max-width : 760px) {
 	.dashboard-container {
-		margin: 84px 16px 20px 230px !important;
+		left: 0 !important;
+		width: 100% !important;
+		padding: 20px 16px !important;
+		top: 80px !important;
 	}
 }
 
 .header-title {
 	font-size: 24px;
-	font-weight: 600;
-	margin-bottom: 20px;
-	color: #5ddcff;
+	font-weight: 700;
+	margin-bottom: 24px;
+	color: #38bdf8; /* 브랜드 네온 블루 마스크 각인 */
 	display: flex;
 	align-items: center;
 	gap: 10px;
-}
-/* 💡 [신규 추가 1] 상단 4개 인포 카드가 반응형으로 유연하게 줄어들도록 조절 */
-#aiBriefingContent>div[style*="display: grid"] {
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+	letter-spacing: -0.02em;
 }
 
-/* 💡 [신규 추가 2] 하단 2개 그래프 룸이 화면 크기에 맞춰 아래로 떨어지거나 유연하게 변하도록 조절 */
-#dashboardGraphZone>div[style*="display: grid"] {
-	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important;
-}
-/* 그래프를 감싸는 룸(좌측/우측 그래프룸)에 크기 유연성 부여 */
-#dashboardGraphZone>div>div {
-	min-width: 0 !important; /* 💡 그리드 아이템의 최소 너비 제한을 풀어 캔버스가 줄어들 수 있게 만듦 */
-	position: relative;
-	width: 100%;
-}
-
-/* 캔버스 태그 자체의 절대적 너비 고정 파괴 */
-#dashboardGraphZone canvas {
-	width: 100% !important;
-	height: 100% !important;
-}
-
-/* ================================================================ */
-/*  [AI 브리핑 전용 레이아웃 테마 패키지 스타일] */
-/* ================================================================ --> */
+/* [2. 타이틀 및 카드 프레임 스킨] */
 .ai-briefing-panel {
-	background: linear-gradient(135deg, #222733 0%, #1a1e29 100%);
-	border: 1px solid #2c313d;
-	border-radius: 12px;
-	padding: 25px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+	background: rgba(20, 26, 42, 0.85) !important; /* 반투명 글래스모피즘 */
+	border: 1px solid #1e293b !important;
+	border-radius: 16px !important;
+	padding: 28px !important;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+	backdrop-filter: blur(4px);
 	margin-bottom: 30px;
 	position: relative;
 	overflow: hidden;
-}
-
-.ai-briefing-panel::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 4px;
-	height: 100%;
-	background-color: #007bff;
+	box-sizing: border-box;
 }
 
 .panel-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 15px;
-	border-bottom: 1px solid #2c313d;
-	padding-bottom: 12px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #1e293b;
+	padding-bottom: 14px;
 }
 
 .panel-title {
 	font-size: 16px;
-	font-weight: 600;
+	font-weight: 700;
 	color: #ffffff;
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	letter-spacing: -0.01em;
 }
 
-.panel-title i {
-	color: #007bff;
-	animation: pulse 2s infinite;
-}
-
+/* [4. 조작 버튼 및 입력 UI 콤포넌트 모던화] */
 .btn-refresh-ai {
-	background-color: #2c313d;
-	color: #ffffff;
-	border: 1px solid #414858;
-	padding: 6px 14px;
-	border-radius: 6px;
+	background-color: #1e293b !important; /* 차분한 무채색 다크 그레이 스킨 */
+	color: #cbd5e1 !important;
+	border: 1px solid #334155 !important;
+	padding: 8px 16px !important;
+	border-radius: 8px !important;
 	cursor: pointer;
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 700;
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	transition: all 0.2s;
+	transition: all 0.15s ease;
 }
 
 .btn-refresh-ai:hover {
-	background-color: #414858;
-	border-color: #007bff;
+	background-color: #334155 !important;
+	color: #ffffff !important;
+	border-color: #0ea5e9 !important;
 }
 
 .ai-content-box {
+	width: 100%;
 	font-size: 14px;
 	line-height: 1.7;
-	color: #e1e4ea;
+	color: #cbd5e1;
 	min-height: 80px;
-	display: flex;
-	align-items: center;
 }
-/* 로딩 애니메이션 기어 */
+
+/* 로딩 기어 애니메이션 룸 */
 .ai-loading {
-	color: #aaa;
+	color: #64748b;
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	font-size: 14px;
 	width: 100%;
 	justify-content: center;
-	padding: 20px 0;
+	padding: 30px 0;
 }
 
 .ai-loading i {
 	font-size: 20px;
 	animation: spin 1s infinite linear;
+}
+
+/* 차트 카드 공통 프레임 스킨 지정 */
+.print-chart-card {
+	background: rgba(17, 24, 39, 0.6) !important;
+	border: 1px solid #1e293b !important;
+	border-radius: 12px !important;
+	padding: 24px !important;
+	box-sizing: border-box;
+}
+
+.chart-title {
+	font-size: 14px;
+	color: #ffffff;
+	font-weight: 700;
+	margin-bottom: 18px;
+	letter-spacing: -0.01em;
+}
+
+/* 반응형 및 크기 유연성 확보 레이어 */
+#aiBriefingContent>div {
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+}
+
+#dashboardGraphZone>div, .chart-row-zone {
+	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important;
+}
+
+.chart-item-wrapper {
+	min-width: 0 !important;
+	position: relative;
+	width: 100%;
+}
+
+canvas {
+	width: 100% !important;
+	height: 100% !important;
 }
 
 @
@@ -164,97 +178,110 @@ keyframes spin { 0% {
 }
 
 100
-%
-{
-transform
-:
-rotate(
-360deg
-);
-}
-}
-@
-keyframes pulse { 0% {
-	transform: scale(1);
-	opacity: 1;
-}
 
-50
+
 %
 {
 transform
+
+
 :
-scale(
-1.1
-);
-opacity
-:
-0.7;
-}
-100
-%
-{
-transform
-:
-scale(
-1
-);
-opacity
-:
-1;
+
+
+rotate
+(
+
+
+360deg
+
+
+)
+;
+
+
 }
 }
 @page {
-	size: A4;
-	margin: 12mm;
+	size: A4 portrait;
+	margin: 8mm;
 }
 
 @media print {
-	body {
-		background: #ffffff !important;
-		color: #000000 !important;
-		padding: 0;
+	html, body {
+		width: 100%;
+		height: auto;
+		margin: 0 !important;
+		padding: 0 !important;
+		background: #fff !important;
 	}
 	body>:not(.dashboard-container), .no-print {
 		display: none !important;
 	}
-	.dashboard-container, .dashboard-container div {
-		background: #ffffff !important;
-		color: #000000 !important;
-		box-shadow: none !important;
-	}
 	.dashboard-container {
-		width: auto !important;
+		position: static !important;
+		width: 100% !important;
+		max-width: none !important;
 		margin: 0 !important;
 		padding: 0 !important;
+		left: auto !important;
+		top: auto !important;
+		box-sizing: border-box !important;
 	}
-	.dashboard-container * {
-		color: #000000 !important;
+	.ai-briefing-panel {
+		width: 100% !important;
+		padding: 10px !important;
+		margin: 0 !important;
+		border-radius: 8px !important;
+		box-shadow: none !important;
+		box-sizing: border-box !important;
 	}
-	#dashboardGraphZone>div>div {
-		break-inside: avoid;
+	.panel-header {
+		margin-bottom: 8px !important;
+		padding-bottom: 6px !important;
 	}
-	/* A4 세로 폭에서는 화면용 auto-fit/minmax(380px)가 1열로 전환된다.
-	   인쇄물은 네 차트를 동일한 2열 구성으로 유지한다. */
-	#dashboardGraphZone>div[style*="display: grid"] {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-		gap: 10px !important;
+
+	/* 상단 지표 */
+	#aiBriefingContent>div {
+		grid-template-columns: repeat(4, 1fr) !important;
+		gap: 6px !important;
+		padding: 3px 0 !important;
 	}
-	.dashboard-container .print-chart-card, .dashboard-container .print-chart-card div
-		{
+	#aiBriefingContent>div>div {
+		padding: 7px !important;
+	}
+
+	/* 그래프 2열 유지 */
+	#dashboardGraphZone>div, .chart-row-zone {
+		width: 100% !important;
+		grid-template-columns: 1fr 1fr !important;
+		gap: 7px !important;
+		box-sizing: border-box !important;
+	}
+	#dashboardGraphZone, .chart-row-zone {
+		margin-top: 8px !important;
+	}
+	.print-chart-card {
+		padding: 8px !important;
+		box-sizing: border-box !important;
+		break-inside: avoid !important;
+		page-break-inside: avoid !important;
 		background: #222733 !important;
-		color: #ffffff !important;
-		-webkit-print-color-adjust: exact;
-		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
 	}
-	.dashboard-container .print-chart-card * {
-		color: #ffffff !important;
+
+	/* ★ 250px → 인쇄 전용 145px */
+	.print-chart-card>div[style*="height: 250px"] {
+		height: 145px !important;
 	}
 	canvas {
+		width: 100% !important;
+		height: 100% !important;
 		max-width: 100% !important;
 	}
 }
 </style>
+
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
@@ -263,17 +290,23 @@ opacity
 	<div class="dashboard-container">
 		<!-- 변경 전 구역 (JSP 3~4페이지): 기존 샌드박스 박스를 아래 코드로 완전 대체하세요 -->
 		<div class="ai-briefing-panel">
-			<div class="panel-header">
-				<div class="panel-title">
-					<i class="fa-solid fa-robot"></i> 실시간 통합 관제 시스템 통계 수치 지표
+			<div class="panel-header"
+				style="display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; gap: 10px;">
+				<div class="panel-title"
+					style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+					관제 통계 수치 지표
 				</div>
-				<div class="d-flex gap-2 no-print">
+				<div class="d-flex gap-2 no-print"
+					style="display: flex; gap: 6px; flex-shrink: 0;">
 					<button type="button" class="btn-refresh-ai"
-						onclick="fn_fetchAiBriefing()">
+						onclick="window.print()"
+						style="padding: 4px 10px; font-size: 12px; white-space: nowrap;">
+						인쇄</button>
+					<button type="button" class="btn-refresh-ai"
+						onclick="fn_fetchAiBriefing()"
+						style="padding: 4px 10px; font-size: 12px; white-space: nowrap;">
 						<i class="fa-solid fa-arrows-rotate"></i> 분석 동기화
 					</button>
-					<button type="button" class="btn-refresh-ai"
-						onclick="window.print();">인쇄</button>
 				</div>
 			</div>
 
@@ -317,9 +350,8 @@ opacity
 			</div>
 
 			<!-- [블록 3] 축종별 / 이상객체별 분포 차트 공간 (기존 그래프존 바로 아래 추가 또는 내부에 배치) -->
-			<div
+			<div class="chart-row-zone"
 				style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px;">
-
 				<!-- 좌측: 축종별 미달 경보 비율 -->
 				<div class="print-chart-card"
 					style="background: #222733; padding: 20px; border-radius: 8px; border: 1px solid #2c313d; min-width: 0;">

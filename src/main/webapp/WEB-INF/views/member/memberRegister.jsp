@@ -265,11 +265,12 @@ button:active { transform: translateY(0); }
         <!-- 하단 실행 제어바 -->
         <div class="action-bar">
             <button type="submit" class="btn-submit">🚀 가입 완료</button>
-            <button type="button" class="btn-back" onclick="location.href='${pageContext.request.contextPath}/member/list'">취소</button>
+            <button type="button" class="btn-back" onclick="return closePopupAndRefreshParent('${pageContext.request.contextPath}/member/list');">취소</button>
         </div>
         
     </form:form>
 </div> <!-- .form-panel END -->
+<script src="${pageContext.request.contextPath}/resources/js/popup-support.js"></script>
 </body>
 <script>
 	// 💡 선택한 사진 파일 실시간 미리보기 스크립트

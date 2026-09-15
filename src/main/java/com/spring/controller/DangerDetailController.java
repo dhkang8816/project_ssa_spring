@@ -77,7 +77,8 @@ public class DangerDetailController {
 
     // 5. 이상 객체 정보 수정 처리 (/danger/modify)
     @PostMapping("/modify")
-    public String modify(DangerDetailVO ddv, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String modify(DangerDetailVO ddv, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         dangerDetailService.modifyDanger(ddv);
         
         // 수정 후 기존 페이징 및 검색 조건 유지
@@ -86,12 +87,13 @@ public class DangerDetailController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "MODIFY_SUCCESS");
         
-        return "redirect:/danger/list";
+        return popup ? "redirect:/danger/list?popupSaved=true" : "redirect:/danger/list";
     }
 
     // 6. 이상 객체 정보 삭제 처리 (/danger/remove)
     @PostMapping("/remove")
-    public String remove(@RequestParam("dangerId") int dangerId, PageMaker pageMaker, RedirectAttributes rttr) {
+    public String remove(@RequestParam("dangerId") int dangerId, PageMaker pageMaker, RedirectAttributes rttr,
+            @RequestParam(value = "popup", defaultValue = "false") boolean popup) {
         dangerDetailService.removeDanger(dangerId);
         
         // 삭제 후 기존 페이징 및 검색 조건 유지
@@ -100,6 +102,6 @@ public class DangerDetailController {
         rttr.addAttribute("keyword", pageMaker.getKeyword());
         rttr.addFlashAttribute("msg", "REMOVE_SUCCESS");
         
-        return "redirect:/danger/list";
+        return popup ? "redirect:/danger/list?popupSaved=true" : "redirect:/danger/list";
     }
 }
