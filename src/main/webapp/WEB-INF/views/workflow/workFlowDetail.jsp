@@ -290,7 +290,7 @@ textarea:focus {
     <c:if test="${not empty workflow.rejectReason}">
         <div class="row">
             <div class="label" style="color: #f87171 !important;">반려 사유</div>
-            <div class="content" style="border-color: rgba(239, 68, 68, 0.2) !important; color: #f87171;">${workflow.rejectReason}</div>
+            <div class="content" style="border-color: rgba(239, 68, 68, 0.2) !important; color: #f87171;"><c:out value="${workflow.rejectReason}" /></div>
         </div>
     </c:if>
     

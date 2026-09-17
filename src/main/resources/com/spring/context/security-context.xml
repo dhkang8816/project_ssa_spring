@@ -65,7 +65,7 @@
 	    <security:intercept-url pattern="/api/event/**" access="permitAll" />
         <security:intercept-url pattern="/dashboard/**" access="permitAll" />
 	    <security:intercept-url pattern="/flighthistory/**" access="permitAll" />
-	    <security:intercept-url pattern="/patrolreport/**" access="permitAll" />
+	    <security:intercept-url pattern="/patrolreport/**" access="isAuthenticated()" />
 	    <security:intercept-url pattern="/loginlog/**" access="permitAll" />
 	    <security:intercept-url pattern="/api/**" access="permitAll" />
 	    

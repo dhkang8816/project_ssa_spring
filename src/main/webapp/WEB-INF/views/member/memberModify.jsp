@@ -308,5 +308,19 @@ button:active { transform: translateY(0); }
 		preview.src = "${pageContext.request.contextPath}/resources/images/member/noImage.jpg";
 		document.getElementById('deleteFlag').value = "true";
 	}
+
+	(function resizeMemberModifyPopup() {
+		if (!window.opener || window.opener.closed) {
+			return;
+		}
+
+		var popupWidth = Math.max(320, Math.min(680, screen.availWidth - 40));
+		var popupHeight = Math.max(420, Math.min(960, screen.availHeight - 36));
+		var left = Math.max(0, Math.round((screen.availWidth - popupWidth) / 2));
+		var top = Math.max(12, Math.min(24, screen.availHeight - popupHeight - 12));
+
+		window.resizeTo(popupWidth, popupHeight);
+		window.moveTo(left, top);
+	})();
 </script>
 </html>

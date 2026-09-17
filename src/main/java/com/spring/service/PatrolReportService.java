@@ -11,6 +11,7 @@ public interface PatrolReportService {
     PatrolReportVO getReportById(int reportId) throws Exception;
     List<PatrolReportVO> getReportList() throws Exception;
     void updateReport(PatrolReportVO reportVO) throws Exception;
+    void reviseRejectedReport(PatrolReportVO reportVO, String currentMemberId) throws Exception;
     void deleteReport(int reportId) throws Exception;
     public List<PatrolReportVO> getReportListWithPaging(PageMaker pageMaker) throws Exception;
 

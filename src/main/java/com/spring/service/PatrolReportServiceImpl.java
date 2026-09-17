@@ -58,6 +58,37 @@ public class PatrolReportServiceImpl implements PatrolReportService {
 
     @Transactional
     @Override
+    public void reviseRejectedReport(PatrolReportVO reportVO, String currentMemberId) throws Exception {
+        if (reportVO == null || reportVO.getReportId() == null) {
+            throw new IllegalArgumentException("A patrol report is required.");
+        }
+
+        PatrolReportVO storedReport = patrolReportDAO.getReportById(reportVO.getReportId().intValue());
+        if (storedReport == null) {
+            throw new IllegalArgumentException("The patrol report does not exist.");
+        }
+        if (!"2".equals(storedReport.getConfirmStatus())) {
+            throw new IllegalStateException("Only rejected patrol reports can be revised.");
+        }
+        if (currentMemberId == null || !currentMemberId.equals(storedReport.getMemberId())) {
+            throw new SecurityException("Only the report drafter can revise a rejected report.");
+        }
+
+        storedReport.setActionTaken(reportVO.getActionTaken());
+        storedReport.setRemark(reportVO.getRemark());
+        storedReport.setConfirmStatus("0");
+        storedReport.setModDate(new java.util.Date());
+
+        if (patrolReportDAO.updateReport(storedReport) != 1) {
+            throw new IllegalStateException("The patrol report could not be updated.");
+        }
+        if (workFlowDAO.resubmitWorkFlowByReportId(storedReport.getReportId().intValue(), currentMemberId) != 1) {
+            throw new IllegalStateException("The approval workflow could not be resubmitted.");
+        }
+    }
+
+    @Transactional
+    @Override
     public void deleteReport(int reportId) throws Exception {
         patrolReportDAO.deletePdfCachesByReportId(reportId);
         workFlowDAO.deleteWorkFlowsByReportId(reportId);

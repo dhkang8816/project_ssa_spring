@@ -73,6 +73,25 @@ public class DroneController {
         model.addAttribute("memberList", memberList);
         return "drone/droneDetail";
     }
+    @GetMapping("/modify")
+    public String modifyForm(
+            @RequestParam("droneId") String droneId,
+            @ModelAttribute("pageMaker") PageMaker pageMaker,
+            Model model) throws Exception {
+
+        // 수정할 드론 조회
+        DroneVO drone = droneService.getDroneById(droneId);
+
+        // 담당 관제원 목록 조회
+        PageMaker pm = new PageMaker();
+        pm.setPerPageNum(1000);
+        List<MemberVO> memberList = memberService.getMemberList(pm);
+
+        model.addAttribute("drone", drone);
+        model.addAttribute("memberList", memberList);
+
+        return "drone/droneModify";
+    }
     @PostMapping("/modify")
     public String modify(DroneVO dvo, PageMaker pageMaker, RedirectAttributes rttr,
             @RequestParam(value = "popup", defaultValue = "false") boolean popup) {

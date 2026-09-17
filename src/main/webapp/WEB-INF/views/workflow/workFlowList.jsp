@@ -263,7 +263,7 @@ a:hover {
 
 	<div class="control-page-content">
 		<div class="panel">
-			<h2>결재 관리</h2>
+			<h2>보고서 결재 관리</h2>
 			<div class="staff-list-summary">
 			    <div>총 <strong>${pageMaker.totalCount}</strong>건</div>
 			    

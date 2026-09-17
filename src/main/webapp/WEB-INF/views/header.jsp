@@ -392,14 +392,16 @@ $(document).ready(function() {
     const POPUP_SIZE = {
         sm: { width: 560, height: 480 },
         md: { width: 860, height: 760 },
-        lg: { width: 1200, height: 820 }
+        lg: { width: 1200, height: 820 },
+        droneForm: { width: 640, height: 860 },
+        droneDetail: { width: 640, height: 640 }
     };
 
     const POPUP_PROFILE = {
         dangerRegister: 'sm',
-        droneRegister: 'sm',
+        droneRegister: 'droneForm',
         dangerDetail: 'sm',
-        droneDetail: 'sm',
+        droneDetail: 'droneDetail',
         codeRegister: 'md',
         codeDetail: 'md',
         animalRegister: 'md',

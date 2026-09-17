@@ -70,7 +70,57 @@ body {
 .sel-2 {
 	color: #e74c3c;
 	border: 1px solid #e74c3c;
-} 
+}
+
+.rejection-status-wrapper {
+	position: relative;
+	display: inline-block;
+}
+
+.rejection-reason-popup {
+	position: absolute;
+	top: calc(100% + 9px);
+	right: 0;
+	z-index: 20;
+	width: min(360px, calc(100vw - 56px));
+	padding: 14px 16px;
+	box-sizing: border-box;
+	border: 1px solid rgba(231, 76, 60, .7);
+	border-radius: 8px;
+	background: #2a1720;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, .42);
+	color: #fecaca;
+	font-size: 13px;
+	font-weight: normal;
+	line-height: 1.55;
+	text-align: left;
+}
+
+.rejection-reason-popup::before {
+	content: '';
+	position: absolute;
+	top: -6px;
+	right: 18px;
+	width: 10px;
+	height: 10px;
+	border-top: 1px solid rgba(231, 76, 60, .7);
+	border-left: 1px solid rgba(231, 76, 60, .7);
+	background: #2a1720;
+	transform: rotate(45deg);
+}
+
+.rejection-reason-popup strong {
+	display: block;
+	margin-bottom: 5px;
+	color: #f87171;
+	font-size: 12px;
+}
+
+.rejection-reason-text {
+	display: block;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
 .grid-metrics {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -145,14 +195,23 @@ body {
 			<div class="d-flex gap-2 align-items-center no-print">
 				<button type="button" class="btn btn-outline-light"
 					onclick="window.print();">인쇄</button>
-				<span
-					class="status-select ${report.confirmStatus eq '1' ? 'sel-1' : (report.confirmStatus eq '2' ? 'sel-2' : 'sel-0')}">
-					<c:choose>
-						<c:when test="${report.confirmStatus eq '1'}">승인 완료</c:when>
-						<c:when test="${report.confirmStatus eq '2'}">반려</c:when>
-						<c:otherwise>승인 대기</c:otherwise>
-					</c:choose>
-				</span>
+				<c:choose>
+					<c:when test="${report.confirmStatus eq '2'}">
+						<div class="rejection-status-wrapper">
+							<span class="status-select sel-2">반려</span>
+							<div class="rejection-reason-popup" role="alert">
+								<strong>반려 사유</strong>
+								<span class="rejection-reason-text"><c:choose><c:when test="${not empty rejectReason}"><c:out value="${rejectReason}" /></c:when><c:otherwise>등록된 반려 사유가 없습니다.</c:otherwise></c:choose></span>
+							</div>
+						</div>
+					</c:when>
+					<c:when test="${report.confirmStatus eq '1'}">
+						<span class="status-select sel-1">승인 완료</span>
+					</c:when>
+					<c:otherwise>
+						<span class="status-select sel-0">승인 대기</span>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 
@@ -282,6 +341,10 @@ body {
 			<button type="button" class="btn btn-primary fw-bold"
 				onclick="fn_triggerForceUpdate();">🔄 대시보드 수동 강제 재실행</button>
 			<div class="d-flex gap-2">
+				<c:if test="${canModifyRejectedReport}">
+					<button type="button" class="btn btn-warning fw-bold"
+						onclick="location.href='${pageContext.request.contextPath}/patrolreport/modify/${report.reportId}?popup=true';">반려 사유 반영 후 수정</button>
+				</c:if>
 				<form:form
 					action="${pageContext.request.contextPath}/patrolreport/delete"
 					method="post"

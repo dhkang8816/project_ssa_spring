@@ -9,7 +9,9 @@ public interface WorkFlowDAO {
     int selectWorkFlowTotalCount(String approverId);
     int insertWorkFlow(WorkFlowVO workFlow);
     WorkFlowVO selectWorkFlowById(Long approvalId);
+    WorkFlowVO selectWorkFlowByReportId(Long reportId);
     int approveWorkFlow(Long approvalId, String approverId);
     int rejectWorkFlow(Long approvalId, String approverId, String rejectReason);
+    int resubmitWorkFlowByReportId(int reportId, String drafterId);
     int deleteWorkFlowsByReportId(int reportId);
 }

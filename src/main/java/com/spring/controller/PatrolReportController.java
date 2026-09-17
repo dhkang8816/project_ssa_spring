@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,12 +23,14 @@ import com.spring.cmd.PageMaker;
 import com.spring.dto.FlightHistoryVO;
 import com.spring.dto.MemberVO;
 import com.spring.dto.PatrolReportVO;
+import com.spring.dto.WorkFlowVO;
 import com.spring.security.CustomUser;
 import com.spring.service.DangerLogService;
 import com.spring.service.DetectionLogService;
 import com.spring.service.FlightHistoryService;
 import com.spring.service.MemberService;
 import com.spring.service.PatrolReportService;
+import com.spring.service.WorkFlowService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -43,6 +46,7 @@ public class PatrolReportController {
 	private final DetectionLogService detectionLogService;
 	private final FlightHistoryService flightHistoryService;
 	private final MemberService memberService;
+	private final WorkFlowService workFlowService;
 	@GetMapping("/list")
 	public String list(@ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
 		List<PatrolReportVO> reportList = reportService.getReportListWithPaging(pageMaker);
@@ -269,6 +273,33 @@ public class PatrolReportController {
 			return "redirect:/patrolreport/detail/" + reportId;
 		}
 	}
+	@GetMapping("/modify/{reportId}")
+	public String modifyForm(@PathVariable("reportId") Long reportId, Model model) throws Exception {
+		PatrolReportVO reportVO = reportService.getReportById(reportId.intValue());
+		validateRejectedReportOwner(reportVO);
+
+		WorkFlowVO workflow = workFlowService.getWorkFlowByReportId(reportId);
+		model.addAttribute("report", reportVO);
+		model.addAttribute("rejectReason", workflow == null ? null : workflow.getRejectReason());
+		return "patrolreport/patrolReportModify";
+	}
+
+	@PostMapping("/modify")
+	public String modifyRejectedReport(@ModelAttribute("report") PatrolReportVO reportVO,
+			@RequestParam(value = "popup", defaultValue = "false") boolean popup, RedirectAttributes rttr) {
+		Long reportId = reportVO == null ? null : reportVO.getReportId();
+		try {
+			reportService.reviseRejectedReport(reportVO, getCurrentMemberId());
+			rttr.addFlashAttribute("msg", "REVISE_SUCCESS");
+			return popup ? "redirect:/patrolreport/list?popupSaved=true" : "redirect:/patrolreport/list";
+		} catch (Exception e) {
+			log.warn("반려 보고서 수정 실패. reportId={}", reportId, e);
+			rttr.addFlashAttribute("msg", "REVISE_FAIL");
+			String detailPath = reportId == null ? "/patrolreport/list" : "/patrolreport/detail/" + reportId;
+			return "redirect:" + detailPath + (popup && reportId != null ? "?popup=true" : "");
+		}
+	}
+
 	@GetMapping("/detail/{reportId}")
 	public String detail(@PathVariable("reportId") Long reportId, Model model) {
 		try {
@@ -295,6 +326,13 @@ public class PatrolReportController {
 				model.addAttribute("memberDept", "관제팀");
 			}
 
+			WorkFlowVO workflow = workFlowService.getWorkFlowByReportId(reportId);
+			String rejectionReason = workflow == null ? null : workflow.getRejectReason();
+			model.addAttribute("rejectReason", rejectionReason);
+			String currentMemberId = getOptionalCurrentMemberId();
+			model.addAttribute("canModifyRejectedReport",
+					"2".equals(reportVO.getConfirmStatus()) && currentMemberId != null
+							&& currentMemberId.equals(reportVO.getMemberId()));
 			model.addAttribute("report", reportVO);
 			return "patrolreport/patrolReportDetail";
 
@@ -303,5 +341,34 @@ public class PatrolReportController {
 			model.addAttribute("msg", "상세 조회 중 시스템 에러가 발생했습니다.");
 			return "patrolreport/patrolReportList";
 		}
+	}
+
+	private void validateRejectedReportOwner(PatrolReportVO reportVO) throws Exception {
+		if (reportVO == null) {
+			throw new IllegalArgumentException("The patrol report does not exist.");
+		}
+		if (!"2".equals(reportVO.getConfirmStatus()) || !getCurrentMemberId().equals(reportVO.getMemberId())) {
+			throw new AccessDeniedException("Only the drafter can revise a rejected patrol report.");
+		}
+	}
+
+	private String getCurrentMemberId() {
+		String memberId = getOptionalCurrentMemberId();
+		if (memberId == null) {
+			throw new AccessDeniedException("Authentication is required.");
+		}
+		return memberId;
+	}
+
+	private String getOptionalCurrentMemberId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+			return null;
+		}
+		Object principal = authentication.getPrincipal();
+		if (principal instanceof CustomUser && ((CustomUser) principal).getMember() != null) {
+			return ((CustomUser) principal).getMember().getMemberId();
+		}
+		return authentication.getName();
 	}
 }

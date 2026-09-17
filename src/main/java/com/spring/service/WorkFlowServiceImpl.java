@@ -22,6 +22,9 @@ public class WorkFlowServiceImpl implements WorkFlowService {
     @Override public WorkFlowVO getWorkFlowById(Long approvalId) throws Exception {
         return workFlowDAO.selectWorkFlowById(approvalId);
     }
+    @Override public WorkFlowVO getWorkFlowByReportId(Long reportId) throws Exception {
+        return workFlowDAO.selectWorkFlowByReportId(reportId);
+    }
     @Transactional
     @Override public void approve(Long approvalId, String currentMemberId) throws Exception {
         WorkFlowVO workflow = validatePendingAssignment(approvalId, currentMemberId);

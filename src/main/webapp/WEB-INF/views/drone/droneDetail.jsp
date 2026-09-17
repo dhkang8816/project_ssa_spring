@@ -145,6 +145,46 @@ a.main-link:hover {
     color: #7dd3fc !important;
     text-decoration: underline !important;
 }
+
+.detail-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 50px;
+	row-gap: 22px;
+}
+
+.detail-grid .info-group:first-child .info-value {
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.info-group {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	min-width: 0;
+}
+
+.info-group label {
+	color: #38bdf8;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.info-value {
+	color: #e5e7eb;
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 1.4;
+}
+
+/* 작은 팝업 대응 */
+@media (max-width: 520px) {
+	.detail-grid {
+		grid-template-columns: 1fr;
+		row-gap: 16px;
+	}
+}
 </style>
 </head>
 <body class="popup-page">
@@ -158,29 +198,95 @@ a.main-link:hover {
         <input type="hidden" name="searchType" value="${pageMaker.searchType}" />
         <input type="hidden" name="keyword" value="${pageMaker.keyword}" />
         
-        
-        <div class="form-group">
-            <label>드론 기체 ID</label>
-            
-            <input type="text" name="droneId" value="${drone.droneId}" readonly="readonly" />
-        </div>
-        
-        <div class="form-group">
-            <label>담당 관제원 변경</label>
-            
-            <select name="memberId">
-                <option value="">-- 담당 관제원 선택 (미배정) --</option>
-                <c:forEach var="member" items="${memberList}">
-                    <option value="${member.memberId}" ${drone.memberId == member.memberId ? 'selected="selected"' : ''}>
-                        ${member.name} (${member.memberId})
-                    </option>
-                </c:forEach>
-            </select>
-        </div>
-        
+		        
+		<div class="detail-grid">
+		
+			<div class="info-group">
+				<label>드론 기체 ID</label>
+				<div class="info-value">${drone.droneId}</div>
+			</div>
+		
+			<div class="info-group">
+				<label>담당 관제원</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.memberId}">
+							<span class="badge-status pending">미배정</span>
+						</c:when>
+						<c:otherwise>
+							${drone.memberId}
+						</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+			<div class="info-group">
+				<label>브랜드</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.brand}">-</c:when>
+						<c:otherwise>${drone.brand}</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+			<div class="info-group">
+				<label>카메라</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.camera}">-</c:when>
+						<c:otherwise>${drone.camera}</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+			<div class="info-group">
+				<label>배터리 용량</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.batteryCapacity}">-</c:when>
+						<c:otherwise>${drone.batteryCapacity} mAh</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+			<div class="info-group">
+				<label>정비횟수</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.maintenanceCount}">0회</c:when>
+						<c:otherwise>${drone.maintenanceCount}회</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+			<div class="info-group">
+				<label>전장</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.droneLength}">-</c:when>
+						<c:otherwise>${drone.droneLength} mm</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+			<div class="info-group">
+				<label>전폭</label>
+				<div class="info-value">
+					<c:choose>
+						<c:when test="${empty drone.droneWidth}">-</c:when>
+						<c:otherwise>${drone.droneWidth} mm</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		
+		</div>
         
         <div class="btn-group">
-            <button type="button" class="btn-modify" onclick="fn_submit('modify')">배정 수정</button>
+            <button type="button"
+				onclick="location.href='${pageContext.request.contextPath}/drone/modify?droneId=${drone.droneId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}&popup=true'">
+				기체 정보 수정
+			</button>
             <button type="button" class="btn-delete" onclick="fn_submit('remove')">기체 삭제</button>
             <button type="button" class="btn-list" onclick="fn_goList()">목록으로</button>
         </div>
