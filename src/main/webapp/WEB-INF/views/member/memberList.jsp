@@ -157,10 +157,6 @@ body.login-page {
 .staff-table-wrapper {
     overflow-x: auto;
     overflow-y: hidden;
-    border-radius: 12px !important;
-    background: rgba(20, 26, 42, 0.85) !important; 
-    border: 1px solid #1e293b !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
     width: 100%;
 }
 
@@ -169,12 +165,18 @@ body.login-page {
     min-width: 850px;
     border-collapse: separate !important;
     border-spacing: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .staff-table th {
     white-space: nowrap;
     padding: 14px 16px !important;
     background: #111827 !important; 
+    border: 0 !important;
     border-bottom: 2px solid #1e293b !important;
     color: #38bdf8 !important; 
     font-size: 13px;
@@ -184,7 +186,9 @@ body.login-page {
 
 .staff-table td {
     padding: 12px 16px !important;
-    background: transparent !important;
+    /* Keep the list rows flush with the page, like flightHistoryList. */
+    background-color: #0b0f19 !important;
+    border: 0 !important;
     border-bottom: 1px solid #1e293b !important;
     color: #cbd5e1 !important;
     font-size: 13.5px;

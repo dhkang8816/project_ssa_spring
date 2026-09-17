@@ -97,10 +97,7 @@ body {
 .staff-table-wrapper { 
     overflow-x: auto; 
     overflow-y: hidden; 
-    border-radius: 12px; 
-    border: 1px solid #1e293b; 
-    background: rgba(20, 26, 42, .85); 
-    box-shadow: 0 12px 40px rgba(0, 0, 0, .4); 
+    width: 100%;
 }
 
 
@@ -131,7 +128,7 @@ body {
 
 .table-zone td {
     white-space: nowrap;
-    padding: 14px 16px !important;
+    padding: 12px 16px !important;
     background-color: transparent !important;
     color: #cbd5e1 !important;
     border: 0 !important;

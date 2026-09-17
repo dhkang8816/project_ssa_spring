@@ -100,8 +100,19 @@ public class DetectionLogController {
     @GetMapping("/detail")
     public String detectionDetail(@RequestParam("dlogId") int dlogId, @ModelAttribute("pageMaker") PageMaker pageMaker, Model model) throws Exception {
         DetectionLogVO vo = detectionLogService.getDetectionLogById(dlogId);
+
+        PageMaker animalTypePageMaker = new PageMaker();
+        animalTypePageMaker.setSearchGrpCode("ANIMAL_TYPE");
+        animalTypePageMaker.setSearchUseYn("Y");
+        animalTypePageMaker.setPerPageNum(1000);
+
+        Map<String, String> animalTypeNames = new HashMap<>();
+        for (CommonCodeVO code : commonCodeService.getCommonCodeList(animalTypePageMaker)) {
+            animalTypeNames.put(code.getCode(), code.getCodeName());
+        }
         
         model.addAttribute("detection", vo);
+        model.addAttribute("animalTypeNames", animalTypeNames);
         model.addAttribute("actionStatusList", commonCodeService.getCodeListByGroup("ACTION_STATUS"));
         return "detection/detectionDetail"; 
     }

@@ -196,7 +196,7 @@ button.btn-list:hover {
                 <tr>
                     <th>포착 객체 (축종)</th>
                     <td style="font-weight: bold; color: #ffffff;">
-                        ${detection.animalType} (${detection.detectCount} 마리)
+                        <c:out value="${empty animalTypeNames[detection.animalType] ? detection.animalType : animalTypeNames[detection.animalType]}" /> (${detection.detectCount} 마리)
                     </td>
                 </tr>
                 <tr>
