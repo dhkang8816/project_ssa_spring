@@ -36,14 +36,14 @@ body {
 
 
 .content-area {
-	position: absolute !important;
-	top: 80px !important; 
-	left: 150px !important; 
-	width: calc(100% - 150px) !important; 
-	padding: 30px 40px !important;
-	background: transparent !important;
-	box-sizing: border-box;
-	z-index: 50 !important;
+    position: absolute !important;
+    top: 80px !important; 
+    left: 200px !important; 
+    width: calc(100% - 200px) !important;
+    padding: 30px 40px !important;
+    background: transparent !important;
+    box-sizing: border-box;
+    z-index: 50 !important;
 }
 
 @media ( max-width : 760px) {
@@ -202,55 +202,62 @@ body {
 }
 
 
-.search-form-bar form {
-	display: flex;
-	gap: 6px;
-	align-items: center;
-	justify-content: center;
+.staff-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 16px;
+    width: 100%;
 }
 
-.search-form-bar select {
-	padding: 9px 12px !important;
-	background-color: #111827 !important;
-	color: #ffffff !important;
-	border: 1px solid #334155 !important;
-	border-radius: 8px !important;
-	font-size: 13.5px;
-	outline: none;
+.search-group form {
+    display: flex;
+    gap: 6px;
+    align-items: center;
 }
 
-.search-form-bar .search-input {
-	width: 200px !important;
-	padding: 9px 16px !important;
-	background: #111827 !important;
-	border: 1px solid #334155 !important;
-	border-radius: 8px !important;
-	color: #ffffff !important;
-	font-size: 13.5px;
-	outline: none;
+.search-group select {
+    padding: 9px 12px !important;
+    background-color: #111827 !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px !important;
+    font-size: 13.5px;
+    outline: none;
 }
 
-.search-form-bar .search-input:focus {
-	border-color: #0ea5e9 !important;
-	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+.search-group .search-input {
+    width: 200px !important;
+    padding: 9px 16px !important;
+    background: #111827 !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-size: 13.5px;
+    outline: none;
 }
 
+.search-group .search-input:focus, .search-group select:focus {
+    border-color: #0ea5e9 !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+}
 
 .btn-search-submit {
-	padding: 9px 18px !important;
-	border: 0 !important;
-	border-radius: 8px !important;
-	background: #0ea5e9 !important;
-	color: #ffffff !important;
-	font-weight: 700;
-	font-size: 13.5px;
-	cursor: pointer;
-	transition: all 0.15s ease;
+    padding: 9px 18px !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: #0ea5e9 !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
 }
 
 .btn-search-submit:hover {
-	background: #0284c7 !important;
-	transform: translateY(-1px);
+    background: #0284c7 !important;
+    transform: translateY(-1px);
 }
 </style>
 </head>
@@ -264,14 +271,25 @@ body {
 		<jsp:include page="/WEB-INF/views/menu.jsp" />
 
 		
-		<main class="content-area">
+<main class="content-area">
 
-			
+			<!-- ⭐ 상단 영역 (타이틀 + 검색창을 한 줄에 배치) -->
 			<div class="staff-top-bar">
 				<h2 class="page-title">로그인 인증 이력</h2>
+				
+				<div class="search-group">
+					<form:form action="list" method="get">
+						<select name="searchType">
+							<option value="m" ${pageMaker.searchType == 'm' ? 'selected' : ''}>사번</option>
+							<option value="s" ${pageMaker.searchType == 's' ? 'selected' : ''}>결과 상태</option>
+						</select>
+						<input type="text" name="keyword" value="${pageMaker.keyword}" class="search-input" placeholder="검색어 입력">
+						<button type="submit" class="btn-search-submit">검색</button>
+					</form:form>
+				</div>
 			</div>
 
-			
+			<!-- 요약 바 (전체 이력 수 + CSV 버튼) -->
 			<div class="staff-summary-bar">
 				<div class="staff-count">
 					전체 이력 수: <span class="count-num">${pageMaker.totalCount}</span> 건
@@ -358,20 +376,6 @@ body {
 								&raquo;</a></li>
 					</c:if>
 				</ul>
-			</div>
-
-			
-			<div class="search-form-bar" style="margin-top: 25px;">
-				<form:form action="list" method="get">
-					<select name="searchType">
-						<option value="m" ${pageMaker.searchType == 'm' ? 'selected' : ''}>사번</option>
-						<option value="s" ${pageMaker.searchType == 's' ? 'selected' : ''}>결과
-							상태</option>
-					</select>
-					<input type="text" name="keyword" value="${pageMaker.keyword}"
-						class="search-input" placeholder="검색어 입력">
-					<button type="submit" class="btn-search-submit">검색</button>
-				</form:form>
 			</div>
 
 		</main>

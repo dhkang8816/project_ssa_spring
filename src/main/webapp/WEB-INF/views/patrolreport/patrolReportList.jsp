@@ -341,7 +341,6 @@ body {
             </table>
         </div>
         
-        
         <c:if test="${pageMaker.totalCount gt 0}">
             <div class="text-center">
                 <ul class="pagination">

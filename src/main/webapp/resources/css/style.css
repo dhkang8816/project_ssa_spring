@@ -54,12 +54,11 @@ header, .top-header {
     right: 30px;
 }
 
-
 nav {
     position: fixed;
     top: 80px;
     left: 0;
-    width: 150px; 
+    width: 200px !important; /* ⭐ 150px에서 200px로 변경 */
     height: calc(100vh - 80px);
     display: flex;
     flex-direction: column;
@@ -69,8 +68,6 @@ nav {
     overflow: visible !important;
     z-index: 20000;
 }
-
-
 
 .sidebar-list {
     flex: 1;
@@ -104,11 +101,10 @@ nav {
     border-left: 4px solid #38bdf8;
 }
 
-
 .submenu {
     display: none; 
     position: absolute;
-    left: 149px; 
+    left: 199px !important; /* ⭐ 149px에서 199px로 변경 */
     top: 0;
     width: 160px;
     padding: 6px 0 !important;
@@ -117,8 +113,6 @@ nav {
     border-radius: 0 8px 8px 0;
     box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.4);
     z-index: 10001;
-
-    
     padding-left: 15px !important;
     margin-left: -15px !important;
 }
@@ -152,12 +146,10 @@ nav {
     font-weight: 600;
 }
 
-
 .control-content-wrapper, .patrol-list-content, .control-page-content {
-    left: 150px !important; 
-    width: calc(100% - 150px) !important;
+    left: 200px !important; /* ⭐ 150px에서 200px로 변경 */
+    width: calc(100% - 200px) !important; /* ⭐ 150px에서 200px로 변경 */
 }
-
 
 @media (max-width: 760px) {
     header, .top-header {

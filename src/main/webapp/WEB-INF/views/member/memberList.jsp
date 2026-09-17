@@ -39,8 +39,8 @@ body.login-page {
 .content-area {
     position: absolute !important;
     top: 80px !important; 
-    left: 150px !important; 
-    width: calc(100% - 150px) !important; 
+    left: 200px !important; 
+    width: calc(100% - 200px) !important; 
     padding: 30px 40px !important;
     background: transparent !important;
     box-sizing: border-box;

@@ -27,42 +27,44 @@ header, .top-header {
     z-index: 1000 !important;
 }
 
+/* 1. 콘텐츠 전체 영역을 왼쪽 정렬로 변경 */
 .control-content-wrapper {
     position: absolute !important;
     top: 80px !important; 
-    left: 250px !important; 
-    width: calc(100% - 250px) !important; 
-    padding: 25px 35px;
+    left: 200px !important; 
+    width: calc(100% - 200px) !important; 
+    padding: 15px 25px !important; 
     box-sizing: border-box;
     min-height: calc(100vh - 80px);
     display: flex;
     flex-direction: column;
-    align-items: flex-start; 
+    align-items: flex-start; /* ⭐ 카드를 왼쪽으로 정렬 */
     margin: 0 !important; 
     z-index: 50 !important;
 }
 
+/* 1. 메인 카드: 좌우 여백을 최소한으로 유지하며 화면에 맞게 확장 */
 .c2-main-card {
     background: rgba(20, 26, 42, 0.85);
     border: 1px solid #1e293b;
     border-radius: 16px;
-    padding: 24px;
+    padding: 16px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-    width: 100%;
-    max-width: 1150px; 
+    width: calc(100% - 30px); /* 오른쪽에도 최소 30px 정도의 여백만 남기고 꽉 채움 */
+    max-width: 1250px; /* 기존 제한 해제 */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-/* 4분할 그리드 레이아웃 (중앙 설정 버튼 배치를 위해 relative 지정) */
+/* 2. 비디오 그리드 컨테이너: 카드 안에서 꽉 차게 조절 */
 .video-grid-container {
     position: relative;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+    gap: 12px;
     width: 100%;
-    max-width: 1100px;
+    max-width: none; /* 그리드도 제한을 풀어 카드를 채우도록 함 */
     box-sizing: border-box;
 }
 
