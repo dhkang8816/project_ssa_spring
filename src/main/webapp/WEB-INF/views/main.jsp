@@ -59,8 +59,7 @@ header, .top-header {
 .video-grid-container {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
     width: 100%;
     max-width: 1100px;
@@ -86,10 +85,52 @@ header, .top-header {
 
 .streaming-frame {
     width: 100%;
-    height: 240px;
+    aspect-ratio: 16 / 9;
+    height: auto;
     object-fit: cover;
     display: block;
     border-radius: 8px;
+    background-color: #000000;
+}
+
+.video-display-box.stream-off .streaming-frame,
+.video-display-box.stream-error .streaming-frame {
+    /* src가 제거된 img의 alt 문구/깨진 이미지 아이콘은 감추되,
+       16:9 화면 영역은 그대로 유지한다. */
+    visibility: hidden;
+}
+
+.video-display-box.stream-off::after {
+    content: "탐지 중지";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+}
+
+.video-display-box.stream-error::after {
+    content: "영상 서버 연결 오류";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f87171;
+    font-size: 14px;
+    font-weight: 700;
+    pointer-events: none;
 }
 
 .video-card-footer {
@@ -159,6 +200,11 @@ header, .top-header {
     color: #06b6d4;
 }
 
+.switch-item input:disabled + .slider {
+    opacity: 0.55;
+    cursor: wait;
+}
+
 /* 4분할 화면 정중앙에 위치하는 동그란 드론 설정 버튼 */
 .drone-center-setting-btn {
     position: absolute;
@@ -225,53 +271,53 @@ header, .top-header {
         <div class="video-grid-container">
             
             <!-- 동영상 1번 박스 -->
-            <div class="video-display-box active-border" id="box_video_1">
-                <img id="droneVideo_1" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="동영상 1번" />
+            <div class="video-display-box stream-off" id="box_video_1">
+                <img id="droneVideo_video_1" class="streaming-frame" alt="동영상 1번" />
                 <div class="video-card-footer">
                     <span class="channel-title" id="sourceButton_video_1">DRONE-01</span>
                     <label class="switch-item">
-                        <input type="checkbox" checked onchange="toggleChannelPower('video_1', this)">
+                        <input id="toggle_video_1" type="checkbox" disabled onchange="toggleChannelPower('video_1', this)">
                         <span class="slider"></span>
-                        <span class="switch-label">ON</span>
+                        <span class="switch-label">OFF</span>
                     </label>
                 </div>
             </div>
 
             <!-- 동영상 2번 박스 -->
-            <div class="video-display-box" id="box_video_2">
-                <img id="droneVideo_2" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="동영상 2번" />
+            <div class="video-display-box stream-off" id="box_video_2">
+                <img id="droneVideo_video_2" class="streaming-frame" alt="동영상 2번" />
                 <div class="video-card-footer">
                     <span class="channel-title" id="sourceButton_video_2">DRONE-02</span>
                     <label class="switch-item">
-                        <input type="checkbox" checked onchange="toggleChannelPower('video_2', this)">
+                        <input id="toggle_video_2" type="checkbox" disabled onchange="toggleChannelPower('video_2', this)">
                         <span class="slider"></span>
-                        <span class="switch-label">ON</span>
+                        <span class="switch-label">OFF</span>
                     </label>
                 </div>
             </div>
 
             <!-- 동영상 3번 박스 -->
-            <div class="video-display-box" id="box_video_3">
-                <img id="droneVideo_3" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="동영상 3번" />
+            <div class="video-display-box stream-off" id="box_video_3">
+                <img id="droneVideo_video_3" class="streaming-frame" alt="동영상 3번" />
                 <div class="video-card-footer">
                     <span class="channel-title" id="sourceButton_video_3">DRONE-03</span>
                     <label class="switch-item">
-                        <input type="checkbox" checked onchange="toggleChannelPower('video_3', this)">
+                        <input id="toggle_video_3" type="checkbox" disabled onchange="toggleChannelPower('video_3', this)">
                         <span class="slider"></span>
-                        <span class="switch-label">ON</span>
+                        <span class="switch-label">OFF</span>
                     </label>
                 </div>
             </div>
 
             <!-- 실시간 CAM (ESP32) 박스 -->
-            <div class="video-display-box" id="box_esp32">
-                <img id="droneVideo_esp32" src="${flaskEsp32VideoUrl}" class="streaming-frame" alt="실시간 CAM" />
+            <div class="video-display-box stream-off" id="box_esp32">
+                <img id="droneVideo_esp32" class="streaming-frame" alt="실시간 CAM" />
                 <div class="video-card-footer">
                     <span class="channel-title" id="sourceButton_esp32">DRONE-04 (ESP32)</span>
                     <label class="switch-item">
-                        <input type="checkbox" checked onchange="toggleChannelPower('esp32', this)">
+                        <input id="toggle_esp32" type="checkbox" disabled onchange="toggleChannelPower('esp32', this)">
                         <span class="slider"></span>
-                        <span class="switch-label">ON</span>
+                        <span class="switch-label">OFF</span>
                     </label>
                 </div>
             </div>
@@ -319,18 +365,150 @@ header, .top-header {
 <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
 <script>
- const toggleChannelPower = (channelKey, checkbox) => {
-     const isChecked = checkbox.checked;
-     const labelEl = checkbox.parentElement.querySelector('.switch-label');
-     
-     if (isChecked) {
-         labelEl.innerText = "ON";
-         console.log("🔌 [" + channelKey + "] 화면 켜짐");
+ const yoloSourceKeys = ['video_1', 'video_2', 'video_3', 'esp32'];
+ const yoloContextPath = "${pageContext.request.contextPath}";
+ const detectionEnabled = {};
+ const isToggling = {};
+ let detectionStatusRefreshTimer = null;
+
+ function getChannelElements(channelKey) {
+     return {
+         image: document.getElementById('droneVideo_' + channelKey),
+         box: document.getElementById('box_' + channelKey),
+         checkbox: document.getElementById('toggle_' + channelKey)
+     };
+ }
+
+ function setChannelStream(channelKey, enabled) {
+     const elements = getChannelElements(channelKey);
+     if (!elements.image) return;
+     elements.box.classList.remove('stream-error');
+     if (enabled) {
+         elements.image.onerror = function() {
+             elements.box.classList.add('stream-error');
+         };
+         elements.image.src = yoloContextPath + '/yolo/videoFeed/' + encodeURIComponent(channelKey)
+             + '?t=' + new Date().getTime();
      } else {
-         labelEl.innerText = "OFF";
-         console.log("🔌 [" + channelKey + "] 화면 꺼짐");
+         // MJPEG는 숨기는 것만으로 연결이 끊기지 않으므로 src 자체를 제거한다.
+         elements.image.onerror = null;
+         elements.image.removeAttribute('src');
      }
- };
+ }
+
+ function renderChannelState(channelKey, enabled, disabled, statusText) {
+	    const elements = getChannelElements(channelKey);
+	    if (!elements.checkbox || !elements.box) return;
+	    
+	    elements.checkbox.checked = !!enabled;
+	    elements.checkbox.disabled = !!disabled;
+	    
+	    elements.box.classList.toggle('stream-off', !enabled);
+	    
+	    elements.box.classList.toggle('active-border', !!enabled);
+	    
+	    const label = elements.checkbox.parentElement.querySelector('.switch-label');
+	    if (label) label.innerText = statusText || (enabled ? 'ON' : 'OFF');
+	}
+
+ function applyServerChannelState(channelKey, workerStatus) {
+     const enabled = !!(workerStatus && workerStatus.running);
+     const stopping = !!(workerStatus && workerStatus.stopping);
+     detectionEnabled[channelKey] = enabled;
+     renderChannelState(channelKey, enabled, stopping, stopping ? 'STOPPING' : null);
+     setChannelStream(channelKey, enabled);
+     return stopping;
+ }
+
+ function readDetectionStatus() {
+     $.ajax({
+         url: yoloContextPath + '/yolo/detection/status',
+         type: 'GET',
+         dataType: 'json',
+         cache: false,
+         success: function(response) {
+             const sources = response && response.sources;
+             if (!sources) {
+                 handleDetectionStatusFailure();
+                 return;
+             }
+             let hasStoppingWorker = false;
+             yoloSourceKeys.forEach(function(channelKey) {
+                 hasStoppingWorker = applyServerChannelState(channelKey, sources[channelKey]) || hasStoppingWorker;
+             });
+             scheduleDetectionStatusRefresh(hasStoppingWorker ? 700 : 2000);
+         },
+         error: function() {
+             handleDetectionStatusFailure();
+             scheduleDetectionStatusRefresh(3000);
+         }
+     });
+ }
+
+ function scheduleDetectionStatusRefresh(delay) {
+     window.clearTimeout(detectionStatusRefreshTimer);
+     detectionStatusRefreshTimer = window.setTimeout(readDetectionStatus, delay);
+ }
+
+ function handleDetectionStatusFailure() {
+     yoloSourceKeys.forEach(function(channelKey) {
+         const elements = getChannelElements(channelKey);
+         if (!elements.checkbox) return;
+         elements.checkbox.disabled = true;
+         const label = elements.checkbox.parentElement.querySelector('.switch-label');
+         if (label) label.innerText = 'ERR';
+     });
+ }
+
+ function toggleChannelPower(channelKey, checkbox) {
+     const previousState = !!detectionEnabled[channelKey];
+     const requestedState = checkbox.checked;
+     if (isToggling[channelKey]) {
+         checkbox.checked = previousState;
+         return;
+     }
+     if (requestedState === previousState) {
+         renderChannelState(channelKey, previousState, false);
+         return;
+     }
+
+     isToggling[channelKey] = true;
+     renderChannelState(channelKey, previousState, true, '...');
+     if (!requestedState) setChannelStream(channelKey, false);
+
+     $.ajax({
+         url: yoloContextPath + '/yolo/detection/' + encodeURIComponent(channelKey)
+             + '/' + (requestedState ? 'start' : 'stop'),
+         type: 'POST',
+         dataType: 'json'
+     }).done(function(response) {
+         const workerStatus = response && response.sources && response.sources[channelKey];
+         const actualState = !!(workerStatus && workerStatus.running);
+         if (response.status !== 'SUCCESS' || actualState !== requestedState) {
+             detectionEnabled[channelKey] = previousState;
+             renderChannelState(channelKey, previousState, false);
+             setChannelStream(channelKey, previousState);
+             alert('[' + channelKey + '] worker 상태가 요청과 일치하지 않습니다.');
+             return;
+         }
+         detectionEnabled[channelKey] = actualState;
+         renderChannelState(channelKey, actualState, false);
+         setChannelStream(channelKey, actualState);
+     }).fail(function() {
+         detectionEnabled[channelKey] = previousState;
+         renderChannelState(channelKey, previousState, false);
+         setChannelStream(channelKey, previousState);
+         alert('[' + channelKey + '] 탐지 worker 상태 변경에 실패했습니다.');
+     }).always(function() {
+         isToggling[channelKey] = false;
+         const enabled = !!detectionEnabled[channelKey];
+         renderChannelState(channelKey, enabled, false);
+     });
+ }
+
+ $(document).ready(function() {
+     readDetectionStatus();
+ });
 </script>
 
 <script>
@@ -438,6 +616,17 @@ header, .top-header {
          }
      });
  }
+</script>
+
+<script>
+$('.video-display-box').on('click', function(e) {
+    if ($(e.target).closest('.switch-item, .drone-dropdown-wrapper, button, select').length > 0) {
+        return;
+    }
+    const boxId = $(this).attr('id'); // 예: box_video_1, box_esp32 등
+    const channelKey = boxId.replace('box_', '');
+    location.href = yoloContextPath + '/yolo/detail?channel=' + encodeURIComponent(channelKey);
+});
 </script>
 </body>
 </html>

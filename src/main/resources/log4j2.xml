@@ -44,7 +44,7 @@
 		</Logger> 
 		
 		
-		<Logger name="org.springframework.security" level="DEBUG" additivity="false">
+		<Logger name="org.springframework.security" level="error" additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
 
@@ -74,7 +74,7 @@
 		</Logger> 
 		
 		
-		<Logger name="jdbc.sqlonly" level="DEBUG" additivity="false">
+		<Logger name="jdbc.sqlonly" level="error" additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
 		

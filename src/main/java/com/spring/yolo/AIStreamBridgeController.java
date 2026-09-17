@@ -1,4 +1,4 @@
-﻿package com.spring.yolo;
+package com.spring.yolo;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +54,8 @@ public class AIStreamBridgeController {
 			"SSA_FLASK_VIDEO_READ_TIMEOUT_MS", 3000);
 	private static final int FLASK_LABEL_TIMEOUT_MS = RuntimeSettings.positiveInt(
 			"SSA_FLASK_LABEL_TIMEOUT_MS", 1500);
+	private static final int FLASK_CONTROL_TIMEOUT_MS = RuntimeSettings.positiveInt(
+			"SSA_FLASK_CONTROL_TIMEOUT_MS", 7000);
 	private static final boolean LEGACY_LABEL_EVENT_SIDE_EFFECTS_ENABLED =
 			RuntimeSettings.enabled("SSA_ENABLE_LEGACY_LABEL_EVENT_SIDE_EFFECTS", false);
 	private static String currentMode = "local";
@@ -77,6 +80,14 @@ public class AIStreamBridgeController {
 		return "main";
 	}
 
+	@GetMapping("/yolo/detail")
+	public String showYoloDetail(@RequestParam(value = "channel", defaultValue = "video_1") String channel) {
+		if (!isKnownYoloChannel(channel)) {
+			return "redirect:/yolo/view";
+		}
+		return "yoloDetail";
+	}
+
 	@PostMapping("/yolo/updateMapping")
 	@ResponseBody
 	public ResponseEntity<String> updateVideoDroneMapping(@RequestParam("sourceKey") String sourceKey,
@@ -98,6 +109,51 @@ public class AIStreamBridgeController {
 		}
 		String pythonServerUrl = FLASK_SERVER_URL + "/video_feed";
 		executeProxy(pythonServerUrl, response, FLASK_VIDEO_CONNECT_TIMEOUT_MS, FLASK_VIDEO_READ_TIMEOUT_MS, false);
+	}
+
+	@RequestMapping("/yolo/videoFeed/{sourceKey}")
+	public void bridgeSourceStream(@PathVariable("sourceKey") String sourceKey, HttpServletResponse response)
+			throws IOException {
+		if (!isSafeSourceKey(sourceKey)) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown video source");
+			return;
+		}
+		String pythonServerUrl = FLASK_SERVER_URL + "/video_feed/" + sourceKey;
+		executeProxy(pythonServerUrl, response, FLASK_VIDEO_CONNECT_TIMEOUT_MS, FLASK_VIDEO_READ_TIMEOUT_MS, false);
+	}
+
+	@PostMapping(value = "/yolo/detection/{sourceKey}/{action}", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<String> controlSourceDetection(@PathVariable("sourceKey") String sourceKey,
+			@PathVariable("action") String action) {
+		if (!isSafeSourceKey(sourceKey) || !isDetectionAction(action)) {
+			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"invalid source or action\"}",
+					HttpStatus.BAD_REQUEST);
+		}
+		return postToFlaskDetection("/" + sourceKey + "/" + action);
+	}
+
+	@PostMapping(value = "/yolo/detection/{action}", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<String> controlAllDetection(@PathVariable("action") String action) {
+		if (!isDetectionAction(action)) {
+			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"invalid action\"}",
+					HttpStatus.BAD_REQUEST);
+		}
+		return postToFlaskDetection("/" + action);
+	}
+
+	@GetMapping(value = "/yolo/detection/status", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<String> detectionStatus() {
+		try {
+			ResponseEntity<String> flaskResponse = flaskRestTemplate(FLASK_LABEL_TIMEOUT_MS)
+					.getForEntity(FLASK_SERVER_URL + "/status", String.class);
+			return ResponseEntity.status(flaskResponse.getStatusCode()).body(flaskResponse.getBody());
+		} catch (Exception e) {
+			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"Flask status unavailable\"}",
+					HttpStatus.BAD_GATEWAY);
+		}
 	}
 
 	@RequestMapping("/yolo/changeVideo/{sourceKey}")
@@ -204,6 +260,15 @@ public class AIStreamBridgeController {
 			connection.setRequestProperty("Connection", "close");
 			connection.setReadTimeout(isJson ? readTimeout : 1000);
 
+			int upstreamStatus = connection.getResponseCode();
+			if (upstreamStatus != HttpURLConnection.HTTP_OK) {
+				if (!response.isCommitted()) {
+					response.sendError(HttpServletResponse.SC_BAD_GATEWAY,
+							"YOLO upstream returned HTTP " + upstreamStatus);
+				}
+				return;
+			}
+
 			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 			response.setHeader("Pragma", "no-cache");
 			response.setDateHeader("Expires", 0);
@@ -216,11 +281,6 @@ public class AIStreamBridgeController {
 			int bytesRead;
 
 			while (!Thread.currentThread().isInterrupted()) {
-				if (!isJson && "esp32".equals(currentMode) && targetUrl.contains("/stream"))
-					break;
-				if (!isJson && "local".equals(currentMode) && targetUrl.contains("/esp32_yolov12"))
-					break;
-
 				try {
 					bytesRead = is.read(buffer);
 					if (bytesRead == -1)
@@ -240,6 +300,13 @@ public class AIStreamBridgeController {
 		} catch (InterruptedIOException e) {
 			Thread.currentThread().interrupt();
 		} catch (Exception e) {
+			System.err.println("[YOLO proxy] " + targetUrl + " 연결 실패: " + e.getMessage());
+			if (!response.isCommitted()) {
+				try {
+					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "YOLO upstream unavailable");
+				} catch (IOException ignored) {
+				}
+			}
 		} finally {
 			try {
 				if (is != null)
@@ -255,5 +322,37 @@ public class AIStreamBridgeController {
 			if (connection != null)
 				connection.disconnect();
 		}
+	}
+
+	private ResponseEntity<String> postToFlaskDetection(String path) {
+		try {
+			ResponseEntity<String> flaskResponse = flaskRestTemplate(FLASK_CONTROL_TIMEOUT_MS)
+					.postForEntity(FLASK_SERVER_URL + "/detection" + path, null, String.class);
+			return ResponseEntity.status(flaskResponse.getStatusCode()).body(flaskResponse.getBody());
+		} catch (Exception e) {
+			System.err.println("[YOLO control] " + path + " 요청 실패: " + e.getMessage());
+			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"Flask detection control unavailable\"}",
+					HttpStatus.BAD_GATEWAY);
+		}
+	}
+
+	private RestTemplate flaskRestTemplate(int timeoutMs) {
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		requestFactory.setConnectTimeout(timeoutMs);
+		requestFactory.setReadTimeout(timeoutMs);
+		return new RestTemplate(requestFactory);
+	}
+
+	private boolean isSafeSourceKey(String sourceKey) {
+		return sourceKey != null && sourceKey.matches("[A-Za-z0-9_-]+");
+	}
+
+	private boolean isKnownYoloChannel(String channel) {
+		return "video_1".equals(channel) || "video_2".equals(channel)
+				|| "video_3".equals(channel) || "esp32".equals(channel);
+	}
+
+	private boolean isDetectionAction(String action) {
+		return "start".equals(action) || "stop".equals(action);
 	}
 }
