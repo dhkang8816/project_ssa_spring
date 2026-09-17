@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
 
 <style>
-
 body {
     margin: 0;
     padding: 0;
@@ -18,7 +17,6 @@ body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
 }
-
 
 header, .top-header {
     position: fixed !important;
@@ -29,13 +27,12 @@ header, .top-header {
     z-index: 1000 !important;
 }
 
-
 .control-content-wrapper {
     position: absolute !important;
     top: 80px !important; 
     left: 250px !important; 
     width: calc(100% - 250px) !important; 
-    padding: 30px 40px;
+    padding: 25px 35px;
     box-sizing: border-box;
     min-height: calc(100vh - 80px);
     display: flex;
@@ -45,19 +42,6 @@ header, .top-header {
     z-index: 50 !important;
 }
 
-
-.section-title {
-    color: #ffffff;
-    font-size: 22px;
-    font-weight: 700;
-    margin-top: 5px;
-    margin-bottom: 25px;
-    letter-spacing: -0.02em;
-    width: 100%;
-    text-align: left;
-}
-
-
 .c2-main-card {
     background: rgba(20, 26, 42, 0.85);
     border: 1px solid #1e293b;
@@ -65,110 +49,165 @@ header, .top-header {
     padding: 24px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     width: 100%;
-    max-width: 1000px;
+    max-width: 1150px; 
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
+/* 4분할 그리드 레이아웃 (중앙 설정 버튼 배치를 위해 relative 지정) */
+.video-grid-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 18px;
+    width: 100%;
+    max-width: 1100px;
+    box-sizing: border-box;
+}
 
 .video-display-box {
     background-color: #000000;
-    padding: 6px;
+    padding: 8px;
     border-radius: 12px;
-    border: 2px solid #0ea5e9;
-    box-shadow: 0 0 25px rgba(14, 165, 233, 0.25);
+    border: 2px solid #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     width: 100%;
-    max-width: 960px;
     box-sizing: border-box;
     position: relative;
+    transition: all 0.2s ease;
 }
 
+.video-display-box.active-border {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 25px rgba(14, 165, 233, 0.35);
+}
 
 .streaming-frame {
     width: 100%;
-    height: auto;
+    height: 240px;
+    object-fit: cover;
     display: block;
     border-radius: 8px;
 }
 
-
-.control-bottom-bar {
-    width: 100%;
-    max-width: 960px;
+.video-card-footer {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start; 
-    margin-top: 15px;
-    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding: 0 4px;
 }
 
-.video-btn-wrapper {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-start; 
-    width: 100%;
-}
-
-
-.btn-change {
-    display: inline-block;
-    padding: 9px 16px;
-    background-color: #1e293b;
-    color: #94a3b8;
-    border: 1px solid #334155;
-    text-decoration: none;
-    border-radius: 8px;
+.channel-title {
     font-size: 13px;
-    font-weight: 600;
-    transition: all 0.2s ease;
+    font-weight: 700;
+    color: #38bdf8;
+}
+
+/* 토글 스위치 스타일 */
+.switch-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
 }
 
-.btn-change:hover {
+.switch-item input {
+    display: none;
+}
+
+.slider {
+    position: relative;
+    width: 42px;
+    height: 22px;
+    background-color: #475569;
+    border-radius: 22px;
+    transition: background-color 0.2s ease;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.switch-item input:checked + .slider {
+    background-color: #06b6d4; 
+}
+
+.switch-item input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.switch-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    width: 22px;
+    text-align: left;
+}
+
+.switch-item input:checked ~ .switch-label {
+    color: #06b6d4;
+}
+
+/* 4분할 화면 정중앙에 위치하는 동그란 드론 설정 버튼 */
+.drone-center-setting-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 38px;
+    height: 38px;
+    background-color: #1e293b;
+    border: 2px solid #334155;
+    color: #94a3b8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    transition: all 0.2s ease;
+    z-index: 100;
+}
+
+.drone-center-setting-btn:hover {
     background-color: #334155;
     color: #ffffff;
-}
-
-
-.btn-change.active-drone {
-    background-color: #0ea5e9 !important;
-    color: #ffffff !important;
-    border-color: #38bdf8 !important;
+    border-color: #0ea5e9;
     box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+    transform: translate(-50%, -50%) scale(1.08);
 }
 
-.btn-esp {
-    background-color: #059669;
-    border-color: #10b981;
-    color: #ffffff;
-}
-.btn-esp:hover {
-    background-color: #10b981;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-}
-
-
+/* 드론 설정 드롭다운 패널 (중앙 버튼 기준 위치) */
 .drone-dropdown-wrapper {
-    width: 100%;
-    display: flex !important;
-    justify-content: flex-start !important; 
-    position: relative !important;
-    box-sizing: border-box;
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
     z-index: 1000 !important;
 }
 
 #droneSettingDropdown {
     display: none;
     position: absolute;
-    top: 38px;
-    left: 0; 
+    top: 28px;
+    left: -150px; /* 드롭다운이 중앙 기준으로 예쁘게 열리도록 조정 */
     width: 320px;
     background-color: #131926;
     border: 1px solid #334155;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     border-radius: 10px;
-    padding: 18px;
+    padding: 16px;
     box-sizing: border-box;
     z-index: 9999 !important;
 }
@@ -180,99 +219,123 @@ header, .top-header {
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="control-content-wrapper">
-    
     <div class="c2-main-card">
         
-        
-        <div class="video-display-box">
-            <img id="droneVideo" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="실시간 드론 관제 스트리밍" />
-        </div>
-        
-        
-        <div class="control-bottom-bar">
+        <!-- 4분할 비디오 그리드 -->
+        <div class="video-grid-container">
             
-            
-            <div class="video-btn-wrapper">
-                <button type="button" onclick="switchMode('video_1')" class="btn-change" id="sourceButton_video_1">동영상 1번</button>
-                <button type="button" onclick="switchMode('video_2')" class="btn-change" id="sourceButton_video_2">동영상 2번</button>
-                <button type="button" onclick="switchMode('video_3')" class="btn-change" id="sourceButton_video_3">동영상 3번</button>
-                <button type="button" onclick="switchMode('esp32')" class="btn-change btn-esp" id="sourceButton_esp32">실시간 드론 CAM (ESP32)</button>
+            <!-- 동영상 1번 박스 -->
+            <div class="video-display-box active-border" id="box_video_1">
+                <img id="droneVideo_1" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="동영상 1번" />
+                <div class="video-card-footer">
+                    <span class="channel-title" id="sourceButton_video_1">DRONE-01</span>
+                    <label class="switch-item">
+                        <input type="checkbox" checked onchange="toggleChannelPower('video_1', this)">
+                        <span class="slider"></span>
+                        <span class="switch-label">ON</span>
+                    </label>
+                </div>
             </div>
-            
-            
+
+            <!-- 동영상 2번 박스 -->
+            <div class="video-display-box" id="box_video_2">
+                <img id="droneVideo_2" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="동영상 2번" />
+                <div class="video-card-footer">
+                    <span class="channel-title" id="sourceButton_video_2">DRONE-02</span>
+                    <label class="switch-item">
+                        <input type="checkbox" checked onchange="toggleChannelPower('video_2', this)">
+                        <span class="slider"></span>
+                        <span class="switch-label">ON</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 동영상 3번 박스 -->
+            <div class="video-display-box" id="box_video_3">
+                <img id="droneVideo_3" src="${pageContext.request.contextPath}/yolo/videoFeed" class="streaming-frame" alt="동영상 3번" />
+                <div class="video-card-footer">
+                    <span class="channel-title" id="sourceButton_video_3">DRONE-03</span>
+                    <label class="switch-item">
+                        <input type="checkbox" checked onchange="toggleChannelPower('video_3', this)">
+                        <span class="slider"></span>
+                        <span class="switch-label">ON</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 실시간 CAM (ESP32) 박스 -->
+            <div class="video-display-box" id="box_esp32">
+                <img id="droneVideo_esp32" src="${flaskEsp32VideoUrl}" class="streaming-frame" alt="실시간 CAM" />
+                <div class="video-card-footer">
+                    <span class="channel-title" id="sourceButton_esp32">DRONE-04 (ESP32)</span>
+                    <label class="switch-item">
+                        <input type="checkbox" checked onchange="toggleChannelPower('esp32', this)">
+                        <span class="slider"></span>
+                        <span class="switch-label">ON</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 4분할 화면 중앙에 위치한 동그란 드론 설정 버튼 및 드롭다운 -->
             <div class="drone-dropdown-wrapper">
-                <button type="button" id="btnToggleDroneSetting" class="btn btn-sm btn-dark border-secondary text-white" style="cursor: pointer; padding: 6px 14px; border-radius: 6px; font-weight: 500;">
-                    ⚙ 드론 설정
+                <button type="button" id="btnToggleDroneSetting" class="drone-center-setting-btn" title="드론 설정">
+                    ⚙
                 </button>
                 
                 <div id="droneSettingDropdown">
-                    <h4 style="color: #38bdf8; font-size: 14px; margin-top: 0; margin-bottom: 15px; font-weight: 600; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+                    <h4 style="color: #38bdf8; font-size: 13px; margin-top: 0; margin-bottom: 12px; font-weight: 600; border-bottom: 1px solid #334155; padding-bottom: 6px;">
                         ⚙ 채널별 드론 배정 실시간 매핑
                     </h4>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-                            <span style="width: 90px; color: #94a3b8;">동영상 1번</span>
-                            <select id="drone_select_video_1" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px;"></select>
-                            <button type="button" onclick="fn_saveDroneMapping('video_1')" class="btn btn-sm btn-primary py-1 px-2" style="font-size:12px;">적용</button>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 12px;">
+                            <span style="width: 80px; color: #94a3b8;">동영상 1번</span>
+                            <select id="drone_select_video_1" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px; font-size: 11px;"></select>
+                            <button type="button" onclick="fn_saveDroneMapping('video_1')" class="btn btn-sm btn-primary py-1 px-2" style="font-size:11px;">적용</button>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-                            <span style="width: 90px; color: #94a3b8;">동영상 2번</span>
-                            <select id="drone_select_video_2" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px;"></select>
-                            <button type="button" onclick="fn_saveDroneMapping('video_2')" class="btn btn-sm btn-primary py-1 px-2" style="font-size:12px;">적용</button>
+                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 12px;">
+                            <span style="width: 80px; color: #94a3b8;">동영상 2번</span>
+                            <select id="drone_select_video_2" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px; font-size: 11px;"></select>
+                            <button type="button" onclick="fn_saveDroneMapping('video_2')" class="btn btn-sm btn-primary py-1 px-2" style="font-size:11px;">적용</button>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-                            <span style="width: 90px; color: #94a3b8;">동영상 3번</span>
-                            <select id="drone_select_video_3" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px;"></select>
-                            <button type="button" onclick="fn_saveDroneMapping('video_3')" class="btn btn-sm btn-primary py-1 px-2" style="font-size:12px;">적용</button>
+                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 12px;">
+                            <span style="width: 80px; color: #94a3b8;">동영상 3번</span>
+                            <select id="drone_select_video_3" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px; font-size: 11px;"></select>
+                            <button type="button" onclick="fn_saveDroneMapping('video_3')" class="btn btn-sm btn-primary py-1 px-2" style="font-size:11px;">적용</button>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 13px;">
-                            <span style="width: 90px; color: #5ddcff; font-weight: bold;">실시간 CAM</span>
-                            <select id="drone_select_esp32" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px;"></select>
-                            <button type="button" onclick="fn_saveDroneMapping('esp32')" class="btn btn-sm btn-success py-1 px-2" style="font-size:12px;">적용</button>
+                        <div style="display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 12px;">
+                            <span style="width: 80px; color: #5ddcff; font-weight: bold;">실시간 CAM</span>
+                            <select id="drone_select_esp32" class="drone-map-select form-select form-select-sm bg-dark text-white border-secondary" style="width: 120px; padding: 4px; border-radius: 4px; font-size: 11px;"></select>
+                            <button type="button" onclick="fn_saveDroneMapping('esp32')" class="btn btn-sm btn-success py-1 px-2" style="font-size:11px;">적용</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> 
+
+        </div>
+
     </div> 
 </div> 
+
 <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
 <script>
- const esp32VideoUrl = "${flaskEsp32VideoUrl}" || "http://localhost:5000/esp32_yolov12/video_feed";
- const switchMode = (modeKey) => {
-     const video = document.getElementById('droneVideo');
-     video.src = ""; // 좀비 세션 방어선
-     $(".btn-change").removeClass("active-drone");
-     $("#sourceButton_" + modeKey).addClass("active-drone");
- 
-     if (modeKey === 'esp32') {
-         fetch("${pageContext.request.contextPath}/yolo/changeVideo/esp32")
-         .then(res => {
-             console.log("✈ [자바 통지 성공] ESP32 모드 전환 완료");
-            setTimeout(() => {
-                video.src = esp32VideoUrl;
-            }, 80);
-         })
-         .catch(err => console.error("ESP32 모드 전환 신호 실패:", err));
- 
+ const toggleChannelPower = (channelKey, checkbox) => {
+     const isChecked = checkbox.checked;
+     const labelEl = checkbox.parentElement.querySelector('.switch-label');
+     
+     if (isChecked) {
+         labelEl.innerText = "ON";
+         console.log("🔌 [" + channelKey + "] 화면 켜짐");
      } else {
-         fetch("${pageContext.request.contextPath}/yolo/changeVideo/" + modeKey)
-         .then(res => {
-             console.log("✈ [동영상 소스 변경 성공] 타겟: " + modeKey);
-            setTimeout(() => {
-                video.src = "${pageContext.request.contextPath}/yolo/videoFeed?t=" + new Date().getTime();
-            }, 80);
-         })
-         .catch(err => console.error("소스 변경 통신 실패:", err));
+         labelEl.innerText = "OFF";
+         console.log("🔌 [" + channelKey + "] 화면 꺼짐");
      }
  };
-
 </script>
 
 <script>
  $('#btnToggleDroneSetting').on('click', function(e) {
-     e.stopPropagation(); // 이벤트 버블링 차단
+     e.stopPropagation(); 
      $('#droneSettingDropdown').fadeToggle(150);
  });
  $('#droneSettingDropdown').on('click', function(e) {
@@ -290,16 +353,14 @@ header, .top-header {
          url: "${pageContext.request.contextPath}/yolo/currentMappings",
          type: "GET",
          dataType: "json",
-         cache: false, // 브라우저 사이드 캐시 노이즈 원천 차단
+         cache: false,
          success: function(res) {
-             console.log("✈ [시큐리티 돌파 수신 완료]:", res);
              if(res) {
                  var drones = res.dbDroneList; 
                  var mappings = res.activeMappings; 
                  $(".drone-map-select").each(function() {
                      var $el = $(this);
-                     $el.empty(); // 텅 빈 상태로 초기화
- 
+                     $el.empty(); 
                      if(drones && drones.length > 0) {
                          drones.forEach(function(droneId) {
                              $el.append($('<option>', {
@@ -327,23 +388,22 @@ header, .top-header {
          }
      });
  }
+ 
  function fn_updateSourceButtonLabels(mappings) {
      var sourceDefaults = {
-         video_1: '동영상 1번',
-         video_2: '동영상 2번',
-         video_3: '동영상 3번',
-         esp32: '실시간 드론 CAM (ESP32)'
+         video_1: 'DRONE-01',
+         video_2: 'DRONE-02',
+         video_3: 'DRONE-03',
+         esp32: 'DRONE-04 (ESP32)'
      };
      Object.keys(sourceDefaults).forEach(function(sourceKey) {
-         var $button = $("#sourceButton_" + sourceKey);
-         if (!$button.length) {
-             return;
-         }
+         var $title = $("#sourceButton_" + sourceKey);
+         if (!$title.length) return;
          var droneId = mappings && mappings[sourceKey];
-         $button.text(droneId || sourceDefaults[sourceKey]);
-         $button.attr('title', droneId ? sourceDefaults[sourceKey] + ' · ' + droneId : sourceDefaults[sourceKey]);
+         $title.text(droneId || sourceDefaults[sourceKey]);
      });
  }
+ 
  function fn_saveDroneMapping(sourceKey) {
      var targetSelect = $("#drone_select_" + sourceKey);
      if (targetSelect.length === 0) {
@@ -358,14 +418,14 @@ header, .top-header {
      $.ajax({
          url: "${pageContext.request.contextPath}/yolo/updateMapping",
          type: "POST",
-         dataType: "json", // 컨트롤러가 리턴하는 JSON({"status":"SUCCESS"}) 포맷 대응
+         dataType: "json",
          data: {
              sourceKey: sourceKey,
              droneId: droneId
          },
          success: function(res) {
              if (res && res.status === "SUCCESS") {
-                 alert(" [" + sourceKey + "] 채널에 드론 배정이 완벽하게 적용되었습니다.");
+                 alert("✅ [" + sourceKey + "] 채널에 드론 배정이 완벽하게 적용되었습니다.");
                  $('#droneSettingDropdown').fadeOut(100);
                  fn_loadCurrentDroneMappings();
              } else {
@@ -374,7 +434,7 @@ header, .top-header {
          },
          error: function(xhr, status, error) {
              console.error("❌ 드론 매핑 적용 통신 실패 사유: ", error);
-             alert("서버와 통신 중 오류가 발생했습니다. (컨트롤러 확인 필요)");
+             alert("서버와 통신 중 오류가 발생했습니다.");
          }
      });
  }
