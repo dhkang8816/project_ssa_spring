@@ -11,6 +11,9 @@ build/
 *.tmp
 *.bak
 
+# JDBC local settings
+src/main/resources/com/spring/properties/jdbc.properties
+
 # OS metadata
 .DS_Store
 Thumbs.db
