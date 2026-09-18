@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>지능형 유기동물 관제 대시보드</title>
+<title>관제 대시보드</title>
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,35 +15,37 @@
 <style>
 
 body {
-	background-color: #0b0f19 !important; 
-	color: #e2e8f0 !important;
-	font-family: 'Pretendard', -apple-system, 'Segoe UI', Roboto, sans-serif;
-	margin: 0;
-	padding: 0;
-	overflow-x: hidden;
+    background-color: #0b0f19 !important; 
+    color: #e2e8f0 !important;
+    font-family: 'Pretendard', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: row; /* 좌우로 배치 */
 }
 
 
 .dashboard-container {
-	position: absolute !important;
-	top: 80px !important;
-	left: 150px !important;
-	width: calc(100% - 150px) !important;
-	padding: 30px 40px !important;
-	box-sizing: border-box !important;
-	margin: 0 !important;
-	z-index: 50 !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    flex: 1 !important; /* 남은 화면 공간을 가득 채우도록 설정 */
+    margin-left: 180px !important; /* 사이드바 너비만큼 여백 주기 (사이드바 실제 너비에 맞춰 조절 가능) */
+    margin-top: 70px !important; /* 상단 헤더 높이만큼 여백 */
+    padding: 30px 40px !important;
+    box-sizing: border-box !important;
+    z-index: 50 !important;
 }
 
-@media ( max-width : 760px) {
-	.dashboard-container {
-		left: 0 !important;
-		width: 100% !important;
-		padding: 20px 16px !important;
-		top: 80px !important;
-	}
+@media (max-width: 760px) {
+    .dashboard-container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 20px 16px !important;
+        top: 0 !important;
+    }
 }
-
 .header-title {
 	font-size: 24px;
 	font-weight: 700;
@@ -201,6 +203,8 @@ rotate
 
 }
 }
+}
+
 @page {
 	size: A4 portrait;
 	margin: 8mm;
@@ -287,7 +291,7 @@ rotate
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<div class="dashboard-container">
+	<div id="dashboardPage" class="dashboard-container">
 		
 		<div class="ai-briefing-panel">
 			<div class="panel-header"

@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -8,7 +8,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>시스템 로그인 이력</title>
+<title>로그인 이력</title>
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
@@ -259,23 +259,23 @@ body {
     background: #0284c7 !important;
     transform: translateY(-1px);
 }
+
+
 </style>
 </head>
 <body class="login-page">
 
 	
 	<jsp:include page="/WEB-INF/views/header.jsp" />
+	<jsp:include page="/WEB-INF/views/menu.jsp" />
 
-	<div class="main-container">
-		
-		<jsp:include page="/WEB-INF/views/menu.jsp" />
-
+	<div id="loginLogListPage" class="main-container">
 		
 <main class="content-area">
 
 			<!-- ⭐ 상단 영역 (타이틀 + 검색창을 한 줄에 배치) -->
 			<div class="staff-top-bar">
-				<h2 class="page-title">로그인 인증 이력</h2>
+				<h2 class="page-title">로그인 이력</h2>
 				
 				<div class="search-group">
 					<form:form action="list" method="get">

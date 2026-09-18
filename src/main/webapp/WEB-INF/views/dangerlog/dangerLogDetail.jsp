@@ -8,7 +8,7 @@
 <head>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
-<title>관제 탐지 상황 상세정보</title>
+<title>이상 개체 탐지 상세</title>
 <style>
 
 body {
@@ -172,7 +172,7 @@ button.btn-list:hover {
 </head>
 <body class="popup-page">
 <div class="panel">
-    <h2>탐지 상황 상세 내용 및 현장 조치</h2>
+    <h2>이상 개체 탐지 상세</h2>
     
     <form:form action="${pageContext.request.contextPath}/dangerlog/modify" method="post">
         

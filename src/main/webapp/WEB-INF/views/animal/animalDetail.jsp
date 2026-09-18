@@ -7,6 +7,8 @@
 <html>
 <head>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
+<meta charset="UTF-8">
+<title>보호 동물 상세 정보</title>
 <style>
 
 body {
@@ -145,8 +147,6 @@ a.main-link:hover {
 }
 </style>
 
-<meta charset="UTF-8">
-<title>보호 동물 상세 정보</title>
 </head>
 <body class="popup-page">
 <div class="panel">

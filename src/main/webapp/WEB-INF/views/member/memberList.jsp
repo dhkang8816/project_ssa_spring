@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -14,27 +14,24 @@
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
 
-body.login-page {
+body {
     background-color: #0b0f19 !important; 
     color: #e2e8f0 !important;
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Pretendard', -apple-system, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
 }
-
 
 .main-container {
     display: block !important; 
     margin-top: 0 !important;
 }
 
-
 #menu-placeholder {
     display: none !important;
     width: 0 !important;
 }
-
 
 .content-area {
     position: absolute !important;
@@ -269,18 +266,18 @@ body.login-page {
     background: rgba(14, 165, 233, 0.15) !important;
     border-color: #0ea5e9 !important;
 }
+
+
 </style>
 
 </head>
-<body class="login-page">
+<body>
 
 
 <jsp:include page="/WEB-INF/views/header.jsp" />
+<jsp:include page="/WEB-INF/views/menu.jsp" />
 
-<div class="main-container">
-    
-    <jsp:include page="/WEB-INF/views/menu.jsp" />
-    
+<div id="memberListPage" class="main-container">
     
     <main class="content-area">
         

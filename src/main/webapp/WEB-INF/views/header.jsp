@@ -1,22 +1,16 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>헤더</title>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
 
-.top-header {
+header, .top-header {
     background-color: #111827 !important; 
     border-bottom: 1px solid #1e293b;
     padding: 0 30px;
@@ -183,10 +177,7 @@
     text-decoration: underline;
 }
 </style>
-</head>
-<body>
-<div class="main-wrapper">
-<header class="top-header">
+<header id="ssaHeader" class="top-header">
 <h1 class="system-title">
 <a href="${pageContext.request.contextPath}/">유기동물 보호소 관제시스템</a>
 </h1>
@@ -285,9 +276,6 @@
     </c:if>
 </div> 
 </header>
-</div>
-
-</body>
 <script
 	src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
 
@@ -373,6 +361,9 @@ $(document).ready(function() {
             css: { fontSize: '11px', color: '#aaa', marginTop: '4px', textAlign: 'right' }
         }));
         $('.alarm-list-content').prepend($newAlarm);
+        document.dispatchEvent(new CustomEvent('ssa:alert-received', {
+            detail: alertData
+        }));
         let $listContainer = $('.alarm-list-content');
         
         while ($listContainer.children('li').length > 5) {
@@ -530,4 +521,3 @@ $(document).ready(function() {
         }
     })();
 </script>
-</html>

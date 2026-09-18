@@ -29,7 +29,16 @@ public class MainController {
             alertPageCmd.setKeyword("");
             List<AlertLogVO> headerAlertList = alertLogDAO.getAlertLogListWithPaging(alertPageCmd);
             model.addAttribute("headerAlertList", headerAlertList);
-            System.out.println("📬 [백엔드 오라클 연동 완수] 메인 화면 팝업창 전용 과거 데이터 5건 바인딩 완료!");
+
+            PageMaker mainAlertPageCmd = new PageMaker();
+            mainAlertPageCmd.setPage(1);
+            mainAlertPageCmd.setPerPageNum(11);
+            mainAlertPageCmd.setSearchType("");
+            mainAlertPageCmd.setKeyword("");
+            List<AlertLogVO> mainAlertList = alertLogDAO.getAlertLogListWithPaging(mainAlertPageCmd);
+            model.addAttribute("mainAlertList", mainAlertList);
+
+            System.out.println("📬 [메인 경보 이력] 최신 11건 바인딩 완료!");
             
         } catch (Exception e) {
             System.err.println("❌ [헤더 알림 초기 로딩 실패] 오라클 이력을 읽어오지 못했습니다: " + e.getMessage());

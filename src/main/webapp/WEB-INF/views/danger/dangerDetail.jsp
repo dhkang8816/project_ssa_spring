@@ -6,6 +6,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<title>이상 객체 상세 정보</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <style>
 
@@ -130,8 +132,6 @@ button.btn-list:hover {
 }
 </style>
 
-<meta charset="UTF-8">
-<title>이상 객체 상세 정보</title>
 </head>
 <body class="popup-page">
 <div class="panel">

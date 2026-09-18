@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -322,6 +322,8 @@ button.btn-search:hover {
 	font-weight: 700;
 	letter-spacing: 0.02em;
 }
+
+
 </style>
 </head>
 <body>
@@ -330,7 +332,7 @@ button.btn-search:hover {
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
 
-	<div class="control-page-content">
+	<div id="droneListPage" class="control-page-content">
 		<div class="panel">
 
 			<h2>드론 관리 목록</h2>

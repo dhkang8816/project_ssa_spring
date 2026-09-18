@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>보고서 관리</title>
+<title>보고서 결재 관리</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
@@ -254,6 +254,8 @@ a:hover {
 	grid-area: pager;
 	justify-self: center;
 }
+
+
 </style>
 </head>
 <body>
@@ -261,7 +263,7 @@ a:hover {
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<div class="control-page-content">
+	<div id="workFlowListPage" class="control-page-content">
 		<div class="panel">
 			<h2>보고서 결재 관리</h2>
 			<div class="staff-list-summary">

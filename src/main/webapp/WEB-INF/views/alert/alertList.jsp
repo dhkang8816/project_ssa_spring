@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -13,16 +13,14 @@
 	rel="stylesheet">
 <title>경보 이력 목록</title>
 <style>
-
 body {
-	background-color: #0b0f19 !important; 
+	background-color: #0b0f19 !important;
 	color: #e2e8f0 !important;
 	font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
 }
-
 
 .control-page-content {
 	position: absolute !important;
@@ -41,7 +39,6 @@ body {
 		padding: 20px 16px;
 	}
 }
-
 
 .panel {
 	background: rgba(20, 26, 42, 0.85) !important;
@@ -63,7 +60,6 @@ body {
 	text-align: left;
 }
 
-
 .search-box {
 	margin: 20px 0;
 	padding: 20px;
@@ -71,7 +67,6 @@ body {
 	border: 1px solid #1e293b !important;
 	border-radius: 12px;
 }
-
 
 table {
 	width: 100%;
@@ -86,12 +81,12 @@ table {
 }
 
 th {
-	background-color: #111827 !important; 
-	color: #38bdf8 !important; 
+	background-color: #111827 !important;
+	color: #38bdf8 !important;
 	padding: 14px 16px !important;
 	font-size: 13px;
 	font-weight: 700;
-	text-align: center !important; 
+	text-align: center !important;
 	border: 0 !important;
 	border-bottom: 2px solid #1e293b !important;
 }
@@ -101,11 +96,10 @@ td {
 	background-color: transparent !important;
 	color: #cbd5e1 !important;
 	font-size: 13.5px;
-	text-align: center !important; 
+	text-align: center !important;
 	border: 0 !important;
 	border-bottom: 1px solid #1e293b !important;
 }
-
 
 tr {
 	transition: background-color 0s ease;
@@ -121,7 +115,6 @@ tbody tr:hover td {
 	color: #64748b !important;
 	font-size: 14px;
 }
-
 
 form {
 	display: flex;
@@ -148,7 +141,6 @@ input[type="text"]:focus, select:focus {
 	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-
 a {
 	color: #38bdf8 !important;
 	font-weight: 600;
@@ -160,7 +152,6 @@ a:hover {
 	color: #7dd3fc !important;
 	text-decoration: underline !important;
 }
-
 
 button {
 	padding: 9px 16px;
@@ -178,12 +169,10 @@ button:hover {
 	background-color: #0284c7 !important;
 }
 
-
 .badge-none {
 	color: #64748b !important;
 	font-size: 13px;
 }
-
 
 .pagination {
 	display: flex;
@@ -217,7 +206,6 @@ button:hover {
 	border-color: #334155;
 }
 
-
 .pagination li.active strong, .pagination strong {
 	color: #38bdf8 !important;
 	background: rgba(14, 165, 233, 0.15) !important;
@@ -249,14 +237,12 @@ a.btn-action-link {
 	transition: all 0.15s ease !important;
 }
 
-
 a.btn-action-link:hover {
 	background-color: #0ea5e9 !important;
 	border-color: #38bdf8 !important;
 	color: #ffffff !important;
 	text-decoration: none !important;
 }
-
 
 .panel {
 	display: grid !important;
@@ -332,41 +318,44 @@ a.btn-action-link:hover {
 </style>
 </head>
 <body>
-	
+
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	
-	<div class="control-page-content">
+
+	<div id="alertListPage" class="control-page-content">
 		<div class="panel">
 
 			<h2>시스템 경보 이력 목록</h2>
 
 
-				
-				<div class="staff-summary-bar"
-				     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1 / -1 !important; line-height: 1.2 !important; height: auto !important; margin-bottom: 5px !important;">
-				     
-				    
-				    <div class="staff-count" style="display: inline-block !important; color: #94a3b8 !important; font-size: 14px !important; font-weight: 500 !important; margin: 0 !important; padding: 0 !important;">
-				        총 <strong style="color: #38bdf8 !important;">${pageMaker.totalCount}</strong>건
-				    </div>
-				    
-				    
-				    <div class="summary-action-group"
-				         style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important; padding: 0 !important; height: auto !important;">
-				         
-				        
-				        <button class="csv-download-btn neon-theme"
-		                onclick="downloadTableAsCsv('#alertTable', 'alert-list')"
-				                style="float: none !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; box-sizing: border-box !important; height: 36px !important; padding: 0 16px !important; line-height: 1 !important; border-radius: 6px !important;">
-				            <i class="fa-solid fa-file-csv" style="font-size: 14px; margin: 0 !important; padding: 0 !important;"></i> CSV
-				        </button>
-				    </div>
+
+			<div class="staff-summary-bar"
+				style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; box-sizing: border-box !important; grid-column: 1/-1 !important; line-height: 1.2 !important; height: auto !important; margin-bottom: 5px !important;">
+
+
+				<div class="staff-count"
+					style="display: inline-block !important; color: #94a3b8 !important; font-size: 14px !important; font-weight: 500 !important; margin: 0 !important; padding: 0 !important;">
+					총 <strong style="color: #38bdf8 !important;">${pageMaker.totalCount}</strong>건
 				</div>
 
 
-			
+				<div class="summary-action-group"
+					style="display: flex !important; gap: 8px !important; align-items: center !important; float: none !important; margin: 0 !important; padding: 0 !important; height: auto !important;">
+
+
+					<button class="csv-download-btn neon-theme"
+						onclick="downloadTableAsCsv('#alertTable', 'alert-list')"
+						style="float: none !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; box-sizing: border-box !important; height: 36px !important; padding: 0 16px !important; line-height: 1 !important; border-radius: 6px !important;">
+						<i class="fa-solid fa-file-csv"
+							style="font-size: 14px; margin: 0 !important; padding: 0 !important;"></i>
+						CSV
+					</button>
+				</div>
+			</div>
+
+
+
 			<table id="alertTable" data-csv-export data-csv-filename="alert-list">
 				<thead>
 					<tr>
@@ -389,16 +378,16 @@ a.btn-action-link:hover {
 						<c:otherwise>
 							<c:forEach var="alert" items="${alertList}">
 								<tr>
-									
+
 									<td style="font-weight: bold;"><a data-detail-popup
 										data-popup-name="alertDetail"
 										href="${pageContext.request.contextPath}/alert/alertDetail?alertId=${alert.alertId}&page=${pageMaker.page}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">
 											${alert.alertId} </a></td>
 
-									
+
 									<td>${alert.alertType}</td>
 
-									
+
 									<td><c:choose>
 											<c:when test="${not empty alert.dlogId}">
 												<a class="btn-action-link" data-detail-popup
@@ -420,18 +409,18 @@ a.btn-action-link:hover {
 										</c:choose></td>
 
 
-									
+
 									<td style="text-align: left;"><c:out
 											value="${alert.alertMsg}" /></td>
 
-									
+
 									<td>${alert.sendStatus}</td>
 
-									
+
 									<td><fmt:formatDate value="${alert.firstSendTime}"
 											pattern="yyyy-MM-dd HH:mm:ss" /></td>
 
-									
+
 									<td><fmt:formatDate value="${alert.sendDate}"
 											pattern="yyyy-MM-dd HH:mm:ss" /></td>
 								</tr>
@@ -440,7 +429,7 @@ a.btn-action-link:hover {
 					</c:choose>
 				</tbody>
 			</table>
-			
+
 			<div class="search-box">
 				<form:form action="list" method="get">
 					<select name="searchType" id="alertSearchType"
@@ -473,22 +462,22 @@ a.btn-action-link:hover {
 					document.getElementById('alertMessageKeyword').disabled = !isMessageSearch;
 				}
 			</script>
-			
+
 			<div style="margin-top: 25px;">
 				<ul class="pagination">
-					
+
 					<c:if test="${pageMaker.prev}">
 						<li><a
 							href="list?page=${pageMaker.startPage - 1}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">&laquo;
 								이전</a></li>
 					</c:if>
 
-					
+
 					<c:forEach var="pageNum" begin="${pageMaker.startPage}"
 						end="${pageMaker.endPage}">
 						<li class="${pageMaker.page == pageNum ? 'active' : ''}"><c:choose>
 								<c:when test="${pageMaker.page == pageNum}">
-									
+
 									<strong>${pageNum}</strong>
 								</c:when>
 								<c:otherwise>
@@ -498,7 +487,7 @@ a.btn-action-link:hover {
 							</c:choose></li>
 					</c:forEach>
 
-					
+
 					<c:if test="${pageMaker.next}">
 						<li><a
 							href="list?page=${pageMaker.endPage + 1}&searchType=${pageMaker.searchType}&keyword=${pageMaker.keyword}">다음

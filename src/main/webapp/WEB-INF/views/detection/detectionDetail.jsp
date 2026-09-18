@@ -8,7 +8,7 @@
 <head>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
-<title>관제 탐지 상황 상세정보</title>
+<title>관제 상황 상세정보</title>
 <style>
 
 body {

@@ -1,17 +1,8 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>메뉴</title>
-<link rel="icon" href="./favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
-
 <style>
 nav {
     position: fixed !important;
@@ -154,28 +145,28 @@ nav {
     margin-top: 8px;
 }
 
-.btn-mini-tab {
-    background-color: #1e293b;
-    color: #94a3b8;
-    border: 1px solid #334155;
-    padding: 4px 0;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 600;
+#ssaSidebar .btn-mini-tab {
+    background-color: #1e293b !important;
+    color: #94a3b8 !important;
+    border: 1px solid #334155 !important;
+    padding: 4px 0 !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
     cursor: pointer;
     text-align: center;
     transition: all 0.2s ease;
 }
 
-.btn-mini-tab:hover {
-    background-color: #334155;
-    color: #ffffff;
+#ssaSidebar .btn-mini-tab:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
 }
 
-.btn-mini-tab.active {
-    background-color: #0ea5e9;
-    color: #ffffff;
-    border-color: #38bdf8;
+#ssaSidebar .btn-mini-tab.active {
+    background-color: #0ea5e9 !important;
+    color: #ffffff !important;
+    border-color: #38bdf8 !important;
 }
 /* ───────────────────────────── */
 
@@ -212,24 +203,39 @@ nav {
     border-left: 4px solid #38bdf8; 
 }
 
-.submenu {
+#ssaSidebar > .sidebar-list > li > .submenu {
     display: none; 
-    position: absolute;
-    top: 0;
-    left: 199px; 
-    width: 160px; 
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
     background-color: #1e293b !important; 
-    border: 1px solid #334155;
-    border-radius: 0 8px 8px 0; 
-    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.4);
+    border: 0 !important;
+    border-radius: 0 0 8px 8px !important; 
+    box-shadow: none !important;
     list-style: none !important;
-    padding: 6px 0 !important;
+    padding: 4px 0 6px !important;
     margin: 0 !important;
-    z-index: 9999 !important;
+    transform: none !important;
+    float: none !important;
 }
 
-.sidebar-list > li:hover .submenu {
+#ssaSidebar .sidebar-list > li:hover .submenu {
+    display: none !important;
+}
+
+#ssaSidebar .sidebar-list > li.menu-open > .submenu {
     display: block !important;
+}
+
+#ssaSidebar .sidebar-list > li.menu-open > a {
+    color: #38bdf8 !important;
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0) 100%);
+    border-left: 4px solid #38bdf8;
 }
 
 .submenu li {
@@ -253,15 +259,8 @@ nav {
     border-radius: 4px; 
 }
 
-.control-content-wrapper {
-    left: 200px !important; 
-    width: calc(100% - 200px) !important;
-}
 </style>
-</head>
-<body>
-<main>
-    <nav>
+    <nav id="ssaSidebar" class="ssa-sidebar">
 		<div class="mini-control-box">
             <div class="mini-video-display stream-off" id="mini_videoBox">
                 <img id="mini_droneVideo" class="mini-streaming-frame" alt="미니 관제 화면" />
@@ -326,11 +325,6 @@ nav {
         </ul>
     </nav>
 
-    <div class="control-content-wrapper">
-        <!-- 본문 콘텐츠 영역 -->
-    </div>
-</main>
-
 <script src="${pageContext.request.contextPath}/resources/js/jquery-1.12.3.js"></script>
 <script>
 let miniChannelKey = 'video_1';
@@ -339,6 +333,26 @@ const menuContextPath = "${pageContext.request.contextPath}";
 $(document).ready(function() {
     checkMiniStatus();
     setInterval(checkMiniStatus, 2000);
+
+    var $menuItems = $('#ssaSidebar .sidebar-list > li');
+    var menuStateKey = 'ssa.openSidebarMenuIndex';
+    var savedMenuIndex = window.sessionStorage.getItem(menuStateKey);
+    if (savedMenuIndex !== null && /^\d+$/.test(savedMenuIndex)) {
+        $menuItems.eq(Number(savedMenuIndex)).addClass('menu-open');
+    }
+
+    $menuItems.children('a[href="#"]').on('click', function(event) {
+        event.preventDefault();
+        var $item = $(this).parent();
+        var willOpen = !$item.hasClass('menu-open');
+        $menuItems.removeClass('menu-open');
+        if (willOpen) {
+            $item.addClass('menu-open');
+            window.sessionStorage.setItem(menuStateKey, String($menuItems.index($item)));
+        } else {
+            window.sessionStorage.removeItem(menuStateKey);
+        }
+    });
 });
 
 $('#mini_videoBox').on('click', function() {
@@ -400,5 +414,3 @@ function checkMiniStatus() {
     });
 }
 </script>
-</body>
-</html>

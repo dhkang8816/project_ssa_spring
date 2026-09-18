@@ -8,7 +8,7 @@
 <head>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 <meta charset="UTF-8">
-<title>실시간 개체수 현황</title>
+<title>개체수 현황</title>
 </head>
 <style>
 

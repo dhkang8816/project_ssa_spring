@@ -11,6 +11,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,6 +74,7 @@ public class AIStreamBridgeController {
 	private FlightHistoryService flightHistoryService;
 
 	private static final Map<String, Long> activeFlightStartMap = new ConcurrentHashMap<>();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@GetMapping("/yolo/view")
 	public String showMainControlPage(Model model) {
@@ -103,8 +105,7 @@ public class AIStreamBridgeController {
 
 	@RequestMapping("/yolo/videoFeed")
 	public void bridgeStream(HttpServletResponse response) {
-		if (!activeFlightStartMap.containsKey(lastActiveSourceKey)) {
-			activeFlightStartMap.put(lastActiveSourceKey, System.currentTimeMillis());
+		if (activeFlightStartMap.putIfAbsent(lastActiveSourceKey, System.currentTimeMillis()) == null) {
 			System.out.println(" [최초 화면 진입 이륙] 채널 [" + lastActiveSourceKey + "]의 첫 비행 타이머가 가동되었습니다.");
 		}
 		String pythonServerUrl = FLASK_SERVER_URL + "/video_feed";
@@ -130,7 +131,9 @@ public class AIStreamBridgeController {
 			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"invalid source or action\"}",
 					HttpStatus.BAD_REQUEST);
 		}
-		return postToFlaskDetection("/" + sourceKey + "/" + action);
+		ResponseEntity<String> flaskResponse = postToFlaskDetection("/" + sourceKey + "/" + action);
+		synchronizeFlightLifecycle(sourceKey, action, flaskResponse);
+		return flaskResponse;
 	}
 
 	@PostMapping(value = "/yolo/detection/{action}", produces = "application/json; charset=UTF-8")
@@ -140,7 +143,11 @@ public class AIStreamBridgeController {
 			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"invalid action\"}",
 					HttpStatus.BAD_REQUEST);
 		}
-		return postToFlaskDetection("/" + action);
+		ResponseEntity<String> flaskResponse = postToFlaskDetection("/" + action);
+		for (String sourceKey : new String[] { "video_1", "video_2", "video_3", "esp32" }) {
+			synchronizeFlightLifecycle(sourceKey, action, flaskResponse);
+		}
+		return flaskResponse;
 	}
 
 	@GetMapping(value = "/yolo/detection/status", produces = "application/json; charset=UTF-8")
@@ -156,28 +163,29 @@ public class AIStreamBridgeController {
 		}
 	}
 
+	@GetMapping(value = "/yolo/flight/status", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> flightStatus() {
+		Map<String, Object> result = new LinkedHashMap<>();
+		for (String sourceKey : new String[] { "video_1", "video_2", "video_3", "esp32" }) {
+			Long startTime = activeFlightStartMap.get(sourceKey);
+			Map<String, Object> sourceStatus = new LinkedHashMap<>();
+			sourceStatus.put("running", startTime != null);
+			sourceStatus.put("startTime", startTime);
+			sourceStatus.put("droneId", resolveDroneId(sourceKey));
+			result.put(sourceKey, sourceStatus);
+		}
+		return ResponseEntity.ok(result);
+	}
+
 	@RequestMapping("/yolo/changeVideo/{sourceKey}")
 	@ResponseBody
 	public String changeVideoSource(@PathVariable("sourceKey") String sourceKey) {
 		System.out.println(" → [스프링] 사용자가 새로운 채널 전환 요청: " + sourceKey);
 		try {
 			String prevSourceKey = lastActiveSourceKey;
-			if (activeFlightStartMap.containsKey(prevSourceKey)) {
-				long startTimeMs = activeFlightStartMap.remove(prevSourceKey);
-				long endTimeMs = System.currentTimeMillis();
-				double durationHours = (double) (endTimeMs - startTimeMs) / 3600000.0;
-
-				String prevDroneId = aiStreamBridgeService.resolveActiveDroneId(currentMode, prevSourceKey);
-
-				FlightHistoryVO historyVO = FlightHistoryVO.builder().startTime(new Timestamp(startTimeMs))
-						.endTime(new Timestamp(endTimeMs)).flightDuration(durationHours).droneId(prevDroneId).build();
-				if (flightHistoryService.registerFlightHistory(historyVO) != 1) {
-					System.err.println("[비행 이력 미적재] DRONE 기체 ID 또는 source 매핑을 확인하세요: " + prevDroneId);
-				} else
-				System.out.println(" [자동 착륙 적재 완수] 드론 [" + prevDroneId + "] 비행 이력 DB 저장 완료.");
-			}
-
-			activeFlightStartMap.put(sourceKey, System.currentTimeMillis());
+			completeActiveFlight(prevSourceKey);
+			beginActiveFlight(sourceKey);
 			System.out.println(" [채널 전환 이륙 감지] 새 채널 [" + sourceKey + "] 비행 타이머 시작.");
 
 			lastActiveSourceKey = sourceKey;
@@ -241,6 +249,7 @@ public class AIStreamBridgeController {
 				}
 			}
 			resultMap.put("dbDroneList", droneIdList);
+			resultMap.put("dbDroneDetails", dbDroneList == null ? new ArrayList<DroneVO>() : dbDroneList);
 		} catch (Exception e) {
 			System.err.println("❌ 서비스 레이어 재활용 동적 조회 최종 실패: " + e.getMessage());
 		}
@@ -334,6 +343,58 @@ public class AIStreamBridgeController {
 			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"Flask detection control unavailable\"}",
 					HttpStatus.BAD_GATEWAY);
 		}
+	}
+
+	private void synchronizeFlightLifecycle(String sourceKey, String action, ResponseEntity<String> flaskResponse) {
+		if (flaskResponse == null || !flaskResponse.getStatusCode().is2xxSuccessful()) {
+			return;
+		}
+
+		try {
+			JsonNode sourceStatus = objectMapper.readTree(flaskResponse.getBody()).path("sources").path(sourceKey);
+			boolean running = sourceStatus.path("running").asBoolean(false);
+			if ("start".equals(action) && running) {
+				beginActiveFlight(sourceKey);
+			} else if ("stop".equals(action) && !running) {
+				completeActiveFlight(sourceKey);
+			}
+		} catch (Exception e) {
+			System.err.println("[비행 이력 동기화] worker 응답을 해석하지 못했습니다: " + sourceKey + " / " + action);
+		}
+	}
+
+	private void beginActiveFlight(String sourceKey) {
+		if (activeFlightStartMap.putIfAbsent(sourceKey, System.currentTimeMillis()) == null) {
+			System.out.println("[비행 시작] " + sourceKey + " / " + resolveDroneId(sourceKey));
+		}
+	}
+
+	private void completeActiveFlight(String sourceKey) {
+		Long startTimeMs = activeFlightStartMap.remove(sourceKey);
+		if (startTimeMs == null) {
+			return;
+		}
+
+		long endTimeMs = System.currentTimeMillis();
+		double durationHours = (double) (endTimeMs - startTimeMs) / 3600000.0;
+		String droneId = resolveDroneId(sourceKey);
+		FlightHistoryVO historyVO = FlightHistoryVO.builder()
+				.startTime(new Timestamp(startTimeMs))
+				.endTime(new Timestamp(endTimeMs))
+				.flightDuration(durationHours)
+				.droneId(droneId)
+				.build();
+		try {
+			if (flightHistoryService.registerFlightHistory(historyVO) != 1) {
+				System.err.println("[비행 이력 미적재] DRONE 기체 ID 또는 source 매핑을 확인하세요: " + droneId);
+			}
+		} catch (Exception e) {
+			System.err.println("[비행 이력 종료 처리 실패] " + sourceKey + ": " + e.getMessage());
+		}
+	}
+
+	private String resolveDroneId(String sourceKey) {
+		return aiStreamBridgeService.resolveActiveDroneId("esp32".equals(sourceKey) ? "esp32" : "local", sourceKey);
 	}
 
 	private RestTemplate flaskRestTemplate(int timeoutMs) {

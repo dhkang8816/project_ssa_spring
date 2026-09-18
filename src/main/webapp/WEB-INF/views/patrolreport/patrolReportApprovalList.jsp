@@ -96,13 +96,15 @@ body {
 .pagination a {
 	color: #5ddcff;
 }
+
+
 </style>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/menu.jsp" />
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
-	<div class="control-page-content">
+	<div id="patrolReportApprovalListPage" class="control-page-content">
 		<div class="main-panel">
 			<div style="border-bottom: 1px solid #2c313d; padding-bottom: 15px;">
 				<h2 style="color: #f1c40f; margin: 0; font-weight: bold;">결재 관리</h2>
@@ -125,8 +127,7 @@ body {
 					<c:choose>
 						<c:when test="${empty reportList}">
 							<tr>
-								<td colspan="7" style="color: #aaa; padding: 50px;">승인 대기
-									업무일지가 없습니다.</td>
+								<td colspan="7" style="color: #aaa; padding: 50px;">승인 대기 업무일지가 없습니다.</td>
 							</tr>
 						</c:when>
 						<c:otherwise>
@@ -176,7 +177,7 @@ body {
 						</c:forEach>
 						<c:if test="${pageMaker.next}">
 							<li><a
-								href="${pageContext.request.contextPath}/patrolreport/approval/list?page=${pageMaker.endPage + 1}">다음
+								href="${pageContext.request.contextPath}/patrolreport/approval/list?page=${pageMaker.endPage + 1}">?ㅼ쓬
 									&raquo;</a></li>
 						</c:if>
 					</ul>

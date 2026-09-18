@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>⚠️ 시스템 오류 안내</title>
+<title>시스템 오류 안내</title>
 </head>
 <body>
 	<div

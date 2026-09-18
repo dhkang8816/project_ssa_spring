@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>공통코드 목록 확인용</title>
+<title>공통코드 목록</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/style.css">
 <style>
@@ -346,6 +346,8 @@ button.btn-search:hover {
 		justify-self: stretch;
 	}
 }
+
+
 </style>
 </head>
 <body>
@@ -354,7 +356,7 @@ button.btn-search:hover {
 	<jsp:include page="/WEB-INF/views/header.jsp" />
 
 	
-	<div class="control-page-content">
+	<div id="codeListPage" class="control-page-content">
 		<div class="panel">
 			<h2>시스템 코드</h2>
 

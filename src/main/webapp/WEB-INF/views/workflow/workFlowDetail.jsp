@@ -236,7 +236,7 @@ textarea:focus {
 </head>
 <body class="popup-page">
 <div class="panel">
-    <h2> 일일 관제 업무 전자결재 상세</h2>
+    <h2>전자결재 상세</h2>
     
     
     <c:if test="${not empty message}">

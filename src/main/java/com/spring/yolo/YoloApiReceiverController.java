@@ -30,7 +30,7 @@ public class YoloApiReceiverController {
     public ResponseEntity<String> receiveNormalDetectionReport(@RequestBody DetectionLogVO vo) {
         synchronized(YoloApiReceiverController.class) {
             try {
-                log.info("⏰ [AI 수신 게이트웨이] 개체수 미달 신호 유입 확인");
+                log.info("개체수 미달 신호 유입 확인");
                 if (vo.getDroneId() == null || vo.getDroneId().isEmpty()) {
                     vo.setDroneId("DRONE01");
                 }
@@ -39,24 +39,24 @@ public class YoloApiReceiverController {
                     
                     AlertLogVO avo = AlertLogVO.builder()
                          .alertType("0") // 공통코드 규칙: '0' (동물미달)
-                         .alertMsg("⚠ [관제 시스템 자동 알림] 관제 구역 내 " + animalName + " 보유 마리수 기준치 미달 현상 지속 감지!")
+                         .alertMsg("관제 구역 내 " + animalName + " 보유 마리수 기준치 미달 현상 지속 감지!")
                          .sendStatus("1") // 공통코드 규칙: '1' (성공)
                          .dlogId(vo.getDlogId() != 0 ? vo.getDlogId() : null) 
                          .firstSendTime(new Timestamp(System.currentTimeMillis()))
                          .build();
                          
                     alertLinkingService.recordDetectionAlert(vo, avo);
-                    log.info(" [다이렉트 적재 성공] '동물미달(0)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
+                    log.info("'동물미달(0)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
                     session.setAttribute("REALTIME_ALERT_FLAG", "TRIGGER");
                     session.setAttribute("REALTIME_ALERT_MSG", avo.getAlertMsg());
              
                 } catch (Exception alertEx) {
-                    log.error("❌ [DAO 적재 에러] 트랙 A ALERT_LOG 직통 인서트 실패: ", alertEx);
+                    log.error("트랙 A ALERT_LOG 직통 인서트 실패: ", alertEx);
                     throw new IllegalStateException("Detection alert persistence failed.", alertEx);
                 }
                 return new ResponseEntity<>("{\"status\":\"SUCCESS\"}", HttpStatus.OK);
             } catch (Exception e) {
-                log.error("❌ [AI 수신 게이트웨이] 정상 축종 적재 실패: ", e);
+                log.error("정상 축종 적재 실패: ", e);
                 return new ResponseEntity<>("{\"status\":\"FAIL\"}", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
@@ -67,37 +67,37 @@ public class YoloApiReceiverController {
     public ResponseEntity<String> receiveDangerDetectionReport(@RequestBody DangerLogVO vo) {
         synchronized(YoloApiReceiverController.class) {
             try {
-                log.info(" [AI 수신 게이트웨이] 위험 객체 신호 유입 성공 ➔ 수신된 코드 번호: {}", vo.getDangerType());
+                log.info("위험 객체 신호 유입 성공 ➔ 수신된 코드 번호: {}", vo.getDangerType());
                 if (vo.getDroneId() == null || vo.getDroneId().isEmpty()) {
                     vo.setDroneId("DRONE01"); 
                 }
                 try {
                     String dangerName = "확인불명 이상객체";
-                    if (vo.getDangerType() == 2) dangerName = "외계 생물(블루)";
-                    else if (vo.getDangerType() == 3) dangerName = "유해 수중체(샤크)"; // 🌟 누락된 상어(3번) 배관 추가 복구
-                    else if (vo.getDangerType() == 4) dangerName = "유해 비행체(드래곤)";
+                    if (vo.getDangerType() == 2) dangerName = "외계 생물(외계인)";
+                    else if (vo.getDangerType() == 3) dangerName = "유해 수중체(상어)"; // 🌟 누락된 상어(3번) 배관 추가 복구
+                    else if (vo.getDangerType() == 4) dangerName = "유해 비행체(용)";
                     else if (vo.getDangerType() == 5) dangerName = "맹수(호랑이)";
                     
                     AlertLogVO avo = AlertLogVO.builder()
                          .alertType("1") // 공통코드 규칙: '1' (이상개체)
-                         .alertMsg("🚨 [비상 관제 경보] 관제 구역 내 위험 이상객체 [" + dangerName + "] 실시간 출현! 즉시 대피 요망.")
+                         .alertMsg("관제 구역 내 위험 이상객체 [" + dangerName + "] 실시간 출현! 즉시 대피 요망.")
                          .sendStatus("1") // 공통코드 규칙: '1' (성공)
                          .danlogId(vo.getDanlogId() != 0 ? vo.getDanlogId() : null) 
                          .firstSendTime(new Timestamp(System.currentTimeMillis()))
                          .build();
                          
                     alertLinkingService.recordDangerAlert(vo, avo);
-                    log.info(" [다이렉트 적재 성공] '이상개체(1)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
+                    log.info("'이상개체(1)' 경보 이력이 ALERT_LOG에 안전하게 등록되었습니다.");
                     session.setAttribute("REALTIME_ALERT_FLAG", "TRIGGER");
                     session.setAttribute("REALTIME_ALERT_MSG", avo.getAlertMsg());
              
                 } catch (Exception alertEx) {
-                    log.error("❌ [DAO 적재 에러] 트랙 B ALERT_LOG 직통 인서트 실패: ", alertEx);
+                    log.error("트랙 B ALERT_LOG 직통 인서트 실패: ", alertEx);
                     throw new IllegalStateException("Danger alert persistence failed.", alertEx);
                 }
                 return new ResponseEntity<>("{\"status\":\"SUCCESS\"}", HttpStatus.OK); 
             } catch (Exception e) {
-                log.error("❌ [AI 수신 게이트웨이] 위험 객체 적재 실패: ", e);
+                log.error("위험 객체 적재 실패: ", e);
                 return new ResponseEntity<>("{\"status\":\"FAIL\"}", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }

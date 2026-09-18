@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>신규 경보 이력 등록</title>
+<title>신규 경보 이력</title>
 
 </head>
 <body>

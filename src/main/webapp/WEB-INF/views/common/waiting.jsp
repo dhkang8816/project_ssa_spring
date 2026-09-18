@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<title>승인 대기 중</title>
 <style>
 
 body {
@@ -82,7 +83,6 @@ button.btn-list:hover {
 }
 </style>
 
-<title>승인 대기 중</title>
 </head>
 <body>
 

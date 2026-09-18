@@ -76,8 +76,18 @@ public class DashboardController {
 	        detectList = detectionLogService.getDetectionLogList(dbPageMaker);
 	        flightList = flightHistoryService.getFlightHistoryList(dbPageMaker);
 	        if (flightList != null) {
+	            Calendar today = Calendar.getInstance();
 	            for (FlightHistoryVO fvo : flightList) {
-	                todayTotalFlightHours += fvo.getFlightDuration();
+	                if (fvo.getFlightDate() == null) {
+	                    continue;
+	                }
+	                Calendar flightDate = Calendar.getInstance();
+	                flightDate.setTime(fvo.getFlightDate());
+	                if (today.get(Calendar.ERA) == flightDate.get(Calendar.ERA)
+	                        && today.get(Calendar.YEAR) == flightDate.get(Calendar.YEAR)
+	                        && today.get(Calendar.DAY_OF_YEAR) == flightDate.get(Calendar.DAY_OF_YEAR)) {
+	                    todayTotalFlightHours += fvo.getFlightDuration();
+	                }
 	            }
 	        }
 	        Map<String, Object> dangerStats = dangerLogService.getTodayDangerStats();
@@ -116,6 +126,7 @@ public class DashboardController {
 	        safetyScore = 100;
 	    }
 	    resultMap.put("safetyScore", safetyScore);
+	    resultMap.put("todayDangerCount", dangerTotal);
 	    resultMap.put("dangerCount", dangerList != null ? dangerList.size() : 0);
 	    resultMap.put("detectionCount", detectList != null ? detectList.size() : 0);
 		List<String> dateLabels = new ArrayList<>();
@@ -236,7 +247,8 @@ public class DashboardController {
 
 		if (detectList != null) {
 			for (DetectionLogVO vo : detectList) {
-				if (vo.getAnimalType() != null && dynamicAnimalMap.containsKey(vo.getAnimalType())) {
+				if (vo.getDetectTime() != null && todayStr.equals(dbFormat.format(vo.getDetectTime()))
+						&& vo.getAnimalType() != null && dynamicAnimalMap.containsKey(vo.getAnimalType())) {
 					dynamicAnimalMap.put(vo.getAnimalType(), dynamicAnimalMap.get(vo.getAnimalType()) + 1);
 				}
 			}
@@ -266,7 +278,8 @@ public class DashboardController {
 		if (dangerList != null) {
 			for (DangerLogVO vo : dangerList) {
 				int voType = vo.getDangerType();
-				if (dynamicDangerMap.containsKey(voType)) {
+				if (vo.getDangerTime() != null && todayStr.equals(dbFormat.format(vo.getDangerTime()))
+						&& dynamicDangerMap.containsKey(voType)) {
 					dynamicDangerMap.put(voType, dynamicDangerMap.get(voType) + 1);
 				}
 			}
