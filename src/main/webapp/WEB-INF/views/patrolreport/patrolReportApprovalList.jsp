@@ -9,38 +9,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 관리</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
 <style>
 body {
 	background-color: #0b0f19;
-	color: #e2e8f0;
-	font-family: 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
 }
 
-.control-page-content {
+#patrolReportApprovalListPage {
+	color: #e2e8f0;
+	font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+#patrolReportApprovalListPage.control-page-content {
 	position: absolute;
 	top: 80px;
-	left: 150px;
-	width: calc(100% - 150px);
 	padding: 30px 40px;
 	box-sizing: border-box;
 	z-index: 50;
 }
 
 @media (max-width: 760px) {
-	.control-page-content {
-		left: 0;
-		width: 100%;
+	#patrolReportApprovalListPage.control-page-content {
 		padding: 20px 16px;
 	}
 }
 
-.main-panel {
+#patrolReportApprovalListPage .main-panel {
 	overflow-x: auto;
 	background: rgba(20, 26, 42, 0.85);
 	border: 1px solid #1e293b;
@@ -50,7 +46,7 @@ body {
 	box-sizing: border-box;
 }
 
-.table-zone {
+#patrolReportApprovalListPage .table-zone {
 	min-width: 850px;
 	width: 100%;
 	border-collapse: separate;
@@ -61,7 +57,7 @@ body {
 	overflow: hidden;
 }
 
-.table-zone th {
+#patrolReportApprovalListPage .table-zone th {
 	white-space: nowrap;
 	background-color: #111827;
 	color: #38bdf8;
@@ -71,7 +67,7 @@ body {
 	font-size: 13px;
 }
 
-.table-zone td {
+#patrolReportApprovalListPage .table-zone td {
 	white-space: nowrap;
 	padding: 14px 16px;
 	border: 0;
@@ -81,11 +77,11 @@ body {
 	font-size: 13.5px;
 }
 
-.table-zone tbody tr:hover {
+#patrolReportApprovalListPage .table-zone tbody tr:hover {
 	background-color: rgba(56, 189, 248, 0.08);
 }
 
-.approval-select {
+#patrolReportApprovalListPage .approval-select {
 	background: #161920;
 	color: #ffffff;
 	border: 1px solid #f1c40f;
@@ -93,8 +89,12 @@ body {
 	padding: 5px 8px;
 }
 
-.pagination a {
+#patrolReportApprovalListPage .pagination a {
 	color: #5ddcff;
+}
+
+#patrolReportApprovalListPage .approval-pagination-wrap {
+	text-align: center;
 }
 
 
@@ -155,7 +155,7 @@ body {
 			</table>
 
 			<c:if test="${pageMaker.totalCount gt 0}">
-				<div class="text-center" style="margin-top: 20px;">
+				<div class="approval-pagination-wrap" style="margin-top: 20px;">
 					<ul class="pagination"
 						style="display: flex; justify-content: center; gap: 10px; list-style: none; padding: 0;">
 						<c:if test="${pageMaker.prev}">

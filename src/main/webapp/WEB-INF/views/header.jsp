@@ -7,7 +7,7 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/style.css">
+	href="${pageContext.request.contextPath}/resources/css/style.css?v=20260921">
 <style>
 
 header, .top-header {

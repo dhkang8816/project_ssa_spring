@@ -8,39 +8,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
 <title>경보 이력 목록</title>
 <style>
 body {
 	background-color: #0b0f19 !important;
-	color: #e2e8f0 !important;
-	font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
 }
 
-.control-page-content {
+#alertListPage {
+	color: #e2e8f0;
+	font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
+}
+
+#alertListPage.control-page-content {
 	position: absolute !important;
 	top: 80px !important;
-	left: 150px !important;
-	width: calc(100% - 150px) !important;
 	padding: 30px 40px;
 	box-sizing: border-box;
 	z-index: 50 !important;
 }
 
 @media ( max-width : 760px) {
-	.control-page-content {
-		left: 0 !important;
-		width: 100% !important;
+	#alertListPage.control-page-content {
 		padding: 20px 16px;
 	}
 }
 
-.panel {
+#alertListPage .panel {
 	background: rgba(20, 26, 42, 0.85) !important;
 	border: 1px solid #1e293b !important;
 	border-radius: 16px;
@@ -51,7 +47,7 @@ body {
 	box-sizing: border-box;
 }
 
-.panel h2 {
+#alertListPage .panel h2 {
 	color: #ffffff;
 	margin: 0 0 24px 0 !important;
 	font-size: 20px;
@@ -60,7 +56,7 @@ body {
 	text-align: left;
 }
 
-.search-box {
+#alertListPage .search-box {
 	margin: 20px 0;
 	padding: 20px;
 	background: rgba(17, 24, 39, 0.6) !important;
@@ -68,7 +64,7 @@ body {
 	border-radius: 12px;
 }
 
-table {
+#alertListPage table {
 	width: 100%;
 	border-collapse: separate !important;
 	border-spacing: 0 !important;
@@ -80,7 +76,7 @@ table {
 	overflow: hidden;
 }
 
-th {
+#alertListPage th {
 	background-color: #111827 !important;
 	color: #38bdf8 !important;
 	padding: 14px 16px !important;
@@ -91,7 +87,7 @@ th {
 	border-bottom: 2px solid #1e293b !important;
 }
 
-td {
+#alertListPage td {
 	padding: 14px 16px !important;
 	background-color: transparent !important;
 	color: #cbd5e1 !important;
@@ -101,22 +97,22 @@ td {
 	border-bottom: 1px solid #1e293b !important;
 }
 
-tr {
+#alertListPage tr {
 	transition: background-color 0s ease;
 }
 
-tbody tr:hover td {
+#alertListPage tbody tr:hover td {
 	background-color: rgba(30, 41, 59, 0.6) !important;
 	color: #ffffff !important;
 }
 
-.no-data {
+#alertListPage .no-data {
 	padding: 60px !important;
 	color: #64748b !important;
 	font-size: 14px;
 }
 
-form {
+#alertListPage form {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 12px;
@@ -125,7 +121,7 @@ form {
 	font-size: 13.5px;
 }
 
-input[type="text"], select {
+#alertListPage input[type="text"], #alertListPage select {
 	padding: 8px 12px;
 	background: #111827 !important;
 	color: #ffffff !important;
@@ -136,24 +132,24 @@ input[type="text"], select {
 	transition: all 0.15s ease;
 }
 
-input[type="text"]:focus, select:focus {
+#alertListPage input[type="text"]:focus, #alertListPage select:focus {
 	border-color: #0ea5e9 !important;
 	box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
-a {
+#alertListPage a {
 	color: #38bdf8 !important;
 	font-weight: 600;
 	text-decoration: none !important;
 	transition: color 0.15s ease;
 }
 
-a:hover {
+#alertListPage a:hover {
 	color: #7dd3fc !important;
 	text-decoration: underline !important;
 }
 
-button {
+#alertListPage button {
 	padding: 9px 16px;
 	background-color: #0ea5e9 !important;
 	color: #ffffff !important;
@@ -165,16 +161,16 @@ button {
 	transition: all 0.15s ease;
 }
 
-button:hover {
+#alertListPage button:hover {
 	background-color: #0284c7 !important;
 }
 
-.badge-none {
+#alertListPage .badge-none {
 	color: #64748b !important;
 	font-size: 13px;
 }
 
-.pagination {
+#alertListPage .pagination {
 	display: flex;
 	list-style: none;
 	gap: 6px;
@@ -183,11 +179,11 @@ button:hover {
 	margin: 0 !important;
 }
 
-.pagination li {
+#alertListPage .pagination li {
 	margin: 0 !important;
 }
 
-.pagination a, .pagination strong {
+#alertListPage .pagination a, #alertListPage .pagination strong {
 	display: block;
 	padding: 6px 12px;
 	background: #111827 !important;
@@ -200,27 +196,27 @@ button:hover {
 	transition: all 0.15s;
 }
 
-.pagination a:hover {
+#alertListPage .pagination a:hover {
 	color: #ffffff !important;
 	background: #1f2937 !important;
 	border-color: #334155;
 }
 
-.pagination li.active strong, .pagination strong {
+#alertListPage .pagination li.active strong, #alertListPage .pagination strong {
 	color: #38bdf8 !important;
 	background: rgba(14, 165, 233, 0.15) !important;
 	border-color: #0ea5e9 !important;
 }
 
 @media ( max-width : 760px) {
-	table {
+	#alertListPage table {
 		display: block;
 		overflow-x: auto;
 		white-space: nowrap;
 	}
 }
 
-a.btn-action-link {
+#alertListPage a.btn-action-link {
 	display: inline-block !important;
 	padding: 6px 12px !important;
 	background-color: #242b35 !important;
@@ -237,14 +233,14 @@ a.btn-action-link {
 	transition: all 0.15s ease !important;
 }
 
-a.btn-action-link:hover {
+#alertListPage a.btn-action-link:hover {
 	background-color: #0ea5e9 !important;
 	border-color: #38bdf8 !important;
 	color: #ffffff !important;
 	text-decoration: none !important;
 }
 
-.panel {
+#alertListPage .panel {
 	display: grid !important;
 	grid-template-columns: minmax(180px, 1fr) auto;
 	grid-template-areas: "title search" "summary action" "table table"
@@ -257,7 +253,7 @@ a.btn-action-link:hover {
 	overflow-x: auto;
 }
 
-.panel>h2 {
+#alertListPage .panel>h2 {
 	grid-area: title;
 	margin: 0 !important;
 	padding: 0 0 16px;
@@ -266,52 +262,52 @@ a.btn-action-link:hover {
 	font-size: 22px !important;
 }
 
-.panel>br {
+#alertListPage .panel>br {
 	display: none;
 }
 
-.panel>.staff-list-summary {
+#alertListPage .panel>.staff-list-summary {
 	grid-area: summary;
 	color: #94a3b8;
 	font-size: 14px;
 	font-weight: 500;
 }
 
-.panel>.staff-list-summary strong {
+#alertListPage .panel>.staff-list-summary strong {
 	color: #38bdf8;
 	background: rgba(56, 189, 248, .1);
 	border-radius: 4px;
 	padding: 2px 6px;
 }
 
-.panel>.search-box {
+#alertListPage .panel>.search-box {
 	grid-area: search;
 	justify-self: end;
 	margin: 0 !important;
 }
 
-.panel>table {
+#alertListPage .panel>table {
 	grid-area: table;
 	min-width: 850px;
 	margin: 0 !important;
 }
 
-.panel>table th, .panel>table td {
+#alertListPage .panel>table th, #alertListPage .panel>table td {
 	white-space: nowrap;
 }
 
-.panel>div[style*="margin-top"] {
+#alertListPage .panel>div[style*="margin-top"] {
 	grid-area: pager;
 	justify-self: center;
 	margin: 0 !important;
 }
 
 @media ( max-width :760px) {
-	.panel {
+	#alertListPage .panel {
 		grid-template-columns: 1fr;
 		grid-template-areas: "title" "search" "summary" "table" "pager"
 	}
-	.panel>.search-box {
+	#alertListPage .panel>.search-box {
 		justify-self: stretch
 	}
 }

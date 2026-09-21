@@ -226,11 +226,15 @@ a:hover {
 	font-size: 22px !important;
 }
 
-.panel>.staff-list-summary {
-	grid-area: summary;
-	color: #94a3b8;
-	font-size: 14px;
-	font-weight: 500;
+.panel > .staff-list-summary {
+    grid-area: summary;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .panel>.staff-list-summary strong {

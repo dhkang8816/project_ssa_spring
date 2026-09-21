@@ -281,7 +281,7 @@ button:active { transform: translateY(0); }
         
         
         <div class="action-bar">
-            <button type="submit" class="btn-submit">💾 변경사항 저장</button>
+            <button type="submit" class="btn-submit">변경사항 저장</button>
             <button type="button" class="btn-back" onclick="location.href='${pageContext.request.contextPath}/member/detail?memberId=${member.memberId}'">취소</button>
         </div>
         
