@@ -17,7 +17,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
@@ -159,6 +162,50 @@ public class AIStreamBridgeController {
 			return ResponseEntity.status(flaskResponse.getStatusCode()).body(flaskResponse.getBody());
 		} catch (Exception e) {
 			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"Flask status unavailable\"}",
+					HttpStatus.BAD_GATEWAY);
+		}
+	}
+
+	@GetMapping(value = "/yolo/buzzer/enabled", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<String> buzzerEnabled() {
+		try {
+			ResponseEntity<String> flaskResponse = flaskRestTemplate(FLASK_CONTROL_TIMEOUT_MS)
+					.getForEntity(FLASK_SERVER_URL + "/buzzer/enabled", String.class);
+			return ResponseEntity.status(flaskResponse.getStatusCode()).body(flaskResponse.getBody());
+		} catch (Exception e) {
+			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"Flask buzzer service unavailable\"}",
+					HttpStatus.BAD_GATEWAY);
+		}
+	}
+
+	@PostMapping(value = "/yolo/buzzer/enabled", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<String> setBuzzerEnabled(@RequestParam("enabled") boolean enabled) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<String> request = new HttpEntity<>("{\"enabled\":" + enabled + "}", headers);
+			ResponseEntity<String> flaskResponse = flaskRestTemplate(FLASK_CONTROL_TIMEOUT_MS)
+					.postForEntity(FLASK_SERVER_URL + "/buzzer/enabled", request, String.class);
+			return ResponseEntity.status(flaskResponse.getStatusCode()).body(flaskResponse.getBody());
+		} catch (Exception e) {
+			return new ResponseEntity<>("{\"status\":\"FAIL\",\"error\":\"Flask buzzer service unavailable\"}",
+					HttpStatus.BAD_GATEWAY);
+		}
+	}
+
+	@GetMapping(value = "/yolo/envSensor/status", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ResponseEntity<String> environmentSensorStatus() {
+		try {
+			ResponseEntity<String> flaskResponse = flaskRestTemplate(FLASK_LABEL_TIMEOUT_MS)
+					.getForEntity(FLASK_SERVER_URL + "/sensor/status", String.class);
+			return ResponseEntity.status(flaskResponse.getStatusCode()).body(flaskResponse.getBody());
+		} catch (Exception e) {
+			return new ResponseEntity<>(
+					"{\"temperature\":0,\"humidity\":0,\"illumination\":0,\"distance\":0,"
+							+ "\"collisionWarning\":false,\"collisionLevel\":\"UNKNOWN\",\"sensorOnline\":false}",
 					HttpStatus.BAD_GATEWAY);
 		}
 	}

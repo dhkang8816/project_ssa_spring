@@ -53,11 +53,12 @@ header, .top-header {
 	border-radius: 16px;
 	padding: 16px;
 	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-	width: calc(100% - 30px);
-	max-width: 1250px;
+	width: 100%;
+	max-width: none;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	box-sizing: border-box;
 }
 
 .video-grid-container {
@@ -77,11 +78,12 @@ header, .top-header {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
-	padding-right: 0;
+	/* 우측 요약 패널 공간만큼 우측 패널딩을 주어 겹침 원천 방지 */
+	padding-right: calc(var(--main-dashboard-width) + 16px);
 }
 
 .main-control-layout .c2-main-card {
-	width: calc(100% - var(--main-dashboard-width) - 16px);
+	width: 100%;
 	max-width: none;
 	min-width: 0;
 	box-sizing: border-box;
@@ -151,28 +153,28 @@ header, .top-header {
 	font-variant-numeric: tabular-nums;
 }
 
-.main-dashboard-charts { 
-	display: grid; 
-	grid-template-rows: repeat(3, minmax(0, 1fr)); 
-	flex: 1 1 auto; 
-	gap: 10px; 
-	width: 100%; 
-	min-width: 0; 
+.main-dashboard-charts {
+	display: grid;
+	grid-template-rows: repeat(3, minmax(0, 1fr));
+	flex: 1 1 auto;
+	gap: 10px;
+	width: 100%;
+	min-width: 0;
 	min-height: 0;
-	margin-top: 10px; 
+	margin-top: 10px;
 }
 
-.main-dashboard-chart { 
-	display: flex; 
-	flex-direction: column; 
-	width: 100%; 
-	min-width: 0; 
+.main-dashboard-chart {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-width: 0;
 	min-height: 0;
-	box-sizing: border-box; 
-	padding: 10px; 
-	background: #0f172a; 
-	border: 1px solid #263449; 
-	border-radius: 9px; 
+	box-sizing: border-box;
+	padding: 10px;
+	background: #0f172a;
+	border: 1px solid #263449;
+	border-radius: 9px;
 }
 
 .main-dashboard-chart-title {
@@ -200,7 +202,7 @@ header, .top-header {
 }
 
 .main-alert-log-panel {
-	width: calc(100% - var(--main-dashboard-width) - 16px);
+	width: 100%;
 	max-width: none;
 	margin-top: 16px;
 	padding: 15px 16px;
@@ -298,8 +300,7 @@ header, .top-header {
 	.main-dashboard-summary {
 		display: none;
 	}
-	.main-control-layout .c2-main-card,
-	.main-alert-log-panel {
+	.main-control-layout .c2-main-card, .main-alert-log-panel {
 		width: 100%;
 	}
 }
@@ -423,6 +424,73 @@ header, .top-header {
 	padding: 0 4px;
 }
 
+/* 4채널 관제용 최소 환경 센서 HUD: 우상단 배치로 변경 */
+.video-sensor-hud {
+	position: absolute;
+	right: 12px;
+	top: 12px; /* bottom: 42px 에서 top: 12px로 변경하여 우상단으로 이동 */
+	z-index: 21;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	max-width: calc(100% - 24px);
+	padding: 6px 9px; /* 타이머와 높이/패딩감을 맞추기 위해 살짝 조정 가능 */
+	border: 1px solid rgba(56, 189, 248, 0.24);
+	border-radius: 6px;
+	background: rgba(15, 23, 42, 0.82); /* 타이머와 배경 투명도 일치 */
+	color: #dbeafe;
+	font-size: 11px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	white-space: nowrap;
+	pointer-events: none;
+	backdrop-filter: blur(2px);
+}
+
+.video-sensor-hud span + span {
+	border-left: 1px solid rgba(148, 163, 184, 0.28);
+	padding-left: 7px;
+}
+
+.video-sensor-hud .sensor-distance {
+	color: #94a3b8;
+}
+
+.video-sensor-hud.is-safe .sensor-distance {
+	color: #86efac;
+}
+
+.video-sensor-hud.is-caution .sensor-distance {
+	color: #facc15;
+}
+
+.video-sensor-hud.is-warning .sensor-distance {
+	color: #fb923c;
+}
+
+.video-sensor-hud.is-danger .sensor-distance {
+	color: #f87171;
+}
+
+.video-sensor-hud.is-offline {
+	border-color: rgba(100, 116, 139, 0.42);
+	background: rgba(30, 41, 59, 0.78);
+	color: #94a3b8;
+}
+
+@media (max-width: 760px) {
+	.video-sensor-hud {
+		gap: 4px;
+		padding: 3px 5px;
+		font-size: 10px;
+	}
+
+	.video-sensor-hud span + span {
+		padding-left: 4px;
+	}
+}
+
 .channel-title {
 	font-size: 13px;
 	font-weight: 700;
@@ -527,7 +595,7 @@ header, .top-header {
 	display: none;
 	position: absolute;
 	top: 28px;
-	left: -150px; /* 드롭다운이 중앙 기준으로 예쁘게 열리도록 조정 */
+	left: -150px;
 	width: 320px;
 	background-color: #131926;
 	border: 1px solid #334155;
@@ -600,6 +668,77 @@ header, .top-header {
 	border-color: rgba(248, 113, 113, 0.4);
 	box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
 }
+
+.top-alarm-toggle-wrapper {
+	position: absolute;
+	top: 8px;
+	right: 16px;
+	z-index: 100;
+}
+
+.alarm-circle-btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: rgba(17, 24, 39, 0.85);
+	border: 1px solid #334155;
+	padding: 4px 12px;
+	border-radius: 30px;
+	cursor: pointer;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(4px);
+	transition: all 0.2s ease;
+}
+
+.alarm-circle-btn:hover {
+	border-color: #38bdf8;
+	background: rgba(30, 41, 59, 0.9);
+}
+
+.alarm-icon-circle {
+	width: 26px;
+	height: 26px;
+	background-color: #1e293b;
+	border: 1px solid #475569;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+}
+
+.alarm-switch-container {
+	position: relative;
+	width: 36px;
+	height: 20px;
+	background-color: #475569;
+	border-radius: 20px;
+	transition: background-color 0.2s ease;
+}
+
+.alarm-switch-container::before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	background-color: #ffffff;
+	border-radius: 50%;
+	transition: transform 0.2s ease;
+}
+
+.alarm-checkbox {
+	display: none;
+}
+
+.alarm-checkbox:checked+.alarm-switch-container {
+	background-color: #06b6d4;
+}
+
+.alarm-checkbox:checked+.alarm-switch-container::before {
+	transform: translateX(16px);
+}
 </style>
 </head>
 <body>
@@ -610,6 +749,15 @@ header, .top-header {
 	<div id="yoloMainPage" class="control-content-wrapper">
 		<div class="main-control-layout">
 			<div class="c2-main-card">
+
+				<div class="top-alarm-toggle-wrapper">
+					<label class="alarm-circle-btn" title="알람 소리 설정">
+					    <span class="alarm-icon-circle">🔔</span> 
+					    <input type="checkbox" id="topAlarmToggle" class="alarm-checkbox" checked>
+					    <span class="alarm-switch-container"></span>
+					</label>
+				</div>
+
 				<div class="video-grid-container">
 
 					<!-- 동영상 1번 박스 -->
@@ -619,6 +767,12 @@ header, .top-header {
 								class="flight-timer-value">--:--:--</span>
 						</div>
 						<img id="droneVideo_video_1" class="streaming-frame" alt="동영상 1번" />
+						<div class="video-sensor-hud is-offline" title="SENSOR OFFLINE">
+							<span class="sensor-temp" title="온도">0°C</span><span
+								class="sensor-humidity" title="습도">0%</span><span
+								class="sensor-light" title="조도 ADC">0</span><span
+								class="sensor-distance" title="충돌 거리">0cm</span>
+						</div>
 						<div class="video-card-footer">
 							<span class="channel-title" id="sourceButton_video_1">DRONE-01</span>
 							<label class="switch-item"> <input id="toggle_video_1"
@@ -636,6 +790,12 @@ header, .top-header {
 								class="flight-timer-value">--:--:--</span>
 						</div>
 						<img id="droneVideo_video_2" class="streaming-frame" alt="동영상 2번" />
+						<div class="video-sensor-hud is-offline" title="SENSOR OFFLINE">
+							<span class="sensor-temp" title="온도">0°C</span><span
+								class="sensor-humidity" title="습도">0%</span><span
+								class="sensor-light" title="조도 ADC">0</span><span
+								class="sensor-distance" title="충돌 거리">0cm</span>
+						</div>
 						<div class="video-card-footer">
 							<span class="channel-title" id="sourceButton_video_2">DRONE-02</span>
 							<label class="switch-item"> <input id="toggle_video_2"
@@ -653,6 +813,12 @@ header, .top-header {
 								class="flight-timer-value">--:--:--</span>
 						</div>
 						<img id="droneVideo_video_3" class="streaming-frame" alt="동영상 3번" />
+						<div class="video-sensor-hud is-offline" title="SENSOR OFFLINE">
+							<span class="sensor-temp" title="온도">0°C</span><span
+								class="sensor-humidity" title="습도">0%</span><span
+								class="sensor-light" title="조도 ADC">0</span><span
+								class="sensor-distance" title="충돌 거리">0cm</span>
+						</div>
 						<div class="video-card-footer">
 							<span class="channel-title" id="sourceButton_video_3">DRONE-03</span>
 							<label class="switch-item"> <input id="toggle_video_3"
@@ -670,6 +836,12 @@ header, .top-header {
 								class="flight-timer-value">--:--:--</span>
 						</div>
 						<img id="droneVideo_esp32" class="streaming-frame" alt="실시간 CAM" />
+						<div class="video-sensor-hud is-offline" title="SENSOR OFFLINE">
+							<span class="sensor-temp" title="온도">0°C</span><span
+								class="sensor-humidity" title="습도">0%</span><span
+								class="sensor-light" title="조도 ADC">0</span><span
+								class="sensor-distance" title="충돌 거리">0cm</span>
+						</div>
 						<div class="video-card-footer">
 							<span class="channel-title" id="sourceButton_esp32">DRONE-04
 								(ESP32)</span> <label class="switch-item"> <input
@@ -680,7 +852,6 @@ header, .top-header {
 						</div>
 					</div>
 
-					<!-- 4분할 화면 중앙에 위치한 동그란 드론 설정 버튼 및 드롭다운 -->
 					<div class="drone-dropdown-wrapper">
 						<button type="button" id="btnToggleDroneSetting"
 							class="drone-center-setting-btn" title="드론 설정">⚙</button>
@@ -805,7 +976,7 @@ header, .top-header {
 							<div class="main-alert-log-empty">표시할 경보 이력이 없습니다.</div>
 						</c:when>
 						<c:otherwise>
-						<c:forEach var="alert" items="${mainAlertList}">
+							<c:forEach var="alert" items="${mainAlertList}">
 								<c:choose>
 									<c:when test="${not empty alert.dlogId}">
 										<c:set var="mainAlertUrl"
@@ -926,7 +1097,6 @@ header, .top-header {
 						+ encodeURIComponent(channelKey) + '?t='
 						+ new Date().getTime();
 			} else {
-				// MJPEG는 숨기는 것만으로 연결이 끊기지 않으므로 src 자체를 제거한다.
 				elements.image.onerror = null;
 				elements.image.removeAttribute('src');
 			}
@@ -1292,9 +1462,11 @@ header, .top-header {
 
 			var dashboardBottom = dashboard.getBoundingClientRect().bottom;
 			var alertBottom = alertPanel.getBoundingClientRect().bottom;
-			var extraHeight = Math.max(0, Math.round(dashboardBottom - alertBottom));
+			var extraHeight = Math.max(0, Math.round(dashboardBottom
+					- alertBottom));
 			if (extraHeight > 0)
-				alertPanel.style.minHeight = (alertPanel.offsetHeight + extraHeight) + 'px';
+				alertPanel.style.minHeight = (alertPanel.offsetHeight + extraHeight)
+						+ 'px';
 		}
 
 		function refreshMainDashboard() {
@@ -1400,12 +1572,110 @@ header, .top-header {
 			appendMainAlertLog(event.detail);
 		});
 
+		function loadTopAlarmSoundState() {
+			var $toggle = $('#topAlarmToggle');
+			if (!$toggle.length) {
+				return;
+			}
+			$.ajax({
+				url : yoloContextPath + '/yolo/buzzer/enabled',
+				type : 'GET',
+				dataType : 'json',
+				cache : false
+			}).done(function(response) {
+				var enabled = !!(response && response.enabled);
+				$toggle.prop('checked', enabled).data('lastEnabled', enabled);
+			});
+		}
+
+		$('#topAlarmToggle').on('change', function() {
+			var toggle = this;
+			var requested = toggle.checked;
+			var previous = $(toggle).data('lastEnabled');
+			if (typeof previous !== 'boolean') {
+				previous = !requested;
+			}
+
+			$(toggle).prop('disabled', true);
+			$.ajax({
+				url : yoloContextPath + '/yolo/buzzer/enabled',
+				type : 'POST',
+				data : { enabled : requested },
+				dataType : 'json'
+			}).done(function(response) {
+				var enabled = !!(response && response.enabled);
+				$(toggle).prop('checked', enabled).data('lastEnabled', enabled);
+			}).fail(function() {
+				$(toggle).prop('checked', previous).data('lastEnabled', previous);
+				window.alert('알람 소리 상태 변경에 실패했습니다.');
+			}).always(function() {
+				$(toggle).prop('disabled', false);
+			});
+		});
+
+		function toMainSensorNumber(value, fallback) {
+			var parsed = Number(value);
+			return isFinite(parsed) ? parsed : fallback;
+		}
+
+		function formatMainSensorNumber(value, decimals) {
+			var numeric = toMainSensorNumber(value, 0);
+			return decimals > 0 && Math.round(numeric) !== numeric ? numeric
+					.toFixed(decimals) : String(Math.round(numeric));
+		}
+
+		function renderMainSensorStatus(status) {
+			var online = !!(status && status.sensorOnline === true);
+			var level = String(status && status.collisionLevel || 'UNKNOWN')
+					.toUpperCase();
+			var knownLevels = [ 'SAFE', 'CAUTION', 'WARNING', 'DANGER' ];
+			if (!online || knownLevels.indexOf(level) === -1) {
+				level = 'OFFLINE';
+			}
+
+			var temperature = online ? formatMainSensorNumber(status.temperature,
+					1) : '0';
+			var humidity = online ? formatMainSensorNumber(status.humidity, 0)
+					: '0';
+			var illumination = online ? formatMainSensorNumber(status.illumination,
+					0) : '0';
+			var distance = online ? formatMainSensorNumber(status.distance, 1) : '0';
+			var statusTitle = online ? '충돌 상태: ' + level : 'SENSOR OFFLINE';
+
+			$('.video-sensor-hud').each(function() {
+				var $hud = $(this);
+				$hud.removeClass('is-safe is-caution is-warning is-danger is-offline')
+						.addClass('is-' + level.toLowerCase()).attr('title', statusTitle);
+				$hud.find('.sensor-temp').text(temperature + '°C');
+				$hud.find('.sensor-humidity').text(humidity + '%');
+				$hud.find('.sensor-light').text(illumination);
+				$hud.find('.sensor-distance').text(distance + 'cm')
+						.attr('title', statusTitle);
+			});
+		}
+
+		function refreshMainSensorStatus() {
+			$.ajax({
+				url : yoloContextPath + '/yolo/envSensor/status',
+				type : 'GET',
+				dataType : 'json',
+				cache : false
+			}).done(function(status) {
+				renderMainSensorStatus(status || {});
+			}).fail(function() {
+				renderMainSensorStatus({ sensorOnline : false });
+			});
+		}
+
 		$(document).ready(function() {
 			readDetectionStatus();
+			loadTopAlarmSoundState();
 			refreshFlightStatus();
+			refreshMainSensorStatus();
 			syncMainDashboardHeight();
 			refreshMainDashboard();
 			window.setInterval(renderFlightTimers, 1000);
+			window.setInterval(refreshMainSensorStatus, 3000);
 			window.setInterval(refreshMainDashboard, 60000);
 		});
 
@@ -1524,7 +1794,7 @@ header, .top-header {
 								alert("✅ [" + sourceKey
 										+ "] 채널에 드론 배정이 완벽하게 적용되었습니다.");
 								$('#droneSettingDropdown').fadeOut(100);
-								fn_loadCurrentDroneMappings();
+								fn_loadContentDroneMappings();
 							} else {
 								alert("❌ 서버 처리 중 매핑 적용에 실패했습니다.");
 							}
@@ -1547,7 +1817,7 @@ header, .top-header {
 											'.switch-item, .drone-dropdown-wrapper, button, select').length > 0) {
 								return;
 							}
-							const boxId = $(this).attr('id'); // 예: box_video_1, box_esp32 등
+							const boxId = $(this).attr('id');
 							const channelKey = boxId.replace('box_', '');
 							location.href = yoloContextPath
 									+ '/yolo/detail?channel='

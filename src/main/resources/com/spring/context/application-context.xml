@@ -47,6 +47,9 @@
 	<bean id="WorkFlowDAO" class="com.spring.dao.WorkFlowDAOImpl">
 		<constructor-arg ref="sqlSession" />
 	</bean>
+	<bean id="EnvironmentDAO" class="com.spring.dao.EnvironmentDAOImpl">
+		<constructor-arg ref="sqlSession" />
+	</bean>
 
 	
 	<bean id="commonCodeService"
@@ -94,18 +97,11 @@
 		<constructor-arg ref="WorkFlowDAO" />
 		<constructor-arg ref="memberDAO" />
 	</bean>
-	
-	
 	<bean id="AIStreamBridgeService" class="com.spring.yolo.AIStreamBridgeService">
-	    
 	    <constructor-arg ref="VideoDroneMapDAO" />
 	</bean>
-	
 	<bean id="VideoDroneMapService" class="com.spring.service.VideoDroneMapServiceImpl">
-	    
 	    <constructor-arg ref="VideoDroneMapDAO" />
-	    
-	    
 	    <constructor-arg ref="AIStreamBridgeService" />
 	</bean>
 	<bean id="WorkFlowService"
@@ -114,7 +110,17 @@
 		<constructor-arg ref="memberDAO" />
 		<constructor-arg ref="PatrolReportDAO" />
 	</bean>
-
-
-
+	<bean id="EnvironmentService"
+		class="com.spring.service.EnvironmentServiceImpl">
+		<constructor-arg ref="EnvironmentDAO" />
+	</bean>
+	<bean id="GeocodingService"
+      class="com.spring.service.GeocodingServiceImpl">
+	</bean>
+	<bean id="WeatherApiService"
+      class="com.spring.service.WeatherApiServiceImpl">
+	</bean>
+	<bean id="SpaceWeatherService"
+	      class="com.spring.service.SpaceWeatherServiceImpl">
+	</bean>
 </beans>

@@ -33,4 +33,8 @@ public final class RuntimeSettings {
         }
         return defaultValue;
     }
+    
+    public static String kakaoRestApiKey() {
+        return text("KAKAO_REST_API_KEY", "");
+    }
 }

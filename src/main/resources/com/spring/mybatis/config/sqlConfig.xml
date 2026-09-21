@@ -27,5 +27,6 @@
 		<typeAlias type="com.spring.dto.PatrolReportVO" alias="patrolReport" />
 		<typeAlias type="com.spring.dto.VideoDroneMapVO" alias="videoDroneMap" />
 		<typeAlias type="com.spring.dto.WorkFlowVO" alias="workFlow" />
+		<typeAlias type="com.spring.dto.EnvironmentVO" alias="environment" />
 	</typeAliases>
 </configuration>
